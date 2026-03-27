@@ -82,6 +82,8 @@ If no `images/` directory exists, skip this phase.
      - Convert markdown content to HTML
      - First `##` heading becomes the slide header
      - Remaining content goes in `slide-content`
+     - **If the slide has an image:** use 2-column split layout (`slide-split` > `split-text` + `split-image`). Text on left, image on right.
+     - **If the slide has no image:** use normal single-column `slide-content`
      - `> Note:` content goes in `speaker-notes` div
      - Wrap code blocks for highlight.js with line number support
 4. Replace `{{TITLE}}` with the frontmatter title (or filename if no frontmatter)
