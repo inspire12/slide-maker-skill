@@ -1,1 +1,4 @@
 .superpowers/
+.DS_Store
+slides/*.html
+skill/examples/*.html
