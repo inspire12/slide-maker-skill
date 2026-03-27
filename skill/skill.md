@@ -48,6 +48,26 @@ Analyze each slide and suggest improvements:
 
 Present suggestions to the user. Apply only the ones they approve.
 
+### Phase 2.5 — Image Auto-Matching
+
+If an `images/` directory exists in the same directory as the input file (e.g., `slides/images/`):
+
+1. **Scan images:** Use Glob to find all images in the directory (`images/*.{png,jpg,jpeg,gif,svg}`)
+2. **Recognize content:** Use Read tool to view each image and understand what it contains
+3. **Match to slides:** For each slide, determine if any image is relevant based on:
+   - Slide title and content keywords
+   - Image content/subject matter
+   - Visual appropriateness for the slide topic
+4. **Suggest placements:** Present a mapping to the user:
+   ```
+   슬라이드 "양자컴퓨터 버블 붕괴" ← images/quantum_crash.png
+   슬라이드 "수익 곡선" ← images/profit_chart.png
+   슬라이드 "1년 항해 계획" ← (매칭 이미지 없음)
+   ```
+5. **Apply approved matches:** Insert `![](images/filename)` into the approved slides
+
+If no `images/` directory exists, skip this phase.
+
 ### Phase 3 — HTML Generation
 
 1. Read the template file at `~/.claude/skills/markdown-to-slide/template.html`
