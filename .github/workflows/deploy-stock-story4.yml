@@ -1,0 +1,51 @@
+name: Deploy stock_story4 to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - pages-stock-story4
+    paths:
+      - .github/workflows/deploy-stock-story4.yml
+      - slides/stock_story4.html
+      - slides/images/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build site payload
+        run: |
+          mkdir -p site
+          cp slides/stock_story4.html site/index.html
+          cp slides/stock_story4.html site/stock_story4.html
+          cp -R slides/images site/images
+          touch site/.nojekyll
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

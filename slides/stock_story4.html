@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1년간의 전업투자 도전기</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f0f0f2; color: #1d1d1f; line-height: 1.6;
+  display: flex; align-items: center; justify-content: center;
+}
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: #0071e3; transition: width 0.3s ease; z-index: 100;
+}
+.slide {
+  display: none; position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(100vw, 177.78vh); height: min(100vh, 56.25vw);
+  padding: clamp(30px, 4.7vh, 80px) clamp(40px, 6.25vh, 100px);
+  overflow: hidden; background: #fff; box-shadow: 0 0 30px rgba(0,0,0,0.08);
+  flex-direction: column;
+}
+.slide.active { display: flex; animation: fadeIn 0.35s ease-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.98); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .slide.active { animation: none; } }
+.chapter-label { position: absolute; top: 20px; left: 24px; font-size: 0.75rem; font-weight: 600; color: #86868b; letter-spacing: 0.03em; text-transform: uppercase; }
+.chapter-progress { position: absolute; top: 20px; right: 24px; font-size: 0.75rem; font-weight: 500; color: #86868b; }
+.chapter-progress-bar { position: absolute; top: 40px; right: 24px; width: 60px; height: 3px; background: #e5e5e7; border-radius: 2px; overflow: hidden; }
+.chapter-progress-bar .fill { height: 100%; background: #0071e3; border-radius: 2px; transition: width 0.3s ease; }
+.slide.keyword-slide { justify-content: center; align-items: center; text-align: center; background: linear-gradient(135deg, #f8f9ff 0%, #fff 50%, #f0f4ff 100%); }
+.keyword-hero { font-size: clamp(2rem, 5.5vw, 4.5rem); font-weight: 800; color: #0071e3; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 16px; text-shadow: 0 1px 2px rgba(0,113,227,0.08); }
+.keyword-sub { font-size: clamp(0.9rem, 1.8vw, 1.3rem); color: #86868b; font-weight: 400; max-width: 600px; }
+.slide-split { display: flex; gap: 40px; flex: 1; padding-top: 32px; overflow: hidden; }
+.slide-split .split-text { flex: 1; font-size: 1.15rem; color: #333; overflow-y: auto; }
+.slide-split .split-text ul, .slide-split .split-text ol { margin-left: 1.5em; margin-bottom: 0.75em; }
+.slide-split .split-text li { margin-bottom: 0.4em; }
+.slide-split .split-text p { margin-bottom: 0.75em; }
+.slide-split .split-text strong { color: #1d1d1f; }
+.slide-split .split-image { flex: 1; display: flex; align-items: center; justify-content: center; }
+.slide-split .split-image img { max-width: 100%; max-height: 55vh; border-radius: 8px; object-fit: contain; }
+.slide.portrait-split { padding: 0; overflow: hidden; }
+.slide.portrait-split .slide-split-portrait { display: flex; flex: 1; width: 100%; height: 100%; }
+.slide.portrait-split .portrait-image { flex: 0 0 40%; max-width: 40%; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f5f5f7; }
+.slide.portrait-split .portrait-image img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.slide.portrait-split .portrait-content { flex: 1; padding: 60px 50px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto; }
+.slide.portrait-split .portrait-content h2 { font-size: 1.8rem; font-weight: 700; color: #1d1d1f; margin-bottom: 8px; }
+.slide.portrait-split .portrait-content hr.slide-header-divider { border: none; border-bottom: 2px solid #e5e5e7; margin-bottom: 24px; }
+.slide.portrait-split .portrait-content .portrait-text { font-size: 1.1rem; color: #333; line-height: 1.7; }
+.slide.portrait-split .portrait-content .portrait-text ul, .slide.portrait-split .portrait-content .portrait-text ol { margin-left: 1.5em; margin-bottom: 0.75em; }
+.slide.portrait-split .portrait-content .portrait-text li { margin-bottom: 0.5em; }
+.slide.portrait-split .portrait-content .portrait-text p { margin-bottom: 0.75em; }
+.slide.portrait-split .portrait-content .portrait-text strong { color: #1d1d1f; }
+.slide.chapter-title { justify-content: center; align-items: center; text-align: center; }
+.slide.chapter-title h1 { font-size: clamp(1.6rem, 4vw, 3rem); font-weight: 700; color: #1d1d1f; letter-spacing: -0.02em; }
+.slide.chapter-title h1::after { content: ''; display: block; width: 48px; height: 3px; background: #0071e3; margin: 16px auto 0; border-radius: 2px; }
+.slide-header { flex-shrink: 0; margin-bottom: 0; }
+.slide-header h2 { font-size: 1.8rem; font-weight: 700; color: #1d1d1f; text-align: left; }
+.slide-header-divider { border: none; border-bottom: 2px solid #e5e5e7; margin-top: 16px; }
+.slide-content { flex: 1; padding-top: 32px; font-size: 1.15rem; color: #333; overflow-y: auto; }
+.slide-content ul, .slide-content ol { margin-left: 1.5em; margin-bottom: 0.75em; }
+.slide-content li { margin-bottom: 0.4em; }
+.slide-content p { margin-bottom: 0.75em; }
+.keyword { color: #0071e3; font-weight: 700; }
+.stat-card { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #f5f5f7, #e8e8ed); border-radius: 16px; padding: 32px 48px; margin: 16px 8px; min-width: 180px; text-align: center; transition: transform 0.2s ease-out, box-shadow 0.2s ease-out; }
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.stat-card .stat-value { font-size: clamp(1.8rem, 4vw, 3.2rem); font-weight: 800; color: #0071e3; line-height: 1.1; letter-spacing: -0.03em; }
+.stat-card .stat-label { font-size: 0.95rem; color: #86868b; margin-top: 8px; font-weight: 500; }
+.stat-card.loss .stat-value { color: #ff3b30; }
+.stat-card.gain .stat-value { color: #34c759; }
+.stat-cards-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 24px 0; }
+.callout { border-left: 4px solid #0071e3; background: linear-gradient(135deg, #f5f5f7, #f0f2f8); border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 16px 0; font-size: 1.05rem; color: #1d1d1f; }
+.callout p { margin-bottom: 0; }
+.slide-content table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.slide-content th, .slide-content td { padding: 10px 16px; text-align: left; border-bottom: 1px solid #e5e5e7; }
+.slide-content th { font-weight: 600; color: #1d1d1f; background: #f5f5f7; }
+.slide-content td { color: #333; transition: background 0.15s ease; }
+.slide-content tr:hover td { background: #fafafa; }
+.slide.summary-slide .slide-content { display: flex; flex-direction: column; justify-content: center; }
+.slide.summary-slide .slide-content ul { list-style: none; margin-left: 0; }
+.slide.summary-slide .slide-content li { font-size: 1.3rem; font-weight: 600; color: #1d1d1f; padding: 12px 0; border-bottom: 1px solid #e5e5e7; }
+.slide.summary-slide .slide-content li::before { content: '\2713\0020'; color: #0071e3; font-weight: 700; }
+.slide.toc-slide { justify-content: center; padding: 60px 100px; }
+.slide.toc-slide h2 { font-size: 2rem; font-weight: 700; color: #1d1d1f; margin-bottom: 40px; }
+.toc-item { display: flex; align-items: baseline; gap: 20px; padding: 14px 0; border-bottom: 1px solid #e5e5e7; cursor: default; }
+.toc-item:last-child { border-bottom: none; }
+.toc-num { font-size: 1.1rem; font-weight: 700; color: #0071e3; min-width: 36px; }
+.toc-title { font-size: 1.2rem; font-weight: 500; color: #1d1d1f; }
+.speaker-notes { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15,15,15,0.92); color: #e5e5e7; padding: 20px 40px; font-size: 0.95rem; line-height: 1.6; max-height: 30vh; overflow-y: auto; z-index: 90; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); transform: translateY(100%); transition: transform 0.3s ease-out; pointer-events: none; }
+.speaker-notes.visible { transform: translateY(0); pointer-events: auto; }
+.slide-number { position: fixed; bottom: 16px; right: 24px; font-size: 0.75rem; color: #86868b; z-index: 80; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.toc-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.97); z-index: 200; padding: 60px 80px; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 0.25s ease-out; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.toc-overlay.visible { opacity: 1; pointer-events: auto; }
+.toc-overlay h2 { font-size: 2rem; margin-bottom: 1.5rem; color: #1d1d1f; }
+.toc-overlay ul { list-style: none; }
+.toc-overlay li { padding: 12px 16px; font-size: 1.2rem; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+.toc-overlay li:hover { background: #f0f0f2; }
+.toc-overlay li.current { color: #0071e3; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 0: TOC -->
+<div class="slide toc-slide active" data-chapter="0">
+  <h2>1년간의 전업투자 도전기</h2>
+  <p style="font-size: 1rem; color: #86868b; margin-top: -24px; margin-bottom: 32px; font-weight: 400;">서영학</p>
+  <div class="toc-item"><span class="toc-num">01</span><span class="toc-title">자기소개</span></div>
+  <div class="toc-item"><span class="toc-num">02</span><span class="toc-title">왜 도전했나</span></div>
+  <div class="toc-item"><span class="toc-num">03</span><span class="toc-title">나의 원칙</span></div>
+  <div class="toc-item"><span class="toc-num">04</span><span class="toc-title">실전 1년 기록</span></div>
+  <div class="toc-item"><span class="toc-num">05</span><span class="toc-title">돌아보며</span></div>
+</div>
+
+<!-- ===== CH1: 자기소개 ===== -->
+<div class="slide chapter-title" data-chapter="1"><h1>1. 자기소개</h1></div>
+
+<!-- 1-1: portrait — 내용구상하루종일.png 814x842 -->
+<div class="slide portrait-split" data-chapter="1">
+  <div class="slide-split-portrait">
+    <div class="portrait-image"><img src="images/common_humor/내용구상하루종일.png" alt="내용구상하루종일"></div>
+    <div class="portrait-content">
+      <h2>금융AI에서 시작된 인연</h2>
+      <hr class="slide-header-divider">
+      <div class="portrait-text">
+        <ul>
+          <li><strong>2023년</strong> 금융AI서비스 개발팀 근무</li>
+          <li>그전에도 주식을 조금씩 하고 있었지만, 10월쯤 제대로 공부 시작</li>
+          <li>금융 데이터를 다루면서 시장에 대한 관심이 깊어짐</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="speaker-notes">가볍게 자기소개. 금융AI팀에서 일하면서 자연스럽게 주식에 관심을 갖게 된 계기를 이야기합니다.</div>
+</div>
+
+<!-- 1-2: split — 퇴사-끝.png 886x425 -->
+<div class="slide" data-chapter="1">
+  <div class="chapter-label">자기소개</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>2023년 12월 — 예고 없는 폭파</h2><hr class="slide-header-divider"></div>
+  <div class="slide-split">
+    <div class="split-text">
+      <ul>
+        <li>윗선 지시로 금융AI센터 해체</li>
+        <li>원피스의 임처럼, 위에서 "없애라" 해서 하루아침에 팀 삭제</li>
+        <li>갑작스러운 조직 변화에 직면</li>
+      </ul>
+    </div>
+    <div class="split-image"><img src="images/stock_humor/퇴사-끝.png" alt="퇴사 끝"></div>
+  </div>
+  <div class="speaker-notes">조직 해체가 갑작스러웠다는 점을 강조. 여기서 커리어에 대한 고민이 깊어졌음.</div>
+</div>
+
+<!-- 1-3: portrait — 나는나와연애한다.png 458x695 -->
+<div class="slide portrait-split" data-chapter="1">
+  <div class="slide-split-portrait">
+    <div class="portrait-image"><img src="images/common_humor/나는나와연애한다.png" alt="나는 나와 연애한다"></div>
+    <div class="portrait-content">
+      <h2>2025년 — 양지와 음지</h2>
+      <hr class="slide-header-divider">
+      <div class="portrait-text">
+        <ul>
+          <li><strong>양지:</strong> 부트캠프 강사</li>
+          <li><strong>음지:</strong> 전업투자자 (미장 + 국장)</li>
+          <li>두 가지 삶을 병행하는 1년의 시작</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="speaker-notes">양지/음지 표현으로 분위기를 가볍게 가져갑니다.</div>
+</div>
+
+<!-- ===== CH2: 왜 도전했나 ===== -->
+<div class="slide chapter-title" data-chapter="2"><h1>2. 왜 도전했나</h1></div>
+
+<div class="slide keyword-slide" data-chapter="2">
+  <div class="keyword-hero">잃을 거면 일찍 잃자</div>
+</div>
+
+<!-- 2-2: stat cards -->
+<div class="slide" data-chapter="2">
+  <div class="chapter-label">왜 도전했나</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>실패의 비용은 시간이 갈수록 커진다</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <div class="stat-cards-row">
+      <div class="stat-card"><div class="stat-value">10만원</div><div class="stat-label">학생 때 잃으면</div></div>
+      <div class="stat-card"><div class="stat-value">100만원</div><div class="stat-label">사회초년생 때 잃으면</div></div>
+      <div class="stat-card"><div class="stat-value">1,000만원</div><div class="stat-label">지금 잃으면 — 벌 수 있다</div></div>
+      <div class="stat-card loss"><div class="stat-value">억 단위</div><div class="stat-label">은퇴 후 잃으면 — 벌 수 있을까?</div></div>
+    </div>
+  </div>
+  <div class="speaker-notes">핵심 메시지: 젊을 때 실패의 비용이 가장 싸다. 시간이 지날수록 리스크가 커진다.</div>
+</div>
+
+<!-- 2-3: split — 패치노트.png 718x396 -->
+<div class="slide" data-chapter="2">
+  <div class="chapter-label">왜 도전했나</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>주식시장은 끊임없이 패치되는 게임</h2><hr class="slide-header-divider"></div>
+  <div class="slide-split">
+    <div class="split-text">
+      <ul>
+        <li>주식을 시작하고 게임을 접었다</li>
+        <li>주식시장은 하루에도 수많은 <span class="keyword">패치노트</span>가 발행된다
+          <ul>
+            <li>지표발표, 실적발표, 정책발표</li>
+            <li>스캔들, 찌라시, 평가반전 등등</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="split-image"><img src="images/패치노트.png" alt="롤 패치노트"></div>
+  </div>
+  <div class="speaker-notes">게이머 출신답게 게임 비유로 주식시장을 설명. 롤 패치노트 이미지로 직관적으로 보여줍니다.</div>
+</div>
+
+<!-- 2-4: split — 바위를이기는가위.png 408x232 -->
+<div class="slide" data-chapter="2">
+  <div class="chapter-label">왜 도전했나</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>패치가 바꾸는 메타</h2><hr class="slide-header-divider"></div>
+  <div class="slide-split">
+    <div class="split-text">
+      <ul>
+        <li><strong>패치 전:</strong> 1, 2랩 때 사리다가 3랩 때 쇼부</li>
+        <li><strong>패치 후:</strong> 1, 2, 3랩 사리다가 4랩 때 쇼부</li>
+        <li>카운터 관계도 뒤집힘
+          <ul>
+            <li><strong>패치 전:</strong> 가위바위보</li>
+            <li><strong>패치 후:</strong> 바위를 부수는 가위</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="split-image"><img src="images/common_humor/바위를이기는가위.png" alt="바위를 이기는 가위"></div>
+  </div>
+  <div class="speaker-notes">게임 메타가 바뀌듯 주식시장도 끊임없이 변한다는 점.</div>
+</div>
+
+<!-- 2-5: split — 패치노트 디테일.png 634x213 -->
+<div class="slide" data-chapter="2">
+  <div class="chapter-label">왜 도전했나</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>주식도 마찬가지</h2><hr class="slide-header-divider"></div>
+  <div class="slide-split">
+    <div class="split-text">
+      <ul>
+        <li><strong>패치 전:</strong> 삼성전자는 박스권을 횡보한다</li>
+        <li><strong>패치 후:</strong> 어디까지 올라가는 거에요?</li>
+        <li>카운터 관계도 뒤집힘
+          <ul>
+            <li><strong>패치 전:</strong> 한국 주식은 저평가</li>
+            <li><strong>패치 후:</strong> 아직도 저평가인가?</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="split-image"><img src="images/패치노트 디테일.png" alt="패치노트 디테일"></div>
+  </div>
+  <div class="speaker-notes">게임 비유를 주식에 직접 대입. 구체적 사례로 청중의 공감을 이끌어냅니다.</div>
+</div>
+
+<div class="slide keyword-slide" data-chapter="2">
+  <div class="keyword-hero">주식은 정반합이다</div>
+</div>
+
+<!-- 2-7: 정반합 -->
+<div class="slide" data-chapter="2">
+  <div class="chapter-label">왜 도전했나</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>기법이 아니라 사고방법</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <ul>
+      <li><strong>정:</strong> A 방식을 하면 돈 번다! → 강의까지 나옴</li>
+      <li><strong>반:</strong> A를 등쳐먹는 B 방식이 등장 → A로 시도하다 당함</li>
+      <li><strong>합:</strong> A도 B도 안 먹힘 → 새로운 C가 등장</li>
+    </ul>
+    <div class="callout"><p>하나의 전략에 고착되면 시장에 먹힌다</p></div>
+  </div>
+  <div class="speaker-notes">주식 전략의 수명 주기를 정반합으로 설명. 하나의 방식에 고착되면 안 되는 이유.</div>
+</div>
+
+<div class="slide keyword-slide" data-chapter="2">
+  <div class="keyword-hero">파도치는 욕망과 절망</div>
+</div>
+
+<!-- 2-9: portrait — 주식하루감정변화.png 1330x1350 -->
+<div class="slide portrait-split" data-chapter="2">
+  <div class="slide-split-portrait">
+    <div class="portrait-image"><img src="images/stock_humor/주식하루감정변화.png" alt="주식 하루 감정변화"></div>
+    <div class="portrait-content">
+      <h2>차트에 따른 심리 변화</h2>
+      <hr class="slide-header-divider">
+      <div class="portrait-text">
+        <ul>
+          <li><strong>상승장:</strong> 흥분 → 확신 → 탐욕 → "더 오른다, 더 사자"</li>
+          <li><strong>고점:</strong> 환희 → 부정 → "이번엔 다르다"</li>
+          <li><strong>하락장:</strong> 불안 → 공포 → 절망 → "다 팔아야 하나"</li>
+          <li><strong>저점:</strong> 체념 → 무관심 → "다시는 안 해"</li>
+          <li>그리고 다시 상승이 오면... <strong>처음부터 반복</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="speaker-notes">주식 차트의 사이클과 투자자 심리는 항상 함께 움직인다. 감정을 인식하는 것이 원칙을 지키는 첫걸음.</div>
+</div>
+
+<!-- 2-10: portrait — 매수타이밍곡소리.png 850x875 -->
+<div class="slide portrait-split" data-chapter="2">
+  <div class="slide-split-portrait">
+    <div class="portrait-image"><img src="images/stock_humor/매수타이밍곡소리.png" alt="매수 타이밍 곡소리"></div>
+    <div class="portrait-content">
+      <h2>매수 타이밍의 진실</h2>
+      <hr class="slide-header-divider">
+      <div class="portrait-text">
+        <ul>
+          <li>남들이 "곡소리"를 낼 때가 기회</li>
+          <li>남들이 "축제"를 할 때가 위험</li>
+          <li><strong>공포에 사고, 탐욕에 팔아라</strong> — 말은 쉽지만 실행은...</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="speaker-notes">워런 버핏의 명언을 실제 경험과 연결. 심리를 이기는 것이 얼마나 어려운지 강조.</div>
+</div>
+
+<!-- ===== CH3: 나의 원칙 ===== -->
+<div class="slide chapter-title" data-chapter="3"><h1>3. 나의 원칙</h1></div>
+
+<!-- 3-1: 원칙 1 테이블 -->
+<div class="slide" data-chapter="3">
+  <div class="chapter-label">나의 원칙</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>원칙 1 — 큰 손실 후에는 투자를 쉰다</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <ul>
+      <li>큰 손실을 입으면 주식을 잠시 쉰다</li>
+      <li>감정적 트레이딩 방지가 핵심</li>
+      <li>강사 수입이 안전판 역할</li>
+    </ul>
+    <table>
+      <thead><tr><th>기간</th><th>활동</th></tr></thead>
+      <tbody>
+        <tr><td>1~2월</td><td>주식 집중</td></tr>
+        <tr><td>3~5월</td><td>강사 활동 (수입 확보)</td></tr>
+        <tr><td>6월</td><td>개인 프로젝트</td></tr>
+        <tr><td>7~10월</td><td>주식 집중</td></tr>
+        <tr><td>11~12월</td><td>강사 활동</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="speaker-notes">손실 후 감정적 트레이딩을 피하기 위해 강제로 쉬는 구조. 강사 수입이 안전판 역할.</div>
+</div>
+
+<!-- 3-2: portrait — 단타.png 338x512 -->
+<div class="slide portrait-split" data-chapter="3">
+  <div class="slide-split-portrait">
+    <div class="portrait-image"><img src="images/stock_humor/단타.png" alt="단타"></div>
+    <div class="portrait-content">
+      <h2>원칙 2 — 숏은 2주 이상 가져가지 않는다</h2>
+      <hr class="slide-header-divider">
+      <div class="portrait-text">
+        <ul>
+          <li><strong>1~2월:</strong> 양자컴퓨터 버블, 관세 이슈</li>
+          <li>관세는 분명 악재라 생각했지만, 트럼프 집권 초기엔 관심 밖</li>
+          <li>갑자기 쇼크로 다가옴</li>
+        </ul>
+        <div class="callout"><p>원칙을 지켜서 손실이 제한됐지만, 안 지켰으면 더 큰 수익이었을 수도</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="speaker-notes">원칙의 양면성. 지켜서 손해 본 경우도 있지만, 장기적으로는 리스크 관리가 핵심.</div>
+</div>
+
+<!-- 3-3: portrait — 저점대기자.png 800x779 (거의 정사각) -->
+<div class="slide portrait-split" data-chapter="3">
+  <div class="slide-split-portrait">
+    <div class="portrait-image"><img src="images/stock_humor/저점대기자.png" alt="저점 대기자"></div>
+    <div class="portrait-content">
+      <h2>원칙 3 — 저평가된 정보가 돈이다</h2>
+      <hr class="slide-header-divider">
+      <div class="portrait-text">
+        <ul>
+          <li><strong>7~9월:</strong> 투자 가설 수립</li>
+          <li><strong>가설 1:</strong> 원자력은 청정 에너지 + 에너지 부족 시대에 부각</li>
+          <li><strong>가설 2:</strong> 미중 분쟁이 확산되면 희토류가 뜬다</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="speaker-notes">가설 기반 투자가 맞아떨어진 시기. 정보를 남들보다 먼저 해석하는 것이 핵심.</div>
+</div>
+
+<!-- 3-4: split — 나도멍청.png 719x634 -->
+<div class="slide" data-chapter="3">
+  <div class="chapter-label">나의 원칙</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>원칙 4 — 모두 아는 호재는 악재다</h2><hr class="slide-header-divider"></div>
+  <div class="slide-split">
+    <div class="split-text">
+      <ul>
+        <li><strong>10월:</strong> 미-중 무역분쟁 전쟁 가시화 및 장기화</li>
+        <li>7, 8, 9월 벌었던 주식으로 손실 전환</li>
+        <li>결국 원상 복구</li>
+      </ul>
+    </div>
+    <div class="split-image"><img src="images/stock_humor/나도멍청.png" alt="나도 멍청"></div>
+  </div>
+  <div class="speaker-notes">시장이 이미 알고 있는 정보에는 알파가 없다는 교훈.</div>
+</div>
+
+<!-- ===== CH4: 실전 1년 기록 ===== -->
+<div class="slide chapter-title" data-chapter="4"><h1>4. 실전 1년 기록</h1></div>
+
+<!-- 4-1: split — 손절익절.png 720x522 -->
+<div class="slide" data-chapter="4">
+  <div class="chapter-label">실전 1년 기록</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>상반기 — 수업료를 내다</h2><hr class="slide-header-divider"></div>
+  <div class="slide-split">
+    <div class="split-text">
+      <ul>
+        <li><strong>3월 후반:</strong> 숏 2주 후 청산</li>
+        <li><strong>5월:</strong> 정치 테마주의 함정</li>
+      </ul>
+      <div class="stat-cards-row">
+        <div class="stat-card loss"><div class="stat-value">-500만원</div><div class="stat-label">상반기 손실</div></div>
+      </div>
+    </div>
+    <div class="split-image"><img src="images/stock_humor/손절익절.png" alt="손절익절"></div>
+  </div>
+  <div class="speaker-notes">원칙을 지켜서 손실이 났지만, 안 지켰으면 더 큰 손실이었을 상황.</div>
+</div>
+
+<!-- 4-2: split — 1%대호황.png 850x514 (즐거운 이미지) -->
+<div class="slide" data-chapter="4">
+  <div class="chapter-label">실전 1년 기록</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>하반기 — 가설이 적중하다</h2><hr class="slide-header-divider"></div>
+  <div class="slide-split">
+    <div class="split-text">
+      <ul>
+        <li>원자력 + 희토류 포지션 진입</li>
+        <li>확신을 가지고 배팅</li>
+      </ul>
+      <div class="stat-cards-row">
+        <div class="stat-card gain"><div class="stat-value">+1,000만원</div><div class="stat-label">월 수익 달성</div></div>
+        <div class="stat-card gain"><div class="stat-value">+2,000만원</div><div class="stat-label">추석까지 누적</div></div>
+      </div>
+    </div>
+    <div class="split-image"><img src="images/stock_humor/1%대호황.png" alt="1% 대호황"></div>
+  </div>
+  <div class="speaker-notes">가설 기반 투자가 맞아떨어진 시기. 수익의 쾌감과 확신이 커지던 시기.</div>
+</div>
+
+<!-- 4-3: portrait — 제발!.png 656x960 -->
+<div class="slide portrait-split" data-chapter="4">
+  <div class="slide-split-portrait">
+    <div class="portrait-image"><img src="images/stock_humor/제발!.png" alt="제발!"></div>
+    <div class="portrait-content">
+      <h2>4분기 — 다시 원점으로</h2>
+      <hr class="slide-header-divider">
+      <div class="portrait-text">
+        <ul>
+          <li>벌었던 종목이 그대로 손실 전환</li>
+          <li>추석 이후 급락</li>
+        </ul>
+        <div class="stat-cards-row">
+          <div class="stat-card loss"><div class="stat-value">-2,500만원</div><div class="stat-label">4분기 손실</div></div>
+        </div>
+        <p>부트캠프 강의 x3으로 생활비 확보</p>
+      </div>
+    </div>
+  </div>
+  <div class="speaker-notes">수익을 지키는 것이 버는 것보다 어렵다는 뼈저린 교훈.</div>
+</div>
+
+<!-- ===== CH5: 돌아보며 ===== -->
+<div class="slide chapter-title" data-chapter="5"><h1>5. 돌아보며</h1></div>
+
+<div class="slide keyword-slide" data-chapter="5">
+  <div class="keyword-hero">"큰 물고기를 잡았지만,<br>항구에 돌아오니 뼈만 남았다"</div>
+  <div class="keyword-sub">— 노인과 바다, 헤밍웨이</div>
+</div>
+
+<!-- 5-2: portrait — 노인과바다.png 680x702 -->
+<div class="slide portrait-split" data-chapter="5">
+  <div class="slide-split-portrait">
+    <div class="portrait-image"><img src="images/stock_insight/노인과바다.png" alt="노인과 바다"></div>
+    <div class="portrait-content">
+      <h2>노인과 바다</h2>
+      <hr class="slide-header-divider">
+      <div class="portrait-text">
+        <div class="callout"><p>헤밍웨이의 노인처럼, 수익을 잡았지만 지키지 못한 1년</p></div>
+        <p>허무함과 후련함 그 사이</p>
+      </div>
+    </div>
+  </div>
+  <div class="speaker-notes">노인과 바다 비유가 핵심. 수익을 지키는 것이 버는 것보다 어렵다는 교훈.</div>
+</div>
+
+<!-- 5-3: split — 장기투자실제난이도.png 1658x1170 -->
+<div class="slide summary-slide" data-chapter="5">
+  <div class="chapter-label">돌아보며</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>1년의 교훈</h2><hr class="slide-header-divider"></div>
+  <div class="slide-split">
+    <div class="split-text">
+      <div class="slide-content">
+        <ul>
+          <li>주식시장은 끊임없이 변하는 게임</li>
+          <li>원칙이 없으면 표류할 뿐</li>
+          <li>잃는 것도 배움이다</li>
+          <li>전업투자 최고의 수확 — 강사 커리어가 생겼다</li>
+        </ul>
+      </div>
+    </div>
+    <div class="split-image"><img src="images/stock_humor/장기투자실제난이도.png" alt="장기투자 실제 난이도"></div>
+  </div>
+  <div class="speaker-notes">마지막 줄에서 웃음을 유도하며 마감. 실패가 아니라 예상 못한 수확이 있었다는 반전.</div>
+</div>
+
+<div class="slide-number" id="slideNumber"></div>
+<div class="toc-overlay" id="tocOverlay"><h2>목차</h2><ul id="tocList"></ul></div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  let currentSlide = 0;
+  let notesVisible = false;
+
+  const chapters = [];
+  slides.forEach((slide, i) => {
+    if (slide.classList.contains('chapter-title'))
+      chapters.push({ title: slide.querySelector('h1').textContent, slideIndex: i });
+  });
+
+  function getSlidesInChapter(chNum) {
+    const r = [];
+    slides.forEach((s, i) => { if (parseInt(s.dataset.chapter) === chNum) r.push(i); });
+    return r;
+  }
+
+  function updateChapterProgress() {
+    const slide = slides[currentSlide];
+    const ch = parseInt(slide.dataset.chapter);
+    if (isNaN(ch) || ch < 1) return;
+    const chSlides = getSlidesInChapter(ch);
+    const pos = chSlides.indexOf(currentSlide);
+    const total = chSlides.length;
+    const progEl = slide.querySelector('.chapter-progress');
+    if (progEl) progEl.textContent = pos + ' / ' + (total - 1);
+    const fillEl = slide.querySelector('.chapter-progress-bar .fill');
+    if (fillEl && total > 1) fillEl.style.width = (pos / (total - 1)) * 100 + '%';
+  }
+
+  function showSlide(index) {
+    if (index < 0 || index >= totalSlides) return;
+    slides[currentSlide].classList.remove('active');
+    const pn = slides[currentSlide].querySelector('.speaker-notes');
+    if (pn) pn.classList.remove('visible');
+    currentSlide = index;
+    slides[currentSlide].classList.add('active');
+    if (notesVisible) {
+      const n = slides[currentSlide].querySelector('.speaker-notes');
+      if (n) n.classList.add('visible');
+    }
+    const progress = totalSlides > 1 ? (currentSlide / (totalSlides - 1)) * 100 : 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+    document.getElementById('slideNumber').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+    updateTocCurrent();
+    updateChapterProgress();
+  }
+
+  function nextSlide() { showSlide(currentSlide + 1); }
+  function prevSlide() { showSlide(currentSlide - 1); }
+  function nextChapter() { const n = chapters.find(c => c.slideIndex > currentSlide); if (n) showSlide(n.slideIndex); }
+  function prevChapter() { let t = null; for (let i = chapters.length - 1; i >= 0; i--) { if (chapters[i].slideIndex < currentSlide) { t = chapters[i]; break; } } if (t) showSlide(t.slideIndex); }
+  function toggleNotes() { notesVisible = !notesVisible; const n = slides[currentSlide].querySelector('.speaker-notes'); if (n) n.classList.toggle('visible', notesVisible); }
+  function toggleFullscreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+  function toggleToc() { document.getElementById('tocOverlay').classList.toggle('visible'); }
+
+  function buildToc() {
+    const list = document.getElementById('tocList');
+    chapters.forEach(ch => {
+      const li = document.createElement('li');
+      li.textContent = ch.title;
+      li.addEventListener('click', () => { showSlide(ch.slideIndex); toggleToc(); });
+      list.appendChild(li);
+    });
+  }
+
+  function updateTocCurrent() {
+    document.querySelectorAll('#tocList li').forEach((li, i) => {
+      const isCurrent = chapters[i] && chapters[i].slideIndex <= currentSlide &&
+        (i === chapters.length - 1 || chapters[i + 1].slideIndex > currentSlide);
+      li.classList.toggle('current', isCurrent);
+    });
+  }
+
+  document.addEventListener('keydown', e => {
+    const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
+    if (e.key === 't' || e.key === 'T') { toggleToc(); return; }
+    if (e.key === 'Escape' && tocOpen) { toggleToc(); return; }
+    if (tocOpen) return;
+    switch(e.key) {
+      case 'ArrowRight': case ' ': nextSlide(); break;
+      case 'ArrowLeft': prevSlide(); break;
+      case 'ArrowUp': prevChapter(); break;
+      case 'ArrowDown': nextChapter(); break;
+      case 'Home': showSlide(0); break;
+      case 'End': showSlide(totalSlides - 1); break;
+      case 'f': case 'F': toggleFullscreen(); break;
+      case 'n': case 'N': toggleNotes(); break;
+    }
+  });
+
+  buildToc();
+  showSlide(0);
+})();
+</script>
+</body>
+</html>
