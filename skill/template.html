@@ -13,9 +13,12 @@ html, body { height: 100%; overflow: hidden; }
 /* ===== BASE ===== */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: #fff;
+  background: #f0f0f2;
   color: #1d1d1f;
   line-height: 1.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ===== PROGRESS BAR ===== */
@@ -29,35 +32,188 @@ body {
   z-index: 100;
 }
 
-/* ===== SLIDE CONTAINER (16:9 ratio) ===== */
-.slide-container {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f0f0f2;
-}
+/* ===== SLIDE (16:9 ratio, flat structure) ===== */
 .slide {
   display: none;
-  width: min(100vw, 177.78vh); /* 16:9 */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(100vw, 177.78vh);  /* 16:9 */
   height: min(100vh, 56.25vw);  /* 16:9 */
-  padding: 60px 80px;
+  padding: clamp(30px, 4.7vh, 80px) clamp(40px, 6.25vh, 100px);
   overflow: hidden;
   background: #fff;
   box-shadow: 0 0 30px rgba(0,0,0,0.08);
+  flex-direction: column;
 }
-.slide.active { display: flex; flex-direction: column; }
+.slide.active {
+  display: flex;
+  animation: fadeIn 0.35s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.98); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide.active { animation: none; }
+}
 
-/* ===== SPLIT LAYOUT (text left, image right) ===== */
-.slide-split { display: flex; gap: 40px; flex: 1; padding-top: 32px; overflow: hidden; }
+/* ===== CHAPTER LABEL & PROGRESS ===== */
+.chapter-label {
+  position: absolute;
+  top: 22px;
+  left: clamp(40px, 6.25vh, 100px);
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: #a1a1a6;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  max-width: calc(100% - 2 * clamp(40px, 6.25vh, 100px) - 80px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chapter-progress {
+  position: absolute;
+  top: 22px;
+  right: clamp(40px, 6.25vh, 100px);
+  font-size: 0.55rem;
+  font-weight: 500;
+  color: #a1a1a6;
+}
+.chapter-progress-bar {
+  position: absolute;
+  top: 40px;
+  right: clamp(40px, 6.25vh, 100px);
+  width: 60px;
+  height: 3px;
+  background: #e5e5e7;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.chapter-progress-bar .fill {
+  height: 100%;
+  background: #0071e3;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* ===== KEYWORD EMPHASIS SLIDE ===== */
+.slide.keyword-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, #f8f9ff 0%, #fff 50%, #f0f4ff 100%);
+}
+.keyword-hero {
+  font-size: 4rem;
+  font-weight: 800;
+  color: #0071e3;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  text-shadow: 0 1px 2px rgba(0,113,227,0.08);
+}
+.keyword-sub {
+  font-size: 1.3rem;
+  color: #86868b;
+  font-weight: 400;
+  max-width: 600px;
+}
+
+/* ===== SPLIT LAYOUT (text left, image right — default for landscape images) ===== */
+.slide-split { display: flex; gap: 40px; flex: 1; padding-top: clamp(36px, 4.5vh, 64px); overflow: hidden; }
 .slide-split .split-text { flex: 1; font-size: 1.15rem; color: #333; overflow-y: auto; }
 .slide-split .split-text ul, .slide-split .split-text ol { margin-left: 1.5em; margin-bottom: 0.75em; }
 .slide-split .split-text li { margin-bottom: 0.4em; }
 .slide-split .split-text p { margin-bottom: 0.75em; }
 .slide-split .split-text strong { color: #1d1d1f; }
-.slide-split .split-image { flex: 1; display: flex; align-items: center; justify-content: center; }
+.slide-split .split-image { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding-top: 12px; }
 .slide-split .split-image img { max-width: 100%; max-height: 55vh; border-radius: 8px; object-fit: contain; }
+
+/* ===== IMAGE HERO LAYOUT (image as main content) ===== */
+.slide.image-hero .slide-hero-subtitle {
+  font-size: clamp(1rem, calc(1.3rem * var(--scale, 1)), 1.6rem);
+  color: #86868b;
+  font-weight: 500;
+  text-align: left;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+.slide.image-hero .slide-hero-image {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 18px 0 8px;
+}
+.slide.image-hero .slide-hero-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.slide.image-hero .source-url {
+  text-align: right;
+  margin-top: 8px;
+  padding-top: 0;
+}
+
+/* ===== SPLIT LAYOUT PORTRAIT (image left, title+text right — for tall images) ===== */
+.slide.portrait-split { padding: 0; overflow: hidden; }
+.slide.portrait-split .slide-split-portrait {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+.slide.portrait-split .portrait-image {
+  flex: 0 0 40%;
+  max-width: 40%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f7;
+}
+.slide.portrait-split .portrait-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+.slide.portrait-split .portrait-content {
+  flex: 1;
+  padding: 60px 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+.slide.portrait-split .portrait-content h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin-bottom: 8px;
+}
+.slide.portrait-split .portrait-content hr.slide-header-divider {
+  border: none;
+  border-bottom: 2px solid #e5e5e7;
+  margin-bottom: 24px;
+}
+.slide.portrait-split .portrait-content .portrait-text {
+  font-size: 1.1rem;
+  color: #333;
+  line-height: 1.7;
+}
+.slide.portrait-split .portrait-content .portrait-text ul,
+.slide.portrait-split .portrait-content .portrait-text ol { margin-left: 1.5em; margin-bottom: 0.75em; }
+.slide.portrait-split .portrait-content .portrait-text li { margin-bottom: 0.5em; }
+.slide.portrait-split .portrait-content .portrait-text p { margin-bottom: 0.75em; }
+.slide.portrait-split .portrait-content .portrait-text strong { color: #1d1d1f; }
 
 /* ===== CHAPTER TITLE SLIDE ===== */
 .slide.chapter-title {
@@ -66,10 +222,24 @@ body {
   text-align: center;
 }
 .slide.chapter-title h1 {
-  font-size: 3rem;
-  font-weight: 700;
+  font-size: clamp(2rem, 7vw, 9rem);
+  font-weight: 800;
   color: #1d1d1f;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  max-width: 88%;
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.slide.chapter-title h1::after {
+  content: '';
+  display: block;
+  width: 120px;
+  height: 6px;
+  background: #0071e3;
+  margin: 48px auto 0;
+  border-radius: 3px;
 }
 .slide.chapter-title .chapter-subtitle {
   font-size: 1.2rem;
@@ -80,13 +250,16 @@ body {
 /* ===== CONTENT SLIDE ===== */
 .slide-header {
   flex-shrink: 0;
+  margin-top: clamp(32px, 4.5vh, 64px);
   margin-bottom: 0;
 }
 .slide-header h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 2.4rem;
+  font-weight: 800;
   color: #1d1d1f;
   text-align: left;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 .slide-header-divider {
   border: none;
@@ -95,7 +268,7 @@ body {
 }
 .slide-content {
   flex: 1;
-  padding-top: 32px;
+  padding-top: clamp(36px, 4.5vh, 64px);
   font-size: 1.15rem;
   color: #333;
   overflow-y: auto;
@@ -112,13 +285,287 @@ body {
   border-radius: 8px;
 }
 
-/* ===== CODE BLOCKS ===== */
+/* ===== SUBSECTION HEADER (### in md) ===== */
+.slide-content h3.subsection,
+.split-text h3.subsection,
+.portrait-text h3.subsection {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #0071e3;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  letter-spacing: 0.01em;
+}
+.slide-content h3.subsection:first-child,
+.split-text h3.subsection:first-child,
+.portrait-text h3.subsection:first-child { margin-top: 0; }
+
+/* ===== INLINE KEYWORD (within a content slide) ===== */
+.keyword-inline {
+  font-size: clamp(1.4rem, calc(2.2rem * var(--scale, 1)), 2.8rem);
+  font-weight: 800;
+  color: #0071e3;
+  text-align: center;
+  padding: 18px 24px;
+  margin: 12px 0 20px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+/* ===== SOURCE URL (fixed at slide bottom) ===== */
+.slide > .source-url {
+  position: absolute;
+  bottom: 18px;
+  left: clamp(40px, 6.25vh, 100px);
+  right: clamp(40px, 6.25vh, 100px);
+  font-size: 0.65rem;
+  color: #a1a1a6;
+  word-break: break-all;
+  text-align: right;
+  line-height: 1.4;
+  z-index: 5;
+}
+.slide > .source-url a { color: #a1a1a6; text-decoration: none; }
+.slide > .source-url a:hover { color: #0071e3; text-decoration: underline; }
+.slide.portrait-split > .source-url {
+  left: calc(45% + 24px);
+  right: 24px;
+}
+
+/* ===== DENSE CONTENT (auto font scale down for heavy slides) ===== */
+.dense-content { font-size: 0.9rem !important; }
+.dense-content li { margin-bottom: 0.25em !important; }
+.dense-content h3.subsection { font-size: 0.95rem !important; margin-top: 0.8em !important; }
+
+/* ===== TABLE ===== */
+.slide-content table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.slide-content th, .slide-content td { padding: 10px 16px; text-align: left; border-bottom: 1px solid #e5e5e7; }
+.slide-content th { font-weight: 600; color: #1d1d1f; background: #f5f5f7; }
+.slide-content td { color: #333; transition: background 0.15s ease; }
+.slide-content tr:hover td { background: #fafafa; }
+
+/* ===== KEYWORD HIGHLIGHT ===== */
+.keyword {
+  color: #0071e3;
+  font-weight: 700;
+}
+
+/* ===== STAT CARD ===== */
+.stat-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f5f5f7, #e8e8ed);
+  border-radius: 16px;
+  padding: 32px 48px;
+  margin: 16px 8px;
+  min-width: 180px;
+  text-align: center;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+.stat-card .stat-value {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: #0071e3;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.stat-card .stat-label {
+  font-size: 0.95rem;
+  color: #86868b;
+  margin-top: 8px;
+  font-weight: 500;
+}
+.stat-card.loss .stat-value { color: #ff3b30; }
+.stat-card.gain .stat-value { color: #34c759; }
+.stat-cards-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 24px 0;
+}
+
+/* ===== CALLOUT BLOCKQUOTE ===== */
+.callout {
+  border-left: 4px solid #0071e3;
+  background: linear-gradient(135deg, #f5f5f7, #f0f2f8);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 1.05rem;
+  color: #1d1d1f;
+}
+.callout p { margin-bottom: 0; }
+
+/* ===== RESPONSIVE FONT SCALING ===== */
+:root {
+  --slide-w: min(100vw, 177.78vh);
+  --scale: calc(var(--slide-w) / 1280); /* base: 1280px width */
+}
+.slide-content             { font-size: clamp(0.85rem, calc(1.15rem * var(--scale)), 1.5rem); }
+.keyword-hero              { font-size: clamp(2rem, calc(4rem * var(--scale)), 5.5rem); }
+.keyword-sub               { font-size: clamp(0.9rem, calc(1.3rem * var(--scale)), 1.8rem); }
+.slide.chapter-title h1    { font-size: clamp(2rem, 7vw, 9rem); }
+.slide.chapter-title .chapter-subtitle { font-size: clamp(1rem, calc(1.5rem * var(--scale)), 2rem); }
+.stat-card .stat-value     { font-size: clamp(1.8rem, calc(3.2rem * var(--scale)), 4.5rem); }
+.stat-card .stat-label     { font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.3rem); }
+.slide-split .split-text   { font-size: clamp(0.85rem, calc(1.15rem * var(--scale)), 1.5rem); }
+.slide.portrait-split .portrait-content h2 { font-size: clamp(1.8rem, calc(2rem * var(--scale)), 2.75rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
+.slide.portrait-split .portrait-content .portrait-text { font-size: clamp(0.8rem, calc(1.1rem * var(--scale)), 1.4rem); }
+.slide.toc-slide h2        { font-size: clamp(1.3rem, calc(2rem * var(--scale)), 2.6rem); }
+.toc-title                 { font-size: clamp(0.9rem, calc(1.2rem * var(--scale)), 1.6rem); }
+.slide.summary-slide .slide-content li { font-size: clamp(0.95rem, calc(1.3rem * var(--scale)), 1.7rem); }
+.slide-content pre code    { font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.2rem); }
+.callout                   { font-size: clamp(0.8rem, calc(1.05rem * var(--scale)), 1.4rem); }
+.slide-number              { font-size: clamp(0.6rem, calc(0.8rem * var(--scale)), 1rem); }
+.chapter-label, .chapter-progress { font-size: clamp(0.5rem, calc(0.55rem * var(--scale)), 0.68rem); }
+
+/* ===== DENSE CONTENT (auto font scaling) ===== */
+.slide-content.dense-content {
+  font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.2rem);
+  line-height: 1.5;
+}
+.slide-content.dense-content li { margin-bottom: 0.2em; }
+.slide-content.dense-content p { margin-bottom: 0.5em; }
+
+/* ===== SUMMARY SLIDE ===== */
+.slide.summary-slide .slide-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.slide.summary-slide .slide-content ul {
+  list-style: none;
+  margin-left: 0;
+}
+.slide.summary-slide .slide-content li {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1d1d1f;
+  padding: 12px 0;
+  border-bottom: 1px solid #e5e5e7;
+}
+.slide.summary-slide .slide-content li::before {
+  content: '\2713\0020';
+  color: #0071e3;
+  font-weight: 700;
+}
+
+/* ===== QR CODE SLIDE ===== */
+.slide.qr-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.slide.qr-slide h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin-bottom: 32px;
+}
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.qr-container canvas {
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+.qr-url {
+  font-size: 0.9rem;
+  color: #86868b;
+  word-break: break-all;
+  max-width: 400px;
+}
+
+/* ===== TOC SLIDE ===== */
+.slide.toc-slide {
+  justify-content: center;
+  padding: 60px 100px;
+}
+.slide.toc-slide h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin-bottom: 40px;
+}
+.toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e5e5e7;
+  cursor: default;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-num {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0071e3;
+  min-width: 36px;
+}
+.toc-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #1d1d1f;
+}
+
+/* ===== CODE BLOCKS (enhanced) ===== */
+.code-block-wrapper {
+  position: relative;
+  margin-bottom: 1em;
+}
+.code-lang-badge {
+  display: inline-block;
+  background: #0071e3;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 8px 8px 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.code-title {
+  font-size: 0.8rem;
+  color: #86868b;
+  padding: 6px 16px;
+  background: #2d2d2d;
+  border-radius: 8px 8px 0 0;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  border-bottom: 1px solid #3a3a3a;
+}
+.code-title + pre { border-radius: 0 0 8px 8px; }
+.code-copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #ccc;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+  z-index: 5;
+}
+.code-copy-btn:hover { background: rgba(255,255,255,0.2); }
+.code-copy-btn.copied { color: #34c759; }
 .slide-content pre {
   background: #1e1e1e;
   border-radius: 8px;
   padding: 20px;
   overflow-x: auto;
-  margin-bottom: 1em;
+  margin-bottom: 0;
 }
 .slide-content pre code {
   font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
@@ -129,6 +576,13 @@ body {
 .slide-content pre code .line {
   display: block;
   counter-increment: line;
+  padding: 0 4px;
+}
+.slide-content pre code .line.highlighted {
+  background: rgba(0, 113, 227, 0.15);
+  border-left: 3px solid #0071e3;
+  margin-left: -4px;
+  padding-left: 5px;
 }
 .slide-content pre code .line::before {
   content: counter(line);
@@ -142,43 +596,59 @@ body {
 
 /* ===== SPEAKER NOTES ===== */
 .speaker-notes {
-  display: none;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: rgba(0, 0, 0, 0.9);
-  color: #fff;
+  background: rgba(15, 15, 15, 0.92);
+  color: #e5e5e7;
   padding: 20px 40px;
   font-size: 0.95rem;
-  line-height: 1.5;
+  line-height: 1.6;
   max-height: 30vh;
   overflow-y: auto;
   z-index: 90;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+  pointer-events: none;
 }
-.speaker-notes.visible { display: block; }
+.speaker-notes.visible {
+  transform: translateY(0);
+  pointer-events: auto;
+}
 
 /* ===== SLIDE NUMBER ===== */
 .slide-number {
   position: fixed;
   bottom: 16px;
   right: 24px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: #86868b;
   z-index: 80;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 /* ===== TOC OVERLAY ===== */
 .toc-overlay {
-  display: none;
   position: fixed;
   inset: 0;
   background: rgba(255, 255, 255, 0.97);
   z-index: 200;
   padding: 60px 80px;
   overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease-out;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
-.toc-overlay.visible { display: block; }
+.toc-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
 .toc-overlay h2 {
   font-size: 2rem;
   margin-bottom: 1.5rem;
@@ -194,6 +664,74 @@ body {
 }
 .toc-overlay li:hover { background: #f0f0f2; }
 .toc-overlay li.current { color: #0071e3; font-weight: 600; }
+
+/* ===== PRINT / PDF EXPORT TOOLBAR (only on first slide) ===== */
+.print-toolbar {
+  position: fixed;
+  bottom: 16px;
+  left: 24px;
+  z-index: 300;
+  display: none;
+  gap: 8px;
+}
+body.first-slide .print-toolbar {
+  display: flex;
+}
+.print-toolbar button {
+  background: rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.1);
+  color: #86868b;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.print-toolbar button:hover {
+  background: rgba(0,0,0,0.1);
+  color: #1d1d1f;
+}
+
+/* ===== PRINT / PDF STYLES ===== */
+@media print {
+  *, *::before, *::after { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { height: auto; overflow: visible; background: #fff; }
+  body { display: block; }
+
+  .progress-bar, .slide-number, .toc-overlay, .print-toolbar,
+  .speaker-notes, .code-copy-btn { display: none !important; }
+
+  .slide {
+    display: flex !important;
+    position: relative !important;
+    top: auto !important; left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100vh;
+    padding: 48px 64px !important;
+    box-shadow: none !important;
+    animation: none !important;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+
+  /* 16:9 landscape page */
+  @page {
+    size: 297mm 167mm; /* A4 landscape trimmed to 16:9 */
+    margin: 0;
+  }
+
+  .slide.chapter-title h1::after { background: #0071e3 !important; }
+  .keyword-hero { color: #0071e3 !important; }
+  .stat-card { background: #f5f5f7 !important; }
+  .callout { background: #f5f5f7 !important; border-left-color: #0071e3 !important; }
+  .slide-content pre { background: #1e1e1e !important; color: #d4d4d4 !important; }
+}
 </style>
 </head>
 <body>
@@ -203,6 +741,10 @@ body {
 {{SLIDES}}
 
 <div class="slide-number" id="slideNumber"></div>
+
+<div class="print-toolbar">
+  <button onclick="printSlides()" title="Print / PDF (P)">🖨 Print / PDF</button>
+</div>
 
 <div class="toc-overlay" id="tocOverlay">
   <h2>목차</h2>
@@ -225,6 +767,29 @@ body {
     }
   });
 
+  // Chapter progress via data-chapter attribute
+  function getSlidesInChapter(chNum) {
+    const result = [];
+    slides.forEach((s, i) => {
+      if (parseInt(s.dataset.chapter) === chNum) result.push(i);
+    });
+    return result;
+  }
+
+  function updateChapterProgress() {
+    const slide = slides[currentSlide];
+    const ch = parseInt(slide.dataset.chapter);
+    if (isNaN(ch) || ch < 1) return;
+    const chSlides = getSlidesInChapter(ch);
+    const pos = chSlides.indexOf(currentSlide);
+    const total = chSlides.length;
+
+    const progEl = slide.querySelector('.chapter-progress');
+    if (progEl) progEl.textContent = pos + ' / ' + (total - 1);
+    const fillEl = slide.querySelector('.chapter-progress-bar .fill');
+    if (fillEl && total > 1) fillEl.style.width = (pos / (total - 1)) * 100 + '%';
+  }
+
   function showSlide(index) {
     if (index < 0 || index >= totalSlides) return;
     slides[currentSlide].classList.remove('active');
@@ -233,6 +798,7 @@ body {
 
     currentSlide = index;
     slides[currentSlide].classList.add('active');
+    document.body.classList.toggle('first-slide', currentSlide === 0);
 
     if (notesVisible) {
       const notes = slides[currentSlide].querySelector('.speaker-notes');
@@ -243,6 +809,7 @@ body {
     document.getElementById('progressBar').style.width = progress + '%';
     document.getElementById('slideNumber').textContent = (currentSlide + 1) + ' / ' + totalSlides;
     updateTocCurrent();
+    updateChapterProgress();
   }
 
   function nextSlide() { showSlide(currentSlide + 1); }
@@ -286,7 +853,7 @@ body {
 
   function buildToc() {
     const list = document.getElementById('tocList');
-    chapters.forEach((ch, i) => {
+    chapters.forEach((ch) => {
       const li = document.createElement('li');
       li.textContent = ch.title;
       li.addEventListener('click', () => {
@@ -322,7 +889,49 @@ body {
       case 'End': showSlide(totalSlides - 1); break;
       case 'f': case 'F': toggleFullscreen(); break;
       case 'n': case 'N': toggleNotes(); break;
+      case 'p': case 'P': printSlides(); break;
     }
+  });
+
+  // Touch swipe navigation
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
+    if (tocOpen) return;
+
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    const dt = Date.now() - touchStartTime;
+
+    // Must be a quick swipe (< 300ms) with enough horizontal distance (> 50px)
+    // and more horizontal than vertical to avoid scroll conflicts
+    if (dt > 300 || Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+
+    if (dx < 0) nextSlide();   // swipe left → next
+    else prevSlide();           // swipe right → prev
+  }, { passive: true });
+
+  // Tap left/right edges to navigate (for when swipe is awkward)
+  document.addEventListener('click', (e) => {
+    const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
+    if (tocOpen) return;
+    // Only on narrow screens (mobile)
+    if (window.innerWidth > 768) return;
+    // Ignore clicks on buttons/links/interactive elements
+    if (e.target.closest('a, button, .toc-overlay, .print-toolbar, .code-copy-btn')) return;
+
+    const x = e.clientX / window.innerWidth;
+    if (x < 0.25) prevSlide();
+    else if (x > 0.75) nextSlide();
   });
 
   buildToc();
@@ -330,13 +939,138 @@ body {
 })();
 </script>
 
+<script>
+function printSlides() {
+  window.print();
+}
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script type="module">
+// Pretext: auto-fit text to slide bounds
+import { prepare, layout } from 'https://esm.sh/@chenglou/pretext';
+
+function autoFitSlides() {
+  const slides = document.querySelectorAll('.slide');
+  slides.forEach(slide => {
+    // Skip chapter-title, keyword, toc slides
+    if (slide.classList.contains('chapter-title') ||
+        slide.classList.contains('keyword-slide') ||
+        slide.classList.contains('toc-slide')) return;
+
+    // Find the text container
+    const content = slide.querySelector('.slide-content') ||
+                    slide.querySelector('.split-text') ||
+                    slide.querySelector('.portrait-text');
+    if (!content) return;
+
+    const text = content.textContent.trim();
+    if (!text) return;
+
+    // Measure available height
+    const slideRect = slide.getBoundingClientRect();
+    const header = slide.querySelector('.slide-header');
+    const headerH = header ? header.getBoundingClientRect().height + 32 : 0; // 32px padding-top
+    const availH = slideRect.height - headerH - 80; // 80px for top/bottom padding
+
+    // Use pretext to predict text height at current font
+    const style = getComputedStyle(content);
+    const fontSize = style.fontSize;
+    const fontFamily = style.fontFamily;
+    const font = fontSize + ' ' + fontFamily;
+    const lineHeight = parseFloat(style.lineHeight) || parseFloat(fontSize) * 1.6;
+    const contentWidth = content.getBoundingClientRect().width;
+
+    if (contentWidth <= 0) return;
+
+    try {
+      const prepared = prepare(text, font);
+      const measured = layout(prepared, contentWidth, lineHeight);
+
+      // If text overflows, apply dense-content class
+      if (measured.height > availH) {
+        content.classList.add('dense-content');
+
+        // Re-measure with dense font
+        const denseFont = 'calc(0.85 * ' + fontSize + ') ' + fontFamily;
+        const densePrepared = prepare(text, parseFloat(fontSize) * 0.85 + 'px ' + fontFamily);
+        const denseMeasured = layout(densePrepared, contentWidth, lineHeight * 0.9);
+
+        // If still overflows, scale down further
+        if (denseMeasured.height > availH) {
+          const scale = Math.max(0.7, availH / denseMeasured.height);
+          content.style.fontSize = (parseFloat(fontSize) * 0.85 * scale) + 'px';
+          content.style.lineHeight = '1.4';
+        }
+      }
+    } catch (e) {
+      // Fallback: if pretext fails, use simple overflow detection
+      if (content.scrollHeight > availH) {
+        content.classList.add('dense-content');
+      }
+    }
+  });
+}
+
+// Run after DOM is ready and fonts are loaded
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(autoFitSlides);
+} else {
+  window.addEventListener('load', autoFitSlides);
+}
+
+// Re-run on resize for responsive behavior
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(autoFitSlides, 200);
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+// QR Code generation
+document.querySelectorAll('.qr-container[data-url]').forEach(container => {
+  const url = container.getAttribute('data-url');
+  const canvas = document.createElement('canvas');
+  container.prepend(canvas);
+  QRCode.toCanvas(canvas, url, { width: 200, margin: 2 });
+});
+</script>
 <script>
 document.querySelectorAll('pre code').forEach(block => {
   hljs.highlightElement(block);
-  // Add line numbers
+  // Add line numbers + highlighting
   const lines = block.innerHTML.split('\n');
-  block.innerHTML = lines.map(line => '<span class="line">' + line + '</span>').join('\n');
+  const highlightAttr = block.getAttribute('data-highlight');
+  const highlightSet = new Set();
+  if (highlightAttr) {
+    highlightAttr.split(',').forEach(range => {
+      const parts = range.trim().split('-');
+      if (parts.length === 2) {
+        for (let i = parseInt(parts[0]); i <= parseInt(parts[1]); i++) highlightSet.add(i);
+      } else {
+        highlightSet.add(parseInt(parts[0]));
+      }
+    });
+  }
+  block.innerHTML = lines.map((line, i) => {
+    const cls = highlightSet.has(i + 1) ? 'line highlighted' : 'line';
+    return '<span class="' + cls + '">' + line + '</span>';
+  }).join('\n');
+
+  // Copy button
+  const wrapper = block.closest('.code-block-wrapper');
+  if (wrapper) {
+    const btn = wrapper.querySelector('.code-copy-btn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(block.textContent).then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+        });
+      });
+    }
+  }
 });
 </script>
 </body>

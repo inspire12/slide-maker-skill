@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markdown to Slide 종합 쇼케이스</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #fff; color: #1d1d1f; line-height: 1.6;
+}
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: #0071e3; transition: width 0.3s ease; z-index: 100; }
+.slide {
+  display: none; width: min(100vw, 177.78vh); height: min(100vh, 56.25vw);
+  padding: 60px 80px; overflow: hidden; background: #fff; box-shadow: 0 0 30px rgba(0,0,0,0.08);
+}
+.slide.active { display: flex; flex-direction: column; position: relative; }
+.chapter-label { position: absolute; top: 20px; left: 24px; font-size: 0.75rem; font-weight: 600; color: #86868b; letter-spacing: 0.03em; text-transform: uppercase; }
+.chapter-progress { position: absolute; top: 20px; right: 24px; font-size: 0.75rem; font-weight: 500; color: #86868b; }
+.chapter-progress-bar { position: absolute; top: 40px; right: 24px; width: 60px; height: 3px; background: #e5e5e7; border-radius: 2px; overflow: hidden; }
+.chapter-progress-bar .fill { height: 100%; background: #0071e3; border-radius: 2px; transition: width 0.3s ease; }
+.slide.keyword-slide { justify-content: center; align-items: center; text-align: center; }
+.keyword-hero { font-size: 4rem; font-weight: 800; color: #0071e3; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 16px; }
+.slide-split { display: flex; gap: 40px; flex: 1; padding-top: 32px; overflow: hidden; }
+.slide-split .split-text { flex: 1; font-size: 1.15rem; color: #333; overflow-y: auto; }
+.slide-split .split-text ul { margin-left: 1.5em; margin-bottom: 0.75em; }
+.slide-split .split-text li { margin-bottom: 0.4em; }
+.slide-split .split-text strong { color: #1d1d1f; }
+.slide-split .split-image { flex: 1; display: flex; align-items: center; justify-content: center; }
+.slide-split .split-image img { max-width: 100%; max-height: 55vh; border-radius: 8px; object-fit: contain; }
+.slide.chapter-title { justify-content: center; align-items: center; text-align: center; }
+.slide.chapter-title h1 { font-size: 3rem; font-weight: 700; color: #1d1d1f; letter-spacing: -0.02em; }
+.slide-header { flex-shrink: 0; margin-bottom: 0; }
+.slide-header h2 { font-size: 1.8rem; font-weight: 700; color: #1d1d1f; text-align: left; }
+.slide-header-divider { border: none; border-bottom: 2px solid #e5e5e7; margin-top: 16px; }
+.slide-content { flex: 1; padding-top: 32px; font-size: 1.15rem; color: #333; overflow-y: auto; }
+.slide-content ul, .slide-content ol { margin-left: 1.5em; margin-bottom: 0.75em; }
+.slide-content li { margin-bottom: 0.4em; }
+.slide-content p { margin-bottom: 0.75em; }
+.slide-content img { max-width: 100%; max-height: 60vh; border-radius: 8px; }
+.slide-content code { background: #f5f5f7; padding: 2px 6px; border-radius: 4px; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.9em; }
+.keyword { color: #0071e3; font-weight: 700; }
+.stat-card { display: inline-flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #f5f5f7, #e8e8ed); border-radius: 16px; padding: 32px 48px; margin: 16px 8px; min-width: 180px; text-align: center; }
+.stat-card .stat-value { font-size: 3.2rem; font-weight: 800; color: #0071e3; line-height: 1.1; letter-spacing: -0.03em; }
+.stat-card .stat-label { font-size: 0.95rem; color: #86868b; margin-top: 8px; font-weight: 500; }
+.stat-cards-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 24px 0; }
+.callout { border-left: 4px solid #0071e3; background: #f5f5f7; border-radius: 0 8px 8px 0; padding: 16px 20px; margin: 16px 0; font-size: 1.05rem; color: #1d1d1f; }
+.callout p { margin-bottom: 0; }
+.slide-content table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.slide-content th, .slide-content td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #e5e5e7; }
+.slide-content th { font-weight: 700; color: #1d1d1f; background: #f5f5f7; }
+.slide-content td { color: #333; }
+.slide.toc-slide { justify-content: center; padding: 60px 100px; }
+.slide.toc-slide h2 { font-size: 2rem; font-weight: 700; color: #1d1d1f; margin-bottom: 40px; }
+.toc-item { display: flex; align-items: baseline; gap: 20px; padding: 14px 0; border-bottom: 1px solid #e5e5e7; }
+.toc-item:last-child { border-bottom: none; }
+.toc-num { font-size: 1.1rem; font-weight: 700; color: #0071e3; min-width: 36px; }
+.toc-title { font-size: 1.2rem; font-weight: 500; color: #1d1d1f; }
+.code-block-wrapper { position: relative; margin-bottom: 1em; }
+.code-lang-badge { display: inline-block; background: #0071e3; color: #fff; font-size: 0.7rem; font-weight: 600; padding: 2px 10px; border-radius: 8px 8px 0 0; text-transform: uppercase; letter-spacing: 0.05em; }
+.code-title { font-size: 0.8rem; color: #86868b; padding: 6px 16px; background: #2d2d2d; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; border-bottom: 1px solid #3a3a3a; }
+.code-copy-btn { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #ccc; font-size: 0.7rem; padding: 4px 10px; border-radius: 4px; cursor: pointer; z-index: 5; }
+.code-copy-btn:hover { background: rgba(255,255,255,0.2); }
+.code-copy-btn.copied { color: #34c759; }
+.slide-content pre { background: #1e1e1e; border-radius: 8px; padding: 20px; overflow-x: auto; margin-bottom: 0; }
+.slide-content pre code { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.95rem; line-height: 1.6; counter-reset: line; background: transparent; padding: 0; }
+.slide-content pre code .line { display: block; counter-increment: line; padding: 0 4px; }
+.slide-content pre code .line.highlighted { background: rgba(0, 113, 227, 0.15); border-left: 3px solid #0071e3; margin-left: -4px; padding-left: 5px; }
+.slide-content pre code .line::before { content: counter(line); display: inline-block; width: 2em; margin-right: 1em; text-align: right; color: #666; user-select: none; }
+.speaker-notes { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.9); color: #fff; padding: 20px 40px; font-size: 0.95rem; line-height: 1.5; max-height: 30vh; overflow-y: auto; z-index: 90; }
+.speaker-notes.visible { display: block; }
+.slide-number { position: fixed; bottom: 16px; right: 24px; font-size: 0.8rem; color: #86868b; z-index: 80; }
+.toc-overlay { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.97); z-index: 200; padding: 60px 80px; overflow-y: auto; }
+.toc-overlay.visible { display: block; }
+.toc-overlay h2 { font-size: 2rem; margin-bottom: 1.5rem; color: #1d1d1f; }
+.toc-overlay ul { list-style: none; }
+.toc-overlay li { padding: 12px 16px; font-size: 1.2rem; border-radius: 8px; cursor: pointer; transition: background 0.15s; }
+.toc-overlay li:hover { background: #f0f0f2; }
+.toc-overlay li.current { color: #0071e3; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- CHAPTER 1 -->
+<div class="chapter" data-chapter="1" data-chapter-title="1장. 소개">
+<div class="slide chapter-title active"><h1>1장. 소개</h1></div>
+
+<div class="slide toc-slide">
+  <h2>목차</h2>
+  <div class="toc-item"><span class="toc-num">01</span><span class="toc-title">1장. 소개</span></div>
+  <div class="toc-item"><span class="toc-num">02</span><span class="toc-title">2장. 숫자와 강조</span></div>
+  <div class="toc-item"><span class="toc-num">03</span><span class="toc-title">3장. 타임라인과 인용</span></div>
+  <div class="toc-item"><span class="toc-num">04</span><span class="toc-title">4장. 코드 예시</span></div>
+  <div class="toc-item"><span class="toc-num">05</span><span class="toc-title">5장. 마무리</span></div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">1장. 소개</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-content">
+    <p>환영합니다! 이 프레젠테이션은 <strong class="keyword">모든 레이아웃</strong>을 한눈에 보여주는 종합 쇼케이스입니다.</p>
+  </div>
+  <div class="speaker-notes">첫 번째 챕터의 첫 슬라이드입니다. 발표자 노트는 N 키로 토글할 수 있습니다.</div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">1장. 소개</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>주요 기능</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <ul>
+      <li>🚀 <strong class="keyword">10가지 레이아웃</strong> — 다양한 슬라이드 구조 지원</li>
+      <li>📝 <strong class="keyword">마크다운 기반</strong> — 별도 도구 없이 텍스트로 작성</li>
+      <li>🎨 <strong>자동 디자인</strong> — stat-card, callout, 키워드 자동 변환</li>
+      <li>⌨️ <strong>키보드 내비게이션</strong> — 슬라이드/챕터 이동, 전체화면</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">icon-grid 레이아웃. 이모지 + 볼드 키워드 + 설명 패턴.</div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">1장. 소개</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>이미지 분할 레이아웃</h2><hr class="slide-header-divider"></div>
+  <div class="slide-split">
+    <div class="split-text">
+      <ul>
+        <li>가로 이미지는 텍스트 왼쪽 + 이미지 오른쪽</li>
+        <li>세로 이미지는 <strong class="keyword">portrait 레이아웃</strong> 자동 적용</li>
+        <li>이미지 없으면 단일 컬럼</li>
+      </ul>
+    </div>
+    <div class="split-image">
+      <img src="https://via.placeholder.com/600x300/e5e5e7/1d1d1f?text=Split+Layout" alt="샘플 이미지">
+    </div>
+  </div>
+  <div class="speaker-notes">split-image 레이아웃. 가로 이미지이므로 좌우 분할로 렌더링됨.</div>
+</div>
+</div>
+
+<!-- CHAPTER 2 -->
+<div class="chapter" data-chapter="2" data-chapter-title="2장. 숫자와 강조">
+<div class="slide chapter-title"><h1>2장. 숫자와 강조</h1></div>
+
+<div class="slide keyword-slide">
+  <div class="chapter-label">2장. 숫자와 강조</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="keyword-hero">데이터가 답이다</div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">2장. 숫자와 강조</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>핵심 성과 지표</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <div class="stat-cards-row">
+      <div class="stat-card"><span class="stat-value">95%</span><span class="stat-label">고객 만족도</span></div>
+      <div class="stat-card"><span class="stat-value">1,200만원</span><span class="stat-label">월간 매출</span></div>
+      <div class="stat-card"><span class="stat-value">3.2초</span><span class="stat-label">평균 응답 시간</span></div>
+    </div>
+  </div>
+  <div class="speaker-notes">stat-card 레이아웃. 볼드 숫자 + 설명이 큰 폰트 카드로 변환됨.</div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">2장. 숫자와 강조</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>Before vs After</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <p><strong>Before:</strong> 수동 배포, 평균 <strong class="keyword">2시간</strong> 소요</p>
+    <p><strong>After:</strong> CI/CD 파이프라인, 평균 <strong class="keyword">5분</strong> 소요</p>
+    <blockquote class="callout"><p>95% 시간 단축 달성</p></blockquote>
+  </div>
+  <div class="speaker-notes">comparison 레이아웃. stat-card + callout 조합으로 전후 비교.</div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">2장. 숫자와 강조</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>기술 스택 비교</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <table>
+      <thead><tr><th>항목</th><th>현재</th><th>목표</th></tr></thead>
+      <tbody>
+        <tr><td>아키텍처</td><td>Monolith</td><td><strong class="keyword">MSA</strong></td></tr>
+        <tr><td>DB</td><td>MySQL 단일</td><td>MySQL + Redis + MongoDB</td></tr>
+        <tr><td>배포</td><td>수동</td><td><strong class="keyword">GitOps 자동</strong></td></tr>
+        <tr><td>모니터링</td><td>없음</td><td>Grafana + Prometheus</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="speaker-notes">comparison 레이아웃 (테이블 형태). 의사결정 슬라이드에서 자주 사용.</div>
+</div>
+</div>
+
+<!-- CHAPTER 3 -->
+<div class="chapter" data-chapter="3" data-chapter-title="3장. 타임라인과 인용">
+<div class="slide chapter-title"><h1>3장. 타임라인과 인용</h1></div>
+
+<div class="slide">
+  <div class="chapter-label">3장. 타임라인과 인용</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>프로젝트 로드맵</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <ul>
+      <li><strong class="keyword">Q1</strong> — 요구사항 분석 및 설계</li>
+      <li><strong class="keyword">Q2</strong> — MVP 개발 및 내부 테스트</li>
+      <li><strong class="keyword">Q3</strong> — 베타 출시 및 피드백 수집</li>
+      <li><strong class="keyword">Q4</strong> — 정식 런칭</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">timeline 레이아웃. 볼드 키워드 + 설명 패턴으로 단계별 진행 표현.</div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">3장. 타임라인과 인용</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>고객의 목소리</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <blockquote class="callout"><p>"이 서비스를 쓰고 나서 업무 시간이 절반으로 줄었습니다."</p></blockquote>
+    <p>— 김철수, ABC 기업 팀장</p>
+  </div>
+  <div class="speaker-notes">quote 레이아웃. blockquote가 callout 스타일로 렌더링됨.</div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">3장. 타임라인과 인용</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>데이터가 말하는 것</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <blockquote class="callout"><p>"사용자의 68%가 3초 이내에 로딩되지 않으면 이탈한다."</p></blockquote>
+    <p>— Google Web Performance Report, 2024</p>
+    <div class="stat-cards-row">
+      <div class="stat-card"><span class="stat-value">3초</span><span class="stat-label">골든 타임</span></div>
+    </div>
+  </div>
+  <div class="speaker-notes">quote + stat-card 조합. 인용구와 숫자 강조를 함께 사용.</div>
+</div>
+</div>
+
+<!-- CHAPTER 4 -->
+<div class="chapter" data-chapter="4" data-chapter-title="4장. 코드 예시">
+<div class="slide chapter-title"><h1>4장. 코드 예시</h1></div>
+
+<div class="slide">
+  <div class="chapter-label">4장. 코드 예시</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-content">
+    <p>코드 블록은 자동으로 <strong class="keyword">구문 하이라이팅</strong>됩니다.</p>
+  </div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">4장. 코드 예시</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>하이라이트가 있는 코드</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <div class="code-block-wrapper">
+      <div class="code-lang-badge">javascript</div>
+      <div class="code-title">api/handler.js</div>
+      <pre><code class="language-javascript" data-highlight="3-5">export async function handler(req, res) {
+  const data = await fetchData(req.query.id);
+  const result = transform(data);
+  res.json({ success: true, result });
+}</code></pre>
+      <button class="code-copy-btn">Copy</button>
+    </div>
+  </div>
+  <div class="speaker-notes">code-heavy 레이아웃. 파일명 타이틀 + 하이라이트 라인 + 언어 뱃지.</div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">4장. 코드 예시</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>코드 + 설명 조합</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <p>핵심 로직:</p>
+    <div class="code-block-wrapper">
+      <div class="code-lang-badge">python</div>
+      <pre><code class="language-python">def process(items: list[Item]) -> list[Result]:
+    return [item.transform() for item in items]</code></pre>
+      <button class="code-copy-btn">Copy</button>
+    </div>
+    <ul>
+      <li><code>transform()</code> 메서드가 핵심 변환 담당</li>
+      <li>리스트 컴프리헨션으로 간결하게 표현</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">코드와 불릿 설명을 함께 배치하는 패턴.</div>
+</div>
+</div>
+
+<!-- CHAPTER 5 -->
+<div class="chapter" data-chapter="5" data-chapter-title="5장. 마무리">
+<div class="slide chapter-title"><h1>5장. 마무리</h1></div>
+
+<div class="slide">
+  <div class="chapter-label">5장. 마무리</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>요약</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <ul>
+      <li>핵심 메시지 1: <strong class="keyword">속도</strong>가 경쟁력이다</li>
+      <li>핵심 메시지 2: <strong class="keyword">데이터</strong> 기반 의사결정</li>
+      <li>핵심 메시지 3: 작게 시작하고 빠르게 반복</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">closing 레이아웃. 발표 내용을 3줄로 정리.</div>
+</div>
+
+<div class="slide">
+  <div class="chapter-label">5장. 마무리</div>
+  <div class="chapter-progress"></div><div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header"><h2>감사합니다</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content">
+    <blockquote class="callout"><p>"함께 만들어가는 더 나은 서비스"</p></blockquote>
+    <ul>
+      <li>📧 email@example.com</li>
+      <li>🐙 github.com/username</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">closing 레이아웃. 인용구 + 연락처로 마무리.</div>
+</div>
+</div>
+
+<div class="slide-number" id="slideNumber"></div>
+<div class="toc-overlay" id="tocOverlay"><h2>목차</h2><ul id="tocList"></ul></div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  let currentSlide = 0, notesVisible = false;
+  const chapters = [];
+  slides.forEach((s, i) => { if (s.classList.contains('chapter-title')) chapters.push({ title: s.querySelector('h1').textContent, slideIndex: i }); });
+  const chapterSlides = {};
+  let ci = -1;
+  slides.forEach((s, i) => { if (s.classList.contains('chapter-title')) { ci++; chapterSlides[ci] = { slides: [i] }; } else if (ci >= 0) chapterSlides[ci].slides.push(i); });
+  function updateChapterProgress() {
+    const s = slides[currentSlide], ch = s.closest('.chapter');
+    if (!ch) return;
+    const idx = parseInt(ch.dataset.chapter) - 1, info = chapterSlides[idx];
+    if (!info) return;
+    const pos = info.slides.indexOf(currentSlide), total = info.slides.length;
+    const p = s.querySelector('.chapter-progress');
+    if (p) p.textContent = pos + ' / ' + (total - 1);
+    const f = s.querySelector('.chapter-progress-bar .fill');
+    if (f && total > 1) f.style.width = (pos / (total - 1)) * 100 + '%';
+  }
+  function showSlide(i) {
+    if (i < 0 || i >= totalSlides) return;
+    slides[currentSlide].classList.remove('active');
+    const pn = slides[currentSlide].querySelector('.speaker-notes');
+    if (pn) pn.classList.remove('visible');
+    currentSlide = i;
+    slides[currentSlide].classList.add('active');
+    if (notesVisible) { const n = slides[currentSlide].querySelector('.speaker-notes'); if (n) n.classList.add('visible'); }
+    document.getElementById('progressBar').style.width = (totalSlides > 1 ? (currentSlide / (totalSlides - 1)) * 100 : 100) + '%';
+    document.getElementById('slideNumber').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+    updateTocCurrent(); updateChapterProgress();
+  }
+  function nextChapter() { const n = chapters.find(c => c.slideIndex > currentSlide); if (n) showSlide(n.slideIndex); }
+  function prevChapter() { let t = null; for (let i = chapters.length - 1; i >= 0; i--) { if (chapters[i].slideIndex < currentSlide) { t = chapters[i]; break; } } if (t) showSlide(t.slideIndex); }
+  function toggleNotes() { notesVisible = !notesVisible; const n = slides[currentSlide].querySelector('.speaker-notes'); if (n) n.classList.toggle('visible', notesVisible); }
+  function toggleFullscreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+  function toggleToc() { document.getElementById('tocOverlay').classList.toggle('visible'); }
+  function buildToc() { const l = document.getElementById('tocList'); chapters.forEach(ch => { const li = document.createElement('li'); li.textContent = ch.title; li.addEventListener('click', () => { showSlide(ch.slideIndex); toggleToc(); }); l.appendChild(li); }); }
+  function updateTocCurrent() { document.querySelectorAll('#tocList li').forEach((li, i) => { li.classList.toggle('current', chapters[i] && chapters[i].slideIndex <= currentSlide && (i === chapters.length - 1 || chapters[i + 1].slideIndex > currentSlide)); }); }
+  document.addEventListener('keydown', e => {
+    const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
+    if (e.key === 't' || e.key === 'T') { toggleToc(); return; }
+    if (e.key === 'Escape' && tocOpen) { toggleToc(); return; }
+    if (tocOpen) return;
+    switch(e.key) {
+      case 'ArrowRight': case ' ': showSlide(currentSlide + 1); break;
+      case 'ArrowLeft': showSlide(currentSlide - 1); break;
+      case 'ArrowUp': prevChapter(); break;
+      case 'ArrowDown': nextChapter(); break;
+      case 'Home': showSlide(0); break;
+      case 'End': showSlide(totalSlides - 1); break;
+      case 'f': case 'F': toggleFullscreen(); break;
+      case 'n': case 'N': toggleNotes(); break;
+    }
+  });
+  buildToc(); showSlide(0);
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+document.querySelectorAll('pre code').forEach(block => {
+  hljs.highlightElement(block);
+  const lines = block.innerHTML.split('\n');
+  const ha = block.getAttribute('data-highlight'), hs = new Set();
+  if (ha) ha.split(',').forEach(r => { const p = r.trim().split('-'); if (p.length === 2) { for (let i = parseInt(p[0]); i <= parseInt(p[1]); i++) hs.add(i); } else hs.add(parseInt(p[0])); });
+  block.innerHTML = lines.map((l, i) => '<span class="' + (hs.has(i + 1) ? 'line highlighted' : 'line') + '">' + l + '</span>').join('\n');
+  const w = block.closest('.code-block-wrapper');
+  if (w) { const b = w.querySelector('.code-copy-btn'); if (b) b.addEventListener('click', () => { navigator.clipboard.writeText(block.textContent).then(() => { b.textContent = 'Copied!'; b.classList.add('copied'); setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('copied'); }, 1500); }); }); }
+});
+</script>
+</body>
+</html>
