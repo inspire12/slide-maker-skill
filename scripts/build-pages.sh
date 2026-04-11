@@ -2,6 +2,9 @@
 # Build script: organize slides into deployable directory structure
 # slides/stock_story_2025.html → _site/stock_story_2025/index.html
 # slides/images/ → _site/images/ (shared)
+#
+# If INDEX_PASSWORD env var is set, the generated index page is protected by a
+# client-side password gate (SHA-256 hash embedded, verified in the browser).
 
 set -e
 
@@ -40,6 +43,13 @@ for html in $(ls "$SLIDES_DIR"/*.html 2>/dev/null | sort -V); do
 
   echo "  ✓ $basename/"
 done
+
+# Compute SHA-256 hash of INDEX_PASSWORD if provided
+PWD_HASH=""
+if [ -n "$INDEX_PASSWORD" ]; then
+  PWD_HASH=$(printf '%s' "$INDEX_PASSWORD" | shasum -a 256 | awk '{print $1}')
+  echo "  🔒 password gate enabled"
+fi
 
 # Generate index page (slide listing)
 cat > "$SITE_DIR/index.html" <<EOF
@@ -117,9 +127,77 @@ cat > "$SITE_DIR/index.html" <<EOF
     margin-left: auto;
   }
   a:hover::after { color: #0071e3; }
+
+  /* Password gate */
+  #content { display: none; }
+  #gate {
+    position: fixed;
+    inset: 0;
+    background: #f0f0f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  #gate .box {
+    max-width: 360px;
+    width: 100%;
+    padding: 40px 32px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+    text-align: center;
+  }
+  #gate h2 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #1d1d1f;
+  }
+  #gate input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    border: 1px solid #d2d2d7;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  #gate input:focus { border-color: #0071e3; }
+  #gate button {
+    margin-top: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: #0071e3;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  #gate button:hover { background: #0a6fcf; }
+  #gate .err {
+    margin-top: 12px;
+    color: #d70015;
+    font-size: 0.85rem;
+    min-height: 1em;
+  }
 </style>
 </head>
 <body>
+
+<div id="gate" hidden>
+  <div class="box">
+    <h2>🔒 Password required</h2>
+    <input id="pwd" type="password" placeholder="password" autocomplete="off" />
+    <button id="btn">Unlock</button>
+    <div class="err" id="err"></div>
+  </div>
+</div>
+
+<div id="content">
 <div class="container">
   <h1>Slides</h1>
   <p class="subtitle">presentations</p>
@@ -127,6 +205,60 @@ cat > "$SITE_DIR/index.html" <<EOF
 $(echo -e "$ENTRIES")
   </ul>
 </div>
+</div>
+
+<script>
+(function () {
+  const EXPECTED_HASH = "${PWD_HASH}";
+  const STORAGE_KEY = "slides_auth_ok";
+  const gate = document.getElementById("gate");
+  const content = document.getElementById("content");
+
+  async function sha256(str) {
+    const buf = new TextEncoder().encode(str);
+    const h = await crypto.subtle.digest("SHA-256", buf);
+    return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  function reveal() {
+    gate.hidden = true;
+    content.style.display = "block";
+  }
+
+  if (!EXPECTED_HASH) {
+    reveal();
+    return;
+  }
+
+  if (sessionStorage.getItem(STORAGE_KEY) === "1") {
+    reveal();
+    return;
+  }
+
+  gate.hidden = false;
+  content.style.display = "none";
+
+  const pwd = document.getElementById("pwd");
+  const btn = document.getElementById("btn");
+  const err = document.getElementById("err");
+
+  async function tryUnlock() {
+    const h = await sha256(pwd.value);
+    if (h === EXPECTED_HASH) {
+      sessionStorage.setItem(STORAGE_KEY, "1");
+      reveal();
+    } else {
+      err.textContent = "Incorrect password";
+      pwd.value = "";
+      pwd.focus();
+    }
+  }
+
+  btn.addEventListener("click", tryUnlock);
+  pwd.addEventListener("keydown", (e) => { if (e.key === "Enter") tryUnlock(); });
+  pwd.focus();
+})();
+</script>
 </body>
 </html>
 EOF
