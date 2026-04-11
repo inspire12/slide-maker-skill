@@ -98,3 +98,7 @@ If the user provides a share URL (or the output file will be hosted), add a fina
 The HTML template is at: `~/.claude/skills/markdown-to-slide/template.html`
 
 Read this template file and use it as the base for HTML generation. Replace the `{{TITLE}}` and `{{SLIDES}}` placeholders with generated content. The CSS and JS are already included in the template.
+
+## Source of truth
+
+`.md` 파일이 원본이다. 콘텐츠(텍스트 / 구조 / 이미지)는 md에서 수정한 뒤 이 단계를 다시 실행해 HTML을 재생성한다. HTML을 직접 편집해 콘텐츠를 바꾸면 md가 drift되어 다음 빌드 때 변경이 사라진다. (자세한 정책은 `skill.md` 의 "Source-of-truth policy" 참조)

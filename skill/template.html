@@ -194,10 +194,20 @@ body {
   overflow-y: auto;
 }
 .slide.portrait-split .portrait-content h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 2.4rem;
+  font-weight: 800;
   color: #1d1d1f;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
   margin-bottom: 8px;
+}
+.slide.portrait-split .chapter-label {
+  left: auto;
+  right: clamp(80px, 12vh, 140px);
+}
+.slide.portrait-split .chapter-progress,
+.slide.portrait-split .chapter-progress-bar {
+  right: 24px;
 }
 .slide.portrait-split .portrait-content hr.slide-header-divider {
   border: none;
@@ -416,7 +426,6 @@ body {
 .stat-card .stat-value     { font-size: clamp(1.8rem, calc(3.2rem * var(--scale)), 4.5rem); }
 .stat-card .stat-label     { font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.3rem); }
 .slide-split .split-text   { font-size: clamp(0.85rem, calc(1.15rem * var(--scale)), 1.5rem); }
-.slide.portrait-split .portrait-content h2 { font-size: clamp(1.8rem, calc(2rem * var(--scale)), 2.75rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
 .slide.portrait-split .portrait-content .portrait-text { font-size: clamp(0.8rem, calc(1.1rem * var(--scale)), 1.4rem); }
 .slide.toc-slide h2        { font-size: clamp(1.3rem, calc(2rem * var(--scale)), 2.6rem); }
 .toc-title                 { font-size: clamp(0.9rem, calc(1.2rem * var(--scale)), 1.6rem); }
@@ -424,7 +433,6 @@ body {
 .slide-content pre code    { font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.2rem); }
 .callout                   { font-size: clamp(0.8rem, calc(1.05rem * var(--scale)), 1.4rem); }
 .slide-number              { font-size: clamp(0.6rem, calc(0.8rem * var(--scale)), 1rem); }
-.chapter-label, .chapter-progress { font-size: clamp(0.5rem, calc(0.55rem * var(--scale)), 0.68rem); }
 
 /* ===== DENSE CONTENT (auto font scaling) ===== */
 .slide-content.dense-content {

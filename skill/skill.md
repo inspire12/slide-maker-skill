@@ -71,6 +71,14 @@ Full pipeline: runs plan → design → export sequentially. For step-by-step co
   - `T` — Table of contents
   - `Home` / `End` — First / last slide
 
+## Source-of-truth policy — md ↔ HTML
+
+- **원본은 항상 `.md` 파일**이다. HTML은 md로부터 생성된 결과물.
+- 슬라이드 내용(텍스트 · 이미지 · 순서 · 챕터 구조)을 수정할 때는 **먼저 md를 수정**하고 빌드 스크립트로 HTML을 재생성한다.
+- 디자인/스타일(CSS) 수정은 HTML(또는 `template.html`)에서만 하고 md는 손대지 않는다.
+- **금지**: HTML에서 텍스트 · bullets · 이미지 경로만 고치고 md를 방치하는 것. 다음 재빌드 시 변경이 사라진다.
+- **예외**: 긴급 hotfix로 HTML을 먼저 고친 경우, 같은 커밋에 md도 동일하게 반영해 drift가 남지 않도록 한다.
+
 ## Markdown Syntax Reference
 
 ```markdown
