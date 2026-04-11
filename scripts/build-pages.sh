@@ -139,6 +139,7 @@ cat > "$SITE_DIR/index.html" <<EOF
     justify-content: center;
     z-index: 1000;
   }
+  #gate[hidden] { display: none !important; }
   #gate .box {
     max-width: 360px;
     width: 100%;
@@ -222,7 +223,14 @@ $(echo -e "$ENTRIES")
 
   function reveal() {
     gate.hidden = true;
+    gate.style.display = "none";
     content.style.display = "block";
+  }
+
+  function showGate() {
+    gate.hidden = false;
+    gate.style.display = "";
+    content.style.display = "none";
   }
 
   if (!EXPECTED_HASH) {
@@ -235,8 +243,7 @@ $(echo -e "$ENTRIES")
     return;
   }
 
-  gate.hidden = false;
-  content.style.display = "none";
+  showGate();
 
   const pwd = document.getElementById("pwd");
   const btn = document.getElementById("btn");
