@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>어드민의 필요성</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+<style>
+/* ===== RESET ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+/* ===== BASE ===== */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: #f0f0f2;
+  color: #1d1d1f;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #0071e3;
+  transition: width 0.3s ease;
+  z-index: 100;
+}
+
+/* ===== SLIDE (16:9 ratio, flat structure) ===== */
+.slide {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(100vw, 177.78vh);  /* 16:9 */
+  height: min(100vh, 56.25vw);  /* 16:9 */
+  padding: clamp(30px, 4.7vh, 80px) clamp(40px, 6.25vh, 100px);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 0 30px rgba(0,0,0,0.08);
+  flex-direction: column;
+}
+.slide.active {
+  display: flex;
+  animation: fadeIn 0.35s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.98); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide.active { animation: none; }
+}
+
+/* ===== CHAPTER LABEL & PROGRESS ===== */
+.chapter-label {
+  position: absolute;
+  top: 22px;
+  left: clamp(40px, 6.25vh, 100px);
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: #a1a1a6;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  max-width: calc(100% - 2 * clamp(40px, 6.25vh, 100px) - 80px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chapter-progress {
+  position: absolute;
+  top: 22px;
+  right: clamp(40px, 6.25vh, 100px);
+  font-size: 0.55rem;
+  font-weight: 500;
+  color: #a1a1a6;
+}
+.chapter-progress-bar {
+  position: absolute;
+  top: 40px;
+  right: clamp(40px, 6.25vh, 100px);
+  width: 60px;
+  height: 3px;
+  background: #e5e5e7;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.chapter-progress-bar .fill {
+  height: 100%;
+  background: #0071e3;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* ===== KEYWORD EMPHASIS SLIDE ===== */
+.slide.keyword-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: linear-gradient(135deg, #f8f9ff 0%, #fff 50%, #f0f4ff 100%);
+}
+.keyword-hero {
+  font-size: 4rem;
+  font-weight: 800;
+  color: #0071e3;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  text-shadow: 0 1px 2px rgba(0,113,227,0.08);
+}
+.keyword-sub {
+  font-size: 1.3rem;
+  color: #86868b;
+  font-weight: 400;
+  max-width: 600px;
+}
+
+/* ===== CHAPTER TITLE SLIDE ===== */
+.slide.chapter-title {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.slide.chapter-title h1 {
+  font-size: clamp(2rem, 7vw, 9rem);
+  font-weight: 800;
+  color: #1d1d1f;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  max-width: 88%;
+  text-align: center;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+.slide.chapter-title h1::after {
+  content: '';
+  display: block;
+  width: 120px;
+  height: 6px;
+  background: #0071e3;
+  margin: 48px auto 0;
+  border-radius: 3px;
+}
+.slide.chapter-title .chapter-subtitle {
+  font-size: 1.2rem;
+  color: #86868b;
+  margin-top: 0.5rem;
+}
+
+/* ===== CONTENT SLIDE ===== */
+.slide-header {
+  flex-shrink: 0;
+  margin-top: clamp(32px, 4.5vh, 64px);
+  margin-bottom: 0;
+}
+.slide-header h2 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #1d1d1f;
+  text-align: left;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.slide-header-divider {
+  border: none;
+  border-bottom: 2px solid #e5e5e7;
+  margin-top: 16px;
+}
+.slide-content {
+  flex: 1;
+  padding-top: clamp(36px, 4.5vh, 64px);
+  font-size: 1.15rem;
+  color: #333;
+  overflow-y: auto;
+}
+.slide-content ul, .slide-content ol {
+  margin-left: 1.5em;
+  margin-bottom: 0.75em;
+}
+.slide-content li { margin-bottom: 0.4em; }
+.slide-content li li { margin-bottom: 0.2em; font-size: 0.95em; color: #666; }
+.slide-content p { margin-bottom: 0.75em; }
+
+/* ===== KEYWORD HIGHLIGHT ===== */
+.keyword {
+  color: #0071e3;
+  font-weight: 700;
+}
+
+/* ===== CALLOUT BLOCKQUOTE ===== */
+.callout {
+  border-left: 4px solid #0071e3;
+  background: linear-gradient(135deg, #f5f5f7, #f0f2f8);
+  border-radius: 0 8px 8px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 1.05rem;
+  color: #1d1d1f;
+}
+.callout p { margin-bottom: 0; }
+
+/* ===== TOC SLIDE ===== */
+.slide.toc-slide {
+  justify-content: center;
+  padding: 60px 100px;
+}
+.slide.toc-slide h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1d1d1f;
+  margin-bottom: 40px;
+}
+.toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e5e5e7;
+  cursor: default;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-num {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0071e3;
+  min-width: 36px;
+}
+.toc-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #1d1d1f;
+}
+
+/* ===== RESPONSIVE FONT SCALING ===== */
+:root {
+  --slide-w: min(100vw, 177.78vh);
+  --scale: calc(var(--slide-w) / 1280);
+}
+.slide-content             { font-size: clamp(0.85rem, calc(1.15rem * var(--scale)), 1.5rem); }
+.keyword-sub               { font-size: clamp(0.9rem, calc(1.3rem * var(--scale)), 1.8rem); }
+.slide.chapter-title h1    { font-size: clamp(2rem, 7vw, 9rem); }
+.slide.chapter-title .chapter-subtitle { font-size: clamp(1rem, calc(1.5rem * var(--scale)), 2rem); }
+.slide.toc-slide h2        { font-size: clamp(1.3rem, calc(2rem * var(--scale)), 2.6rem); }
+.toc-title                 { font-size: clamp(0.9rem, calc(1.2rem * var(--scale)), 1.6rem); }
+.slide-number              { font-size: clamp(0.6rem, calc(0.8rem * var(--scale)), 1rem); }
+.callout                   { font-size: clamp(0.8rem, calc(1.05rem * var(--scale)), 1.4rem); }
+
+/* ===== DENSE CONTENT ===== */
+.slide-content.dense-content {
+  font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.2rem);
+  line-height: 1.5;
+}
+.slide-content.dense-content li { margin-bottom: 0.2em; }
+.slide-content.dense-content p { margin-bottom: 0.5em; }
+
+/* ===== SPEAKER NOTES ===== */
+.speaker-notes {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(15, 15, 15, 0.92);
+  color: #e5e5e7;
+  padding: 20px 40px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-height: 30vh;
+  overflow-y: auto;
+  z-index: 90;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transform: translateY(100%);
+  transition: transform 0.3s ease-out;
+  pointer-events: none;
+}
+.speaker-notes.visible {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ===== SLIDE NUMBER ===== */
+.slide-number {
+  position: fixed;
+  bottom: 16px;
+  right: 24px;
+  font-size: 0.75rem;
+  color: #86868b;
+  z-index: 80;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+/* ===== TOC OVERLAY ===== */
+.toc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.97);
+  z-index: 200;
+  padding: 60px 80px;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease-out;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.toc-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.toc-overlay h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #1d1d1f;
+}
+.toc-overlay ul { list-style: none; }
+.toc-overlay li {
+  padding: 12px 16px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.toc-overlay li:hover { background: #f0f0f2; }
+.toc-overlay li.current { color: #0071e3; font-weight: 600; }
+
+/* ===== PRINT TOOLBAR ===== */
+.print-toolbar {
+  position: fixed;
+  bottom: 16px;
+  left: 24px;
+  z-index: 300;
+  display: none;
+  gap: 8px;
+}
+body.first-slide .print-toolbar {
+  display: flex;
+}
+.print-toolbar button {
+  background: rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.1);
+  color: #86868b;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.print-toolbar button:hover {
+  background: rgba(0,0,0,0.1);
+  color: #1d1d1f;
+}
+
+/* ===== PRINT STYLES ===== */
+@media print {
+  *, *::before, *::after { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { height: auto; overflow: visible; background: #fff; }
+  body { display: block; }
+  .progress-bar, .slide-number, .toc-overlay, .print-toolbar,
+  .speaker-notes, .code-copy-btn { display: none !important; }
+  .slide {
+    display: flex !important;
+    position: relative !important;
+    top: auto !important; left: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100vh;
+    padding: 48px 64px !important;
+    box-shadow: none !important;
+    animation: none !important;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  @page {
+    size: 297mm 167mm;
+    margin: 0;
+  }
+  .slide.chapter-title h1::after { background: #0071e3 !important; }
+  .keyword-hero { color: #0071e3 !important; }
+  .callout { background: #f5f5f7 !important; border-left-color: #0071e3 !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ==================== SLIDES ==================== -->
+
+<!-- Slide 1: Chapter Title — 왜 어드민인가 -->
+<div class="slide chapter-title" data-chapter="1">
+  <h1>왜 어드민인가</h1>
+  <div class="speaker-notes">모니모니는 콘텐츠 회사. 콘텐츠를 만드는 속도만큼 배포도 빨라야 한다는 메시지로 시작.</div>
+</div>
+
+<!-- Slide 2: Keyword — 콘텐츠 배포, 더 빠르게 -->
+<div class="slide keyword-slide" data-chapter="1">
+  <span class="chapter-label">왜 어드민인가</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="keyword-hero">콘텐츠 배포, 더 빠르게</div>
+  <div class="speaker-notes">모니모니는 콘텐츠 회사. 콘텐츠를 만드는 속도만큼 배포도 빨라야 한다는 메시지로 시작.</div>
+</div>
+
+<!-- Slide 3: 오늘 이야기할 것 -->
+<div class="slide" data-chapter="1">
+  <span class="chapter-label">왜 어드민인가</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>오늘 이야기할 것</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content">
+    <ul>
+      <li>🚀 <strong class="keyword">배포 과정에서 개발자 의존도 낮추기</strong></li>
+      <li>🔍 <strong class="keyword">QA를 더 쉽고 빠르게</strong></li>
+      <li>🔗 <strong class="keyword">흩어진 업무를 한 곳으로</strong></li>
+    </ul>
+  </div>
+  <div class="speaker-notes">세 가지 키워드 중심으로 발표 진행.</div>
+</div>
+
+<!-- Slide 4: Chapter Title — 개발자 병목 해소 -->
+<div class="slide chapter-title" data-chapter="2">
+  <h1>개발자 병목 해소</h1>
+</div>
+
+<!-- Slide 5: 콘텐츠 배포, 왜 느린가 -->
+<div class="slide" data-chapter="2">
+  <span class="chapter-label">개발자 병목 해소</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>콘텐츠 배포, 왜 느린가</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content">
+    <ul>
+      <li>모니모니는 <strong class="keyword">콘텐츠 회사</strong>입니다</li>
+      <li>하지만 콘텐츠 배포의 마지막 단계에는 항상 <strong class="keyword">개발자의 손</strong>이 필요합니다</li>
+      <li>개발자의 우선순위에 따라 <strong class="keyword">콘텐츠 배포 일정도 함께 밀립니다</strong></li>
+    </ul>
+  </div>
+  <div class="speaker-notes">콘텐츠팀이 아무리 빠르게 준비해도, 개발자 병목에서 멈추는 구조.</div>
+</div>
+
+<!-- Slide 6: 입력 과정의 불편함 -->
+<div class="slide" data-chapter="2">
+  <span class="chapter-label">개발자 병목 해소</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>입력 과정의 불편함</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content">
+    <ul>
+      <li>현재 어드민은 입력 과정이 번거로워 <strong class="keyword">실수가 생기기 쉬운 구조</strong></li>
+      <li>반복 작업이 많고 <strong class="keyword">입력값을 검증할 수단이 부족</strong>합니다</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">수동 입력 → 휴먼 에러 → 재작업. 이 악순환을 끊어야 한다.</div>
+</div>
+
+<!-- Slide 7: Chapter Title — QA, 더 빠르게 -->
+<div class="slide chapter-title" data-chapter="3">
+  <h1>QA, 더 빠르게</h1>
+</div>
+
+<!-- Slide 8: QA 환경의 한계 -->
+<div class="slide" data-chapter="3">
+  <span class="chapter-label">QA, 더 빠르게</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>QA 환경의 한계</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content">
+    <ul>
+      <li>어드민에 QA 기능이 없어 <strong class="keyword">앱에서 직접 확인</strong>해야 합니다
+        <ul><li>ex) 밥주기, 질문 등</li></ul>
+      </li>
+      <li>매번 <strong class="keyword">동일한 값을 반복 입력</strong>하며 테스트해야 합니다</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">QA가 느리면 배포도 느려진다. QA 속도가 곧 배포 속도.</div>
+</div>
+
+<!-- Slide 9: Keyword — 어드민도 낡는다 -->
+<div class="slide keyword-slide" data-chapter="3">
+  <span class="chapter-label">QA, 더 빠르게</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="keyword-hero">어드민도 낡는다</div>
+  <div class="speaker-notes">서비스는 계속 진화하는데, 어드민은 멈춰 있다.</div>
+</div>
+
+<!-- Slide 10: 방치된 어드민의 결과 -->
+<div class="slide" data-chapter="3">
+  <span class="chapter-label">QA, 더 빠르게</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>방치된 어드민의 결과</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content">
+    <ul>
+      <li>질문 마이그레이션이 진행되었지만, <strong class="keyword">어드민은 반영되지 않았습니다</strong></li>
+      <li>결과적으로 QA 기능이 <strong class="keyword">정상 동작하지 않는 상태</strong>가 되었습니다</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">실제 사례. 서비스가 바뀌었는데 어드민이 따라가지 못한 케이스.</div>
+</div>
+
+<!-- Slide 11: Chapter Title — 프로세스 일원화 -->
+<div class="slide chapter-title" data-chapter="4">
+  <h1>프로세스 일원화</h1>
+</div>
+
+<!-- Slide 12: 개인의 자원 ≠ 회사의 자원 -->
+<div class="slide" data-chapter="4">
+  <span class="chapter-label">프로세스 일원화</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>개인의 자원 ≠ 회사의 자원</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content">
+    <ul>
+      <li>누구나 간단한 도구를 만들 수 있는 시대입니다</li>
+      <li>하지만 <strong class="keyword">개인이 만든 도구는 개인과 함께 사라집니다</strong></li>
+      <li>퇴사, 이동 시 <strong class="keyword">인수인계되지 않는 업무 자원</strong>이 생깁니다</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">각자의 스프레드시트, 개인 스크립트가 회사 자산으로 남지 않는 문제.</div>
+</div>
+
+<!-- Slide 13: 업무를 모으면 보이는 것 -->
+<div class="slide" data-chapter="4">
+  <span class="chapter-label">프로세스 일원화</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>업무를 모으면 보이는 것</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content">
+    <ul>
+      <li>흩어진 도구와 링크를 관리할 <strong class="keyword">중앙 허브</strong>가 필요합니다</li>
+      <li>처음부터 완벽할 순 없지만</li>
+      <li>업무를 한 곳에 모으다 보면 <strong class="keyword">자동화할 수 있는 지점</strong>이 드러납니다</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">일단 모으는 것이 첫 걸음. 모이면 패턴이 보이고, 패턴이 보이면 자동화할 수 있다.</div>
+</div>
+
+<!-- Slide 14: Chapter Title — 어드민을 함께 가꿔주세요 -->
+<div class="slide chapter-title" data-chapter="5">
+  <h1>어드민을 함께 가꿔주세요</h1>
+</div>
+
+<!-- Slide 15: 부탁드리는 것 -->
+<div class="slide" data-chapter="5">
+  <span class="chapter-label">어드민을 함께 가꿔주세요</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>부탁드리는 것</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content">
+    <ul>
+      <li>🆕 <strong class="keyword">새 기획 시</strong> 어드민(운영/QA/콘텐츠) 개발도 함께 고려해 주세요
+        <ul><li>ex) 썸원타임 등</li></ul>
+      </li>
+      <li>🖥️ <strong class="keyword">불편한 점은 알려주세요</strong> — 자주 쓰이려면 어드민 자체가 편해야 합니다</li>
+      <li>🔗 <strong class="keyword">사용 중인 링크를 등록해 주세요</strong> — 흩어진 자원을 한 곳에 모읍시다</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">어드민은 개발팀만의 도구가 아닙니다. 함께 사용하고, 함께 개선해야 합니다.</div>
+</div>
+
+<!-- Slide 16: 어드민 시연 -->
+<div class="slide" data-chapter="5">
+  <span class="chapter-label">어드민을 함께 가꿔주세요</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>어드민 시연</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content" style="display:flex; align-items:center; justify-content:center;">
+    <p style="font-size:2rem; color:#86868b; font-weight:600;">Live Demo</p>
+  </div>
+  <div class="speaker-notes">현재 어드민의 주요 기능을 시연. 개선된 부분과 앞으로 방향을 함께 보여준다.</div>
+</div>
+
+<!-- Slide 17: Chapter Title — 앞으로의 방향 -->
+<div class="slide chapter-title" data-chapter="6">
+  <h1>앞으로의 방향</h1>
+</div>
+
+<!-- Slide 18: 고도화 로드맵 -->
+<div class="slide" data-chapter="6">
+  <span class="chapter-label">앞으로의 방향</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="slide-header">
+    <h2>고도화 로드맵</h2>
+    <hr class="slide-header-divider">
+  </div>
+  <div class="slide-content">
+    <ul>
+      <li><strong class="keyword">AI PoC 적용</strong> — 내부 질문 분석, 번역 기능</li>
+      <li><strong class="keyword">기능 안정화</strong> — 기존 기능의 품질 개선</li>
+      <li><strong class="keyword">프로세스 일원화</strong> — 흩어진 업무 흐름을 어드민으로 통합</li>
+      <li><strong class="keyword">QA 기능 추가</strong> — 어드민 안에서 바로 검증할 수 있도록</li>
+    </ul>
+  </div>
+  <div class="speaker-notes">어드민은 끝이 없다. 하지만 한 걸음씩 나아가고 있다.</div>
+</div>
+
+<!-- Slide 19: Keyword — 마무리 -->
+<div class="slide keyword-slide" data-chapter="6">
+  <span class="chapter-label">앞으로의 방향</span>
+  <span class="chapter-progress"></span>
+  <div class="chapter-progress-bar"><div class="fill"></div></div>
+  <div class="keyword-hero">어드민은 끝이 없다</div>
+  <div class="keyword-sub">그래서 함께 만들어갑니다</div>
+  <div class="speaker-notes">마무리. 완성이 아니라 지속적 개선이라는 메시지.</div>
+</div>
+
+<!-- ==================== END SLIDES ==================== -->
+
+<div class="slide-number" id="slideNumber"></div>
+
+<div class="print-toolbar">
+  <button onclick="printSlides()" title="Print / PDF (P)">🖨 Print / PDF</button>
+</div>
+
+<div class="toc-overlay" id="tocOverlay">
+  <h2>목차</h2>
+  <ul id="tocList"></ul>
+</div>
+
+<!-- PRESENTATION ENGINE JS -->
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+  let currentSlide = 0;
+  let notesVisible = false;
+
+  const chapters = [];
+  slides.forEach((slide, i) => {
+    if (slide.classList.contains('chapter-title')) {
+      chapters.push({ title: slide.querySelector('h1').textContent, slideIndex: i });
+    }
+  });
+
+  function getSlidesInChapter(chNum) {
+    const result = [];
+    slides.forEach((s, i) => {
+      if (parseInt(s.dataset.chapter) === chNum) result.push(i);
+    });
+    return result;
+  }
+
+  function updateChapterProgress() {
+    const slide = slides[currentSlide];
+    const ch = parseInt(slide.dataset.chapter);
+    if (isNaN(ch) || ch < 1) return;
+    const chSlides = getSlidesInChapter(ch);
+    const pos = chSlides.indexOf(currentSlide);
+    const total = chSlides.length;
+    const progEl = slide.querySelector('.chapter-progress');
+    if (progEl) progEl.textContent = pos + ' / ' + (total - 1);
+    const fillEl = slide.querySelector('.chapter-progress-bar .fill');
+    if (fillEl && total > 1) fillEl.style.width = (pos / (total - 1)) * 100 + '%';
+  }
+
+  function showSlide(index) {
+    if (index < 0 || index >= totalSlides) return;
+    slides[currentSlide].classList.remove('active');
+    const prevNotes = slides[currentSlide].querySelector('.speaker-notes');
+    if (prevNotes) prevNotes.classList.remove('visible');
+
+    currentSlide = index;
+    slides[currentSlide].classList.add('active');
+    document.body.classList.toggle('first-slide', currentSlide === 0);
+
+    if (notesVisible) {
+      const notes = slides[currentSlide].querySelector('.speaker-notes');
+      if (notes) notes.classList.add('visible');
+    }
+
+    const progress = totalSlides > 1 ? (currentSlide / (totalSlides - 1)) * 100 : 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+    document.getElementById('slideNumber').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+    updateTocCurrent();
+    updateChapterProgress();
+  }
+
+  function nextSlide() { showSlide(currentSlide + 1); }
+  function prevSlide() { showSlide(currentSlide - 1); }
+
+  function nextChapter() {
+    const next = chapters.find(c => c.slideIndex > currentSlide);
+    if (next) showSlide(next.slideIndex);
+  }
+
+  function prevChapter() {
+    let target = null;
+    for (let i = chapters.length - 1; i >= 0; i--) {
+      if (chapters[i].slideIndex < currentSlide) {
+        target = chapters[i];
+        break;
+      }
+    }
+    if (target) showSlide(target.slideIndex);
+  }
+
+  function toggleNotes() {
+    notesVisible = !notesVisible;
+    const notes = slides[currentSlide].querySelector('.speaker-notes');
+    if (notes) notes.classList.toggle('visible', notesVisible);
+  }
+
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  function toggleToc() {
+    document.getElementById('tocOverlay').classList.toggle('visible');
+  }
+
+  function buildToc() {
+    const list = document.getElementById('tocList');
+    chapters.forEach((ch) => {
+      const li = document.createElement('li');
+      li.textContent = ch.title;
+      li.addEventListener('click', () => {
+        showSlide(ch.slideIndex);
+        toggleToc();
+      });
+      list.appendChild(li);
+    });
+  }
+
+  function updateTocCurrent() {
+    const items = document.querySelectorAll('#tocList li');
+    items.forEach((li, i) => {
+      const isCurrentChapter = chapters[i] && chapters[i].slideIndex <= currentSlide &&
+        (i === chapters.length - 1 || chapters[i + 1].slideIndex > currentSlide);
+      li.classList.toggle('current', isCurrentChapter);
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
+    if (e.key === 't' || e.key === 'T') { toggleToc(); return; }
+    if (e.key === 'Escape' && tocOpen) { toggleToc(); return; }
+    if (tocOpen) return;
+
+    switch(e.key) {
+      case 'ArrowRight': case ' ': nextSlide(); break;
+      case 'ArrowLeft': prevSlide(); break;
+      case 'ArrowUp': prevChapter(); break;
+      case 'ArrowDown': nextChapter(); break;
+      case 'Home': showSlide(0); break;
+      case 'End': showSlide(totalSlides - 1); break;
+      case 'f': case 'F': toggleFullscreen(); break;
+      case 'n': case 'N': toggleNotes(); break;
+      case 'p': case 'P': printSlides(); break;
+    }
+  });
+
+  // Touch swipe
+  let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
+    if (tocOpen) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    const dt = Date.now() - touchStartTime;
+    if (dt > 300 || Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx < 0) nextSlide(); else prevSlide();
+  }, { passive: true });
+
+  document.addEventListener('click', (e) => {
+    const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
+    if (tocOpen) return;
+    if (window.innerWidth > 768) return;
+    if (e.target.closest('a, button, .toc-overlay, .print-toolbar')) return;
+    const x = e.clientX / window.innerWidth;
+    if (x < 0.25) prevSlide();
+    else if (x > 0.75) nextSlide();
+  });
+
+  buildToc();
+  showSlide(0);
+})();
+</script>
+
+<script>
+function printSlides() { window.print(); }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script type="module">
+import { prepare, layout } from 'https://esm.sh/@chenglou/pretext';
+
+function autoFitSlides() {
+  const slides = document.querySelectorAll('.slide');
+  slides.forEach(slide => {
+    if (slide.classList.contains('chapter-title') ||
+        slide.classList.contains('keyword-slide') ||
+        slide.classList.contains('toc-slide')) return;
+    const content = slide.querySelector('.slide-content');
+    if (!content) return;
+    const text = content.textContent.trim();
+    if (!text) return;
+    const slideRect = slide.getBoundingClientRect();
+    const header = slide.querySelector('.slide-header');
+    const headerH = header ? header.getBoundingClientRect().height + 32 : 0;
+    const availH = slideRect.height - headerH - 80;
+    const style = getComputedStyle(content);
+    const fontSize = style.fontSize;
+    const fontFamily = style.fontFamily;
+    const lineHeight = parseFloat(style.lineHeight) || parseFloat(fontSize) * 1.6;
+    const contentWidth = content.getBoundingClientRect().width;
+    if (contentWidth <= 0) return;
+    try {
+      const prepared = prepare(text, fontSize + ' ' + fontFamily);
+      const measured = layout(prepared, contentWidth, lineHeight);
+      if (measured.height > availH) {
+        content.classList.add('dense-content');
+      }
+    } catch (e) {
+      if (content.scrollHeight > availH) {
+        content.classList.add('dense-content');
+      }
+    }
+  });
+}
+
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(autoFitSlides);
+} else {
+  window.addEventListener('load', autoFitSlides);
+}
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(autoFitSlides, 200);
+});
+</script>
+</body>
+</html>
