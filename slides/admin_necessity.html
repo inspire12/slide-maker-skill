@@ -662,6 +662,14 @@ body.first-slide .print-toolbar {
 <!-- PRESENTATION ENGINE JS -->
 <script>
 (function() {
+  function updateScale() {
+    const w = Math.min(window.innerWidth, window.innerHeight * 16 / 9);
+    document.documentElement.style.setProperty('--scale', (w / 1280).toString());
+  }
+  updateScale();
+  window.addEventListener('resize', updateScale);
+})();
+(function() {
   const slides = document.querySelectorAll('.slide');
   const totalSlides = slides.length;
   let currentSlide = 0;
