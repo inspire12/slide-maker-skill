@@ -20,14 +20,25 @@ Do not use this for unrelated websites or general document editing.
 
 ## Workflow
 
-1. Intake: collect the topic, audience, lecture length, desired tone, source materials, and available images.
-2. Source synthesis: inspect provided text/PDF/PPTX/images and extract a candidate story arc.
+1. Intake: collect the topic, audience, lecture length, desired tone, source materials, available images, desired page count, and image-generation expectations.
+2. Source synthesis: inspect provided text/PDF/PPTX/images and extract a candidate story arc. Normalize Markdown/Obsidian syntax before planning.
 3. Lecture outline: propose chapters and learning objectives before drafting slides.
 4. Per-slide planning: create a slide spec for each slide before writing final markdown. See `references/slides-plan.md`.
 5. Markdown draft: convert approved slide specs into the markdown contract below.
 6. HTML export: use `assets/template.html` by default, or `assets/templates/monymony.html` when the deck is using that theme.
-7. Feedback loop: collect feedback by slide number, update the `.md` first, regenerate HTML, and repeat until approved.
-8. Verify with the project’s build/test commands where available.
+7. Feedback loop: collect feedback by slide number in a feedback memo, update the `.md` first, regenerate HTML, and repeat until approved. See `references/slides-feedback.md`.
+8. Publish: after final approval, verify the generated site and use the repo's GitHub Actions Pages workflow to deploy the lecture archive. See `references/slides-deploy.md`.
+9. Verify with the project’s build/test commands where available.
+
+## Source Intake
+
+When the source is a topic, loose notes, images, or an Obsidian/Markdown document:
+
+- Preserve the user's source material. Do not edit original notes unless explicitly asked.
+- Convert frontmatter, headings, wikilinks, embeds, callouts, tables, code blocks, and image links into ordinary slide markdown.
+- Resolve local images relative to the source document. If an image cannot be resolved, leave a precise placeholder or review item in the slide spec.
+- Prefer one clear idea per slide over preserving every source paragraph.
+- Keep Korean text as editable markdown/HTML text, not baked into generated images.
 
 ## Per-Slide Spec
 
@@ -40,6 +51,7 @@ Before writing the final markdown for each slide, reason with this compact spec:
 - source material: notes, document pages, links, or image filenames used
 - visual: image path, generated/search-needed image, diagram, or none
 - layout: basic / split-image / quote / stat-card / timeline / code-heavy / keyword
+- visual budget: expected 16:9 fit risk, especially long Korean text or tall images
 - speaker note: what the lecturer should say beyond the visible text
 - review focus: what needs user confirmation
 ```
@@ -97,13 +109,13 @@ Important shortcuts:
 - `C`: clear current slide annotations
 - `S`: confirm and save a fixed annotated HTML copy
 
-Recommended presentation viewport: 16:9 at `1280 x 720` or larger. Minimum practical viewport is `1024 x 576`.
+Recommended presentation viewport: 16:9 at `1280 x 720` or larger. Minimum practical viewport is `1024 x 576`. For dense lecture decks, review at `1920 x 1080` or browser fullscreen before delivery.
 
 ## Assets
 
 - Default template: `assets/template.html`
 - Monymony theme: `assets/templates/monymony.html`
-- References: `references/slides-plan.md`, `references/slides-design.md`, `references/slides-export.md`
+- References: `references/slides-plan.md`, `references/slides-design.md`, `references/slides-export.md`, `references/slides-feedback.md`, `references/slides-deploy.md`
 
 When using assets, resolve paths relative to this skill directory.
 
@@ -112,3 +124,5 @@ When using assets, resolve paths relative to this skill directory.
 - Content edits: update markdown first, then regenerate HTML.
 - Runtime/style edits: update template assets, then refresh affected generated HTML.
 - Annotated `annotated-*.html` files are fixed lecture records, not source files.
+- Feedback memos are planning records. Apply accepted feedback to the markdown, regenerate HTML, then mark the memo item resolved.
+- Published GitHub Pages output is the lecture archive, not the editable source. Keep source markdown and generated HTML in git before deploy.

@@ -11,6 +11,9 @@ required_files=(
   "$skill_dir/references/slides-plan.md"
   "$skill_dir/references/slides-design.md"
   "$skill_dir/references/slides-export.md"
+  "$skill_dir/references/slides-feedback.md"
+  "$skill_dir/references/slides-deploy.md"
+  "scripts/install-agent-workflow.sh"
 )
 
 for file in "${required_files[@]}"; do
@@ -24,10 +27,20 @@ grep -Fq "name: markdown-to-slide" "$skill_dir/SKILL.md"
 grep -Fq "Use when creating, editing, exporting, or improving lecture slides" "$skill_dir/SKILL.md"
 grep -Fq "assets/template.html" "$skill_dir/SKILL.md"
 grep -Fq "references/slides-export.md" "$skill_dir/SKILL.md"
+grep -Fq "references/slides-feedback.md" "$skill_dir/SKILL.md"
+grep -Fq "references/slides-deploy.md" "$skill_dir/SKILL.md"
 grep -Fq "Per-Slide Spec" "$skill_dir/SKILL.md"
 grep -Fq "Feedback loop" "$skill_dir/SKILL.md"
+grep -Fq "GitHub Actions Pages workflow" "$skill_dir/SKILL.md"
+grep -Fq "Obsidian" "$skill_dir/SKILL.md"
+grep -Fq "Phase 0.5" "$skill_dir/references/slides-plan.md"
 grep -Fq "Phase 1.5" "$skill_dir/references/slides-plan.md"
 grep -Fq "review focus" "$skill_dir/references/slides-plan.md"
+grep -Fq "16:9 Slide Budget" "$skill_dir/references/slides-design.md"
+grep -Fq "<deck-name>.feedback.md" "$skill_dir/references/slides-feedback.md"
+grep -Fq ".github/workflows/deploy-pages.yml" "$skill_dir/references/slides-deploy.md"
+grep -Fq "main" "$skill_dir/references/slides-deploy.md"
+grep -Fq "claude_dest" scripts/install-agent-workflow.sh
 grep -Fq 'default_prompt: "Use $markdown-to-slide' "$skill_dir/agents/openai.yaml"
 
 cmp -s skill/template.html "$skill_dir/assets/template.html" || {

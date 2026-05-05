@@ -67,6 +67,7 @@ description: Generate self-contained HTML presentation from designed slide markd
 5. Replace `{{TITLE}}` with the frontmatter title (or filename if no frontmatter)
 5. Replace `{{SLIDES}}` with all generated slide HTML
 6. Write the complete HTML to the same directory as the input file, with `.html` extension
+7. If a feedback memo exists for this deck, keep it as a review record and do not embed it into exported HTML.
 
 ## Phase 4 — QR Code Slide (Optional)
 
@@ -84,6 +85,7 @@ If the user provides a share URL (or the output file will be hosted), add a fina
 
 - Input: `./presentation.md` → Output: `./presentation.html`
 - Tell the user: "Presentation saved to `{output_path}`. Open in a browser to present."
+- If feedback is expected, tell the user to leave comments by slide number and keep them in `<deck-name>.feedback.md`.
 - List keyboard shortcuts:
   - `←` `→` — Navigate slides
   - `↑` `↓` — Navigate chapters

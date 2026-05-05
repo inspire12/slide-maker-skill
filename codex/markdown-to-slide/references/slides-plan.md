@@ -24,6 +24,20 @@ If the input is NOT a `.md` file, convert it to markdown first:
 
 After conversion, show the generated markdown to the user and ask for confirmation before proceeding.
 
+## Phase 0.5 — Source Synthesis
+
+When the user starts from a topic, loose notes, images, or an Obsidian note, normalize the material before slide planning.
+
+1. **Intent:** Identify audience, lecture length, desired tone, desired page count, and whether generated images are expected. If the user delegates choices, use conservative defaults and record them.
+2. **Source map:** Record the source files, links, images, and document sections used for each chapter.
+3. **Obsidian syntax:** Convert common Obsidian syntax into ordinary slide markdown:
+   - YAML frontmatter: use `title`, `summary`, `aliases`, and `tags` as hints.
+   - Wikilinks: render `[[Note|Label]]` as `Label`; render `[[Note]]` as readable text unless the linked note is explicitly needed.
+   - Embeds: resolve `![[image.png]]` and ordinary `![](image.png)` relative to the source file.
+   - Callouts: convert `> [!note]`, `> [!warning]`, and similar blocks into callout text or speaker notes based on intent.
+4. **Image inventory:** List each usable image with filename, rough subject, aspect ratio if known, and candidate slide.
+5. **Story arc:** Produce a short chapter outline before writing per-slide cards.
+
 ## Phase 1 — Validation
 
 Read the markdown and check:
@@ -47,6 +61,7 @@ Before final markdown drafting, create a compact planning card for each slide:
 - source material: notes, document pages, links, or image filenames used
 - visual: image path, generated/search-needed image, diagram, or none
 - layout: basic / split-image / quote / stat-card / timeline / code-heavy / keyword
+- visual budget: expected 16:9 fit risk, especially long Korean text or tall images
 - speaker note: what the lecturer should say beyond the visible text
 - review focus: what needs user confirmation
 ```
@@ -58,6 +73,7 @@ Use this planning card to:
 3. Attach each image to a clear slide purpose.
 4. Make user feedback precise by slide number and review focus.
 5. Preserve traceability from topic/source/image material to final slide content.
+6. Catch fit risks before export: too many bullets, tall images, long Korean headings, or code blocks that need splitting.
 
 After the user approves the slide specs, convert them into final markdown. Do not include the planning cards in the final deck unless explicitly requested.
 
@@ -69,6 +85,7 @@ Analyze each slide and suggest improvements:
 2. **Key points:** Suggest summarizing dense paragraphs into bullet points.
 3. **Speaker notes:** For slides without `> Note:` blocks, suggest auto-generated speaker notes.
 4. **Summary slides:** For each chapter with 3+ content slides, suggest adding a summary slide at the end with key takeaways (3~5 bullet points).
+5. **Feedback targets:** For unclear claims, image choices, or examples, mark the exact slide number and `review focus` so later feedback can be applied without re-reading the whole deck.
 
 Present suggestions to the user. Apply only the ones they approve.
 

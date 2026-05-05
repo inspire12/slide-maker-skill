@@ -11,6 +11,18 @@ description: Apply visual design enhancements to validated slide markdown. Conte
 
 Use this reference after the markdown structure has been validated.
 
+## 16:9 Slide Budget
+
+Design for a 16:9 canvas and verify the result in a browser viewport of at least `1280 x 720`; `1920 x 1080` fullscreen is the preferred review target.
+
+Before export, estimate whether each slide fits:
+
+1. One slide should carry one job: one claim, one comparison, one code idea, one visual, or one transition.
+2. Keep normal content slides to one heading plus either a short paragraph or 3~5 bullets.
+3. Split instead of shrinking when a slide needs body copy, bullets, and an image at the same time.
+4. Treat long Korean headings and mixed Korean/English code terms as high fit-risk; use shorter lines and more breathing room.
+5. Tall images should use portrait split; code-heavy slides should use fewer lines or multiple slides.
+
 ## Phase 2.1 — Content Visibility Enhancement
 
 Automatically apply the following visibility improvements during HTML generation:
