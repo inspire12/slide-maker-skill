@@ -16,18 +16,17 @@ Full pipeline: runs plan → design → export sequentially. For step-by-step co
 ## Workflow (3-Phase Pipeline)
 
 ```
-/slides-plan    →    /slides-design    →    /slides-export
- 입력 분석             디자인 강화             HTML 생성
- 구조 검증             이미지 매칭             QR 코드
- 개선 제안             레이아웃 결정            최종 출력
+intake/source    →    slide spec    →    markdown    →    HTML export    →    feedback loop
+주제/자료/이미지       슬라이드별 설계     md 생성        HTML 생성          피드백/수정 반복
 ```
 
 ### Step 1 — Plan (`/slides-plan`)
 
-입력 파일을 분석하고 슬라이드 구조를 검증합니다.
+주제, 대상, 강의 시간, 자료, 이미지를 분석하고 강의 흐름과 슬라이드 구조를 검증합니다.
 
 - **Phase 0:** 입력 전처리 (PDF/PPTX/이미지 → 마크다운 변환)
 - **Phase 1:** 구조 검증 (챕터/슬라이드 구분, 빈 슬라이드, 코드블록, 이미지 경로)
+- **Phase 1.5:** 슬라이드별 설계 카드 작성 (목적, 핵심 메시지, 자료, 이미지, 레이아웃, 발표 노트, 확인 포인트)
 - **Phase 2:** 개선 제안 (콘텐츠 분할, 스피커 노트, 요약 슬라이드)
 
 사용자 승인 후 다음 단계로 진행.
@@ -58,6 +57,23 @@ Full pipeline: runs plan → design → export sequentially. For step-by-step co
 3. 사용자 승인 후 Export 단계 실행 → HTML 파일 생성
 
 각 단계 사이에 사용자 확인을 거치므로, 원하는 시점에 수정 가능.
+
+## Per-Slide Planning Card
+
+최종 md를 만들기 전에 각 슬라이드를 아래 카드로 먼저 설계한다.
+
+```markdown
+### Slide N: Working title
+- purpose: 청중이 이해해야 하는 한 문장
+- key message: 화면에서 가장 크게 남길 주장/키워드
+- source material: 사용한 메모, 문서 페이지, 링크, 이미지 파일
+- visual: 이미지 경로, 생성/검색 필요 이미지, 다이어그램, 없음
+- layout: basic / split-image / quote / stat-card / timeline / code-heavy / keyword
+- speaker note: 화면 밖에서 말로 설명할 내용
+- review focus: 사용자가 확인해야 할 부분
+```
+
+이 카드는 과밀 슬라이드 분리, 이미지 배치, 피드백 반복을 쉽게 하기 위한 중간 산출물이다. 사용자가 요청하지 않는 한 최종 발표 md에는 포함하지 않는다.
 
 ## Output
 

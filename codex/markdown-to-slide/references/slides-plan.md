@@ -36,6 +36,31 @@ Read the markdown and check:
 
 Report all findings to the user as a numbered list.
 
+## Phase 1.5 — Per-Slide Planning
+
+Before final markdown drafting, create a compact planning card for each slide:
+
+```markdown
+### Slide N: Working title
+- purpose: one sentence describing what the audience should understand
+- key message: the phrase or claim that should be visually dominant
+- source material: notes, document pages, links, or image filenames used
+- visual: image path, generated/search-needed image, diagram, or none
+- layout: basic / split-image / quote / stat-card / timeline / code-heavy / keyword
+- speaker note: what the lecturer should say beyond the visible text
+- review focus: what needs user confirmation
+```
+
+Use this planning card to:
+
+1. Keep every slide centered on one job.
+2. Split slides with multiple jobs before markdown generation.
+3. Attach each image to a clear slide purpose.
+4. Make user feedback precise by slide number and review focus.
+5. Preserve traceability from topic/source/image material to final slide content.
+
+After the user approves the slide specs, convert them into final markdown. Do not include the planning cards in the final deck unless explicitly requested.
+
 ## Phase 2 — Enhancement Suggestions
 
 Analyze each slide and suggest improvements:

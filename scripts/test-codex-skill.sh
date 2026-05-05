@@ -24,6 +24,10 @@ grep -Fq "name: markdown-to-slide" "$skill_dir/SKILL.md"
 grep -Fq "Use when creating, editing, exporting, or improving lecture slides" "$skill_dir/SKILL.md"
 grep -Fq "assets/template.html" "$skill_dir/SKILL.md"
 grep -Fq "references/slides-export.md" "$skill_dir/SKILL.md"
+grep -Fq "Per-Slide Spec" "$skill_dir/SKILL.md"
+grep -Fq "Feedback loop" "$skill_dir/SKILL.md"
+grep -Fq "Phase 1.5" "$skill_dir/references/slides-plan.md"
+grep -Fq "review focus" "$skill_dir/references/slides-plan.md"
 grep -Fq 'default_prompt: "Use $markdown-to-slide' "$skill_dir/agents/openai.yaml"
 
 cmp -s skill/template.html "$skill_dir/assets/template.html" || {

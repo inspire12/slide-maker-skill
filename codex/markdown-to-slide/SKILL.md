@@ -20,13 +20,31 @@ Do not use this for unrelated websites or general document editing.
 
 ## Workflow
 
-1. Inspect the input and repo layout.
-2. If input is not markdown, convert/extract the content into markdown first.
-3. Plan slide structure. See `references/slides-plan.md` when validating chapters, separators, images, dense slides, or speaker notes.
-4. Apply design improvements. See `references/slides-design.md` when choosing layout, emphasis, image matching, or dense-content treatment.
-5. Export HTML from a template asset. Use `assets/template.html` by default, or `assets/templates/monymony.html` when the deck is using that theme.
-6. If content changes, update the `.md` first and regenerate HTML. If runtime/style changes, update the template and any generated HTML that should immediately receive the change.
-7. Verify with the project’s build/test commands where available.
+1. Intake: collect the topic, audience, lecture length, desired tone, source materials, and available images.
+2. Source synthesis: inspect provided text/PDF/PPTX/images and extract a candidate story arc.
+3. Lecture outline: propose chapters and learning objectives before drafting slides.
+4. Per-slide planning: create a slide spec for each slide before writing final markdown. See `references/slides-plan.md`.
+5. Markdown draft: convert approved slide specs into the markdown contract below.
+6. HTML export: use `assets/template.html` by default, or `assets/templates/monymony.html` when the deck is using that theme.
+7. Feedback loop: collect feedback by slide number, update the `.md` first, regenerate HTML, and repeat until approved.
+8. Verify with the project’s build/test commands where available.
+
+## Per-Slide Spec
+
+Before writing the final markdown for each slide, reason with this compact spec:
+
+```markdown
+### Slide N: Working title
+- purpose: one sentence describing what the audience should understand
+- key message: the phrase or claim that should be visually dominant
+- source material: notes, document pages, links, or image filenames used
+- visual: image path, generated/search-needed image, diagram, or none
+- layout: basic / split-image / quote / stat-card / timeline / code-heavy / keyword
+- speaker note: what the lecturer should say beyond the visible text
+- review focus: what needs user confirmation
+```
+
+Use the spec to split overloaded content, choose images, and make feedback precise. Do not include the spec in the final deck unless the user asks for it.
 
 ## Markdown Contract
 
