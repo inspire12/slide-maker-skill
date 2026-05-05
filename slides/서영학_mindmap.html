@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서영학 — Mind Map</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #f8f9fb;
+  color: #1d1d1f;
+}
+svg { display: block; width: 100vw; height: 100vh; cursor: grab; }
+svg:active { cursor: grabbing; }
+svg text { user-select: none; }
+
+.controls {
+  position: fixed; bottom: 20px; right: 20px; display: flex; gap: 8px; z-index: 10;
+}
+.controls button {
+  width: 36px; height: 36px; border: 1px solid #d1d5db; border-radius: 8px;
+  background: #fff; font-size: 18px; cursor: pointer; display: flex;
+  align-items: center; justify-content: center; color: #555;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.controls button:hover { background: #f0f0f2; }
+
+.legend {
+  position: fixed; top: 20px; left: 20px; background: rgba(255,255,255,0.95);
+  border-radius: 12px; padding: 16px 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  font-size: 12px; line-height: 2; z-index: 10; backdrop-filter: blur(8px);
+}
+.legend-item { display: flex; align-items: center; gap: 8px; }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="legend">
+  <div style="font-weight:700; margin-bottom:4px; font-size:13px;">서영학 Mind Map</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#0071e3;"></span>Career</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#34c759;"></span>Skills</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#ff9500;"></span>Engineering</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#af52de;"></span>Community</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#ff3b30;"></span>Education</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#5ac8fa;"></span>Domain</div>
+  <div style="margin-top:8px; padding-top:8px; border-top:1px solid #e5e5e7; color:#86868b; font-size:11px; line-height:1.6;">
+    Click node to collapse/expand<br>
+    Drag to pan · Scroll to zoom
+  </div>
+</div>
+
+<div class="controls">
+  <button id="zoomIn" title="Zoom in">+</button>
+  <button id="zoomOut" title="Zoom out">−</button>
+  <button id="resetView" title="Reset">⟳</button>
+</div>
+
+<svg id="mindmap"></svg>
+
+<script>
+const data = {
+  label: "서영학",
+  subtitle: "백엔드 개발자",
+  children: [
+    {
+      label: "Career", color: "#0071e3",
+      children: [
+        { label: "monymony (26.01~)", color: "#0071e3",
+          children: [
+            { label: "썸원 Backend" },
+            { label: "어드민 전면 재개편" },
+            { label: "RAG 시멘틱 검색" },
+            { label: "유저 세그먼트" },
+            { label: "DAU 80만 글로벌" }
+          ]
+        },
+        { label: "ncsoft 금융AI (23)", color: "#0071e3",
+          children: [
+            { label: "실시간 체결 알림" },
+            { label: "WebSocket(Stomp)" },
+            { label: "Faip 추천 플랫폼" },
+            { label: "한투 Mocking 서버" }
+          ]
+        },
+        { label: "ncsoft 계정보안 (24)", color: "#0071e3",
+          children: [
+            { label: "NC Shield ETL" },
+            { label: "200만 건/30분" },
+            { label: "2차 인증 UX" }
+          ]
+        },
+        { label: "ncsoft PAIGE (18~22)", color: "#0071e3",
+          children: [
+            { label: "KBO AI 앱 4년" },
+            { label: "추천피드 3s→100ms" },
+            { label: "경기 중계 시스템" },
+            { label: "Vision MLOps" },
+            { label: "Push 플랫폼" },
+            { label: "팬 커뮤니티" }
+          ]
+        }
+      ]
+    },
+    {
+      label: "Skills", color: "#34c759",
+      children: [
+        { label: "Backend", color: "#34c759",
+          children: [
+            { label: "Spring Boot" },
+            { label: "Spring WebFlux" },
+            { label: "Kotlin / Java" },
+            { label: "NestJS / GraphQL" },
+            { label: "FastAPI" },
+            { label: "WebSocket" }
+          ]
+        },
+        { label: "Data", color: "#34c759",
+          children: [
+            { label: "MySQL / PostgreSQL" },
+            { label: "Redis / Hazelcast" },
+            { label: "Elasticsearch" },
+            { label: "InfluxDB" }
+          ]
+        },
+        { label: "Messaging", color: "#34c759",
+          children: [
+            { label: "Kafka" },
+            { label: "RabbitMQ" }
+          ]
+        },
+        { label: "DevOps", color: "#34c759",
+          children: [
+            { label: "Docker / K8s" },
+            { label: "Jenkins / GH Actions" },
+            { label: "Airflow" },
+            { label: "MSA 운영" }
+          ]
+        }
+      ]
+    },
+    {
+      label: "Engineering\n원칙", color: "#ff9500",
+      children: [
+        { label: "관측 가능성 먼저", color: "#ff9500",
+          children: [
+            { label: "\"빠르게\" 전에\n\"보이게\"부터" }
+          ]
+        },
+        { label: "실패를 허용하는 구조", color: "#ff9500",
+          children: [
+            { label: "단계별 격리\n+ 재처리" }
+          ]
+        },
+        { label: "실시간 정말 필요한가?", color: "#ff9500",
+          children: [
+            { label: "요구사항 재정의\n우선" }
+          ]
+        },
+        { label: "변경 가능성이 전제", color: "#ff9500",
+          children: [
+            { label: "감지 · 기록\n· 재현" }
+          ]
+        },
+        { label: "제약은 설계 대상", color: "#ff9500",
+          children: [
+            { label: "직접 만드는 게\n빠른 경우 의심" }
+          ]
+        }
+      ]
+    },
+    {
+      label: "Community\n& 강의", color: "#af52de",
+      children: [
+        { label: "부트캠프 강사", color: "#af52de",
+          children: [
+            { label: "Upstage 새싹" },
+            { label: "멋사 4기" },
+            { label: "충남대 실전코딩" }
+          ]
+        },
+        { label: "글또 9·10기", color: "#af52de" },
+        { label: "SIPE 3기", color: "#af52de" },
+        { label: "블로그\ninspire12.tistory.com", color: "#af52de" }
+      ]
+    },
+    {
+      label: "Education", color: "#ff3b30",
+      children: [
+        { label: "충남대 컴공", color: "#ff3b30",
+          children: [
+            { label: "ANT 동아리 회장" },
+            { label: "ACM-ICPC 본선" }
+          ]
+        },
+        { label: "AI 연구", color: "#ff3b30",
+          children: [
+            { label: "Elice AI 과정" },
+            { label: "KIPS 학술발표" },
+            { label: "퍼듀대 파견" }
+          ]
+        }
+      ]
+    },
+    {
+      label: "Domain", color: "#5ac8fa",
+      children: [
+        { label: "AI 플랫폼\n(야구, 비전 ML)", color: "#5ac8fa" },
+        { label: "금융 · 실시간 체결\n· 프랍 트레이딩", color: "#5ac8fa" },
+        { label: "글로벌 계정\n· 보안 · ETL", color: "#5ac8fa" },
+        { label: "글로벌\n콘텐츠 서비스", color: "#5ac8fa" }
+      ]
+    }
+  ]
+};
+
+const svg = document.getElementById('mindmap');
+const NS = 'http://www.w3.org/2000/svg';
+let viewBox = { x: -1100, y: -900, w: 2200, h: 1800 };
+let scale = 1;
+
+function setViewBox() {
+  svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.w} ${viewBox.h}`);
+}
+
+// Pan
+let isPanning = false, panStart = {};
+svg.addEventListener('mousedown', e => {
+  isPanning = true;
+  panStart = { x: e.clientX, y: e.clientY, vx: viewBox.x, vy: viewBox.y };
+});
+window.addEventListener('mousemove', e => {
+  if (!isPanning) return;
+  const dx = (e.clientX - panStart.x) * (viewBox.w / svg.clientWidth);
+  const dy = (e.clientY - panStart.y) * (viewBox.h / svg.clientHeight);
+  viewBox.x = panStart.vx - dx;
+  viewBox.y = panStart.vy - dy;
+  setViewBox();
+});
+window.addEventListener('mouseup', () => isPanning = false);
+
+// Zoom
+function zoom(factor) {
+  const cx = viewBox.x + viewBox.w / 2;
+  const cy = viewBox.y + viewBox.h / 2;
+  viewBox.w /= factor; viewBox.h /= factor;
+  viewBox.x = cx - viewBox.w / 2;
+  viewBox.y = cy - viewBox.h / 2;
+  scale *= factor;
+  setViewBox();
+}
+svg.addEventListener('wheel', e => { e.preventDefault(); zoom(e.deltaY < 0 ? 1.08 : 0.92); }, { passive: false });
+document.getElementById('zoomIn').onclick = () => zoom(1.2);
+document.getElementById('zoomOut').onclick = () => zoom(0.83);
+document.getElementById('resetView').onclick = () => {
+  viewBox = { x: -1100, y: -900, w: 2200, h: 1800 }; scale = 1; setViewBox();
+};
+
+function el(tag, attrs = {}) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  return e;
+}
+
+function multilineText(parent, x, y, text, attrs = {}) {
+  const lines = text.split('\n');
+  const lineH = parseFloat(attrs['font-size'] || 13) * 1.3;
+  const startY = y - (lines.length - 1) * lineH / 2;
+  lines.forEach((line, i) => {
+    const t = el('text', { x, y: startY + i * lineH, 'text-anchor': 'middle', 'dominant-baseline': 'central', ...attrs });
+    t.textContent = line;
+    parent.appendChild(t);
+  });
+}
+
+// Collapse state: store _collapsed per node. All start expanded.
+// Assign unique IDs for state tracking.
+let nodeId = 0;
+function assignIds(node) {
+  node._id = nodeId++;
+  node._collapsed = false;
+  if (node.children) {
+    node._children = node.children; // keep reference
+    node.children.forEach(assignIds);
+  }
+}
+assignIds(data);
+
+// Count visible leaves for weighted angle allocation
+function leafCount(node) {
+  if (!node.children || node.children.length === 0 || node._collapsed) return 1;
+  return node.children.reduce((s, c) => s + leafCount(c), 0);
+}
+
+// Node size (half-diagonal) by depth — used for collision check
+function nodeRadius(depth) {
+  if (depth === 0) return 55;
+  if (depth === 1) return 65;
+  if (depth === 2) return 60;
+  return 55;
+}
+
+// Radii per depth (distance from parent)
+function edgeRadius(depth) {
+  if (depth === 0) return 320;
+  if (depth === 1) return 240;
+  if (depth === 2) return 180;
+  return 150;
+}
+
+// Calculate min angular gap needed at a given orbit radius so nodes don't overlap
+function minGapAtRadius(r, depth) {
+  const size = nodeRadius(depth) * 2 + 12; // diameter + padding
+  return Math.atan2(size, r); // angular space needed
+}
+
+// Layout: weighted radial tree with size-aware spacing
+function layoutRadial(node, cx, cy, angleStart, angleEnd, depth, parentRadius) {
+  node.x = cx; node.y = cy; node.depth = depth;
+  const kids = (!node._collapsed && node.children) ? node.children : [];
+  if (kids.length === 0) return;
+
+  const radius = edgeRadius(depth);
+  const childDepth = depth + 1;
+
+  // Weighted distribution
+  const weights = kids.map(c => leafCount(c));
+  const totalW = weights.reduce((a, b) => a + b, 0);
+
+  // Calculate minimum total angle needed based on actual node sizes
+  const minGap = minGapAtRadius(radius, childDepth);
+  const neededAngle = totalW * minGap;
+  let availAngle = angleEnd - angleStart;
+
+  // Expand if too tight
+  if (neededAngle > availAngle) {
+    const mid = (angleStart + angleEnd) / 2;
+    angleStart = mid - neededAngle / 2;
+    angleEnd = mid + neededAngle / 2;
+    availAngle = neededAngle;
+  }
+
+  let cursor = angleStart;
+  kids.forEach((child, i) => {
+    const share = (weights[i] / totalW) * availAngle;
+    const angle = cursor + share / 2;
+    const x = cx + Math.cos(angle) * radius;
+    const y = cy + Math.sin(angle) * radius;
+
+    child._angle = angle; // store for collision pass
+
+    layoutRadial(child, x, y, cursor, cursor + share, childDepth, radius);
+    cursor += share;
+  });
+}
+
+// Post-layout collision resolution: push overlapping siblings apart
+function resolveCollisions(node) {
+  const kids = (!node._collapsed && node.children) ? node.children : [];
+  if (kids.length < 2) { kids.forEach(resolveCollisions); return; }
+
+  // Multiple passes to resolve overlaps
+  for (let pass = 0; pass < 5; pass++) {
+    let moved = false;
+    for (let i = 0; i < kids.length; i++) {
+      for (let j = i + 1; j < kids.length; j++) {
+        const a = kids[i], b = kids[j];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const minDist = nodeRadius(a.depth) + nodeRadius(b.depth) + 10;
+        if (dist < minDist && dist > 0) {
+          const overlap = (minDist - dist) / 2;
+          const nx = dx / dist, ny = dy / dist;
+          a.x -= nx * overlap; a.y -= ny * overlap;
+          b.x += nx * overlap; b.y += ny * overlap;
+          // Recursively shift subtrees
+          shiftSubtree(a, -nx * overlap, -ny * overlap);
+          shiftSubtree(b, nx * overlap, ny * overlap);
+          moved = true;
+        }
+      }
+    }
+    if (!moved) break;
+  }
+
+  kids.forEach(resolveCollisions);
+}
+
+function shiftSubtree(node, dx, dy) {
+  const kids = (!node._collapsed && node.children) ? node.children : [];
+  kids.forEach(child => {
+    child.x += dx; child.y += dy;
+    shiftSubtree(child, dx, dy);
+  });
+}
+
+// Draw everything (called on each toggle)
+function render() {
+  while (svg.firstChild) svg.removeChild(svg.firstChild);
+  layoutRadial(data, 0, 0, -Math.PI, Math.PI, 0, 0);
+  resolveCollisions(data);
+  drawNode(svg, data);
+  setViewBox();
+}
+
+function drawEdge(parent, x1, y1, x2, y2, color, depth) {
+  const opacity = depth === 1 ? 0.5 : depth === 2 ? 0.3 : 0.2;
+  const width = depth === 1 ? 2.5 : depth === 2 ? 1.5 : 1;
+  // Curved edge
+  const dx = x2 - x1, dy = y2 - y1;
+  const cx1 = x1 + dx * 0.4, cy1 = y1;
+  const cx2 = x1 + dx * 0.6, cy2 = y2;
+  const path = el('path', {
+    d: `M${x1},${y1} C${cx1},${cy1} ${cx2},${cy2} ${x2},${y2}`,
+    fill: 'none', stroke: color || '#ccc', 'stroke-width': width,
+    opacity, 'stroke-linecap': 'round'
+  });
+  parent.appendChild(path);
+}
+
+function drawNode(parent, node) {
+  const kids = (!node._collapsed && node.children) ? node.children : [];
+
+  // Draw edges first (behind nodes)
+  kids.forEach(child => {
+    drawEdge(parent, node.x, node.y, child.x, child.y, child.color || node.color, child.depth);
+  });
+
+  const g = el('g', { class: 'node', transform: `translate(${node.x},${node.y})`, style: 'cursor:pointer' });
+
+  const hasChildren = node.children && node.children.length > 0;
+
+  if (node.depth === 0) {
+    g.appendChild(el('circle', { r: 52, fill: '#1d1d1f', opacity: 0.95 }));
+    g.appendChild(el('circle', { r: 52, fill: 'none', stroke: '#0071e3', 'stroke-width': 3 }));
+    multilineText(g, 0, -8, node.label, { fill: '#fff', 'font-size': 22, 'font-weight': 800 });
+    multilineText(g, 0, 18, node.subtitle, { fill: '#a1a1a6', 'font-size': 10, 'font-weight': 500 });
+  } else if (node.depth === 1) {
+    const color = node.color || '#555';
+    g.appendChild(el('rect', {
+      x: -60, y: -22, width: 120, height: 44, rx: 22,
+      fill: color, opacity: node._collapsed ? 0.25 : 0.12
+    }));
+    g.appendChild(el('rect', {
+      x: -60, y: -22, width: 120, height: 44, rx: 22,
+      fill: 'none', stroke: color, 'stroke-width': 1.5, opacity: 0.6
+    }));
+    multilineText(g, 0, 0, node.label, { fill: color, 'font-size': 12, 'font-weight': 700 });
+    // Collapse indicator
+    if (hasChildren) {
+      const badge = node._collapsed ? `+${leafCount({ ...node, _collapsed: false, children: node.children })}` : '−';
+      const bt = el('text', { x: 48, y: -12, 'text-anchor': 'middle', 'dominant-baseline': 'central',
+        fill: color, 'font-size': 9, 'font-weight': 700, opacity: 0.7 });
+      bt.textContent = badge;
+      g.appendChild(bt);
+    }
+  } else if (node.depth === 2) {
+    const color = node.color || '#555';
+    const lines = node.label.split('\n');
+    const h = Math.max(28, lines.length * 16 + 8);
+    g.appendChild(el('rect', {
+      x: -56, y: -h/2, width: 112, height: h, rx: 14,
+      fill: node._collapsed ? '#f0f0f2' : '#fff', stroke: color, 'stroke-width': 1, opacity: 0.85
+    }));
+    multilineText(g, 0, 0, node.label, { fill: '#1d1d1f', 'font-size': 10, 'font-weight': 600 });
+    if (hasChildren && node._collapsed) {
+      const bt = el('text', { x: 42, y: -h/2 + 6, 'text-anchor': 'middle', 'dominant-baseline': 'central',
+        fill: color, 'font-size': 8, 'font-weight': 700, opacity: 0.6 });
+      bt.textContent = `+${node.children.length}`;
+      g.appendChild(bt);
+    }
+  } else {
+    const lines = node.label.split('\n');
+    const h = Math.max(22, lines.length * 14 + 6);
+    g.appendChild(el('rect', {
+      x: -52, y: -h/2, width: 104, height: h, rx: 11,
+      fill: '#f5f5f7', stroke: '#d1d5db', 'stroke-width': 0.5
+    }));
+    multilineText(g, 0, 0, node.label, { fill: '#555', 'font-size': 8.5, 'font-weight': 500 });
+  }
+
+  // Click to toggle collapse
+  if (hasChildren && node.depth > 0) {
+    g.addEventListener('click', (e) => {
+      e.stopPropagation();
+      node._collapsed = !node._collapsed;
+      render();
+    });
+  }
+
+  parent.appendChild(g);
+
+  // Recurse visible children
+  kids.forEach(child => drawNode(parent, child));
+}
+
+render();
+</script>
+</body>
+</html>
