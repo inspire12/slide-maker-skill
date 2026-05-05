@@ -68,13 +68,14 @@ Full pipeline: runs plan → design → export sequentially. For step-by-step co
   - `←` `→` — Navigate slides
   - `↑` `↓` — Navigate chapters
   - `F` — Fullscreen
-  - `N` — Speaker notes
+  - `N` — Speaker notes popup
   - `?` — Annotation tutorial and shortcuts
   - `O` — Table of contents
-  - `M` — Presenter prompt / private checklist memo
+  - `M` — Presenter prompt / private checklist memo popup
   - `A` — Toggle annotation mode
   - `T` — Add text annotation
   - `R` — Draw rectangle annotation
+  - `V` — Select and move an annotation
   - `E` — Eraser while annotation mode is active
   - `C` — Clear current slide annotations while annotation mode is active
   - `S` — Confirm and save fixed annotated HTML copy

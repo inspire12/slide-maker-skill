@@ -1,0 +1,8 @@
+interface:
+  display_name: "Markdown to Slide"
+  short_description: "Create HTML lecture decks from markdown"
+  brand_color: "#0071E3"
+  default_prompt: "Use $markdown-to-slide to turn my markdown notes into a polished HTML lecture deck."
+
+policy:
+  allow_implicit_invocation: true

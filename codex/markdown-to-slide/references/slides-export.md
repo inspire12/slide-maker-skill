@@ -7,13 +7,13 @@ description: Generate self-contained HTML presentation from designed slide markd
 
 디자인이 완료된 마크다운을 최종 HTML 프레젠테이션으로 변환합니다.
 
-## Trigger
+## Use
 
-`/slides-export <file-path>` — design 단계를 거친 `.md` 파일 대상.
+Use this reference after the markdown content and design choices are ready.
 
 ## Phase 3 — HTML Generation
 
-1. Read the template file at `~/.claude/skills/markdown-to-slide/template.html`
+1. Read the template file at `assets/template.html` relative to the skill directory. Use `assets/templates/monymony.html` if the deck is using the monymony theme.
 2. Parse the markdown:
    - Extract YAML frontmatter (`title`, `author`)
    - Split by `#` headings into chapters
@@ -29,7 +29,7 @@ description: Generate self-contained HTML presentation from designed slide markd
      - Convert markdown content to HTML
      - First `##` heading becomes the slide header
      - Remaining content goes in `slide-content`
-     - **If the slide has an image:** check the image aspect ratio using Read tool:
+     - **If the slide has an image:** check the image aspect ratio using available image/file inspection tools:
        - **Landscape/square image (width ≥ height):** use default split layout (`slide-split` > `split-text` left + `split-image` right)
        - **Portrait image (height > width):** use portrait split layout. Apply `portrait-split` class to `.slide`. Structure:
          ```html
@@ -87,21 +87,19 @@ If the user provides a share URL (or the output file will be hosted), add a fina
 - List keyboard shortcuts:
   - `←` `→` — Navigate slides
   - `↑` `↓` — Navigate chapters
+  - `Home` / `End` — First / last slide
   - `F` — Fullscreen
-  - `N` — Speaker notes
-    - `Home` / `End` — First / last slide
-    - Each content slide shows a chapter label (top-left) and chapter progress (e.g., "2/5")
-    - `N` — Speaker notes popup
-    - `?` — Annotation tutorial and shortcuts
-    - `O` — Table of contents
-    - `M` — Presenter prompt / private checklist memo popup
-    - `A` — Toggle annotation mode
-    - `T` — Add text annotation
-    - `R` — Draw rectangle annotation
-    - `V` — Select and move an annotation
-    - `E` — Eraser while annotation mode is active
-    - `C` — Clear current slide annotations while annotation mode is active
-    - `S` — Confirm and save fixed annotated HTML copy
+  - `N` — Speaker notes popup
+  - `?` — Annotation tutorial and shortcuts
+  - `O` — Table of contents
+  - `M` — Presenter prompt / private checklist memo popup
+  - `A` — Toggle annotation mode
+  - `T` — Add text annotation
+  - `R` — Draw rectangle annotation
+  - `V` — Select and move an annotation
+  - `E` — Eraser while annotation mode is active
+  - `C` — Clear current slide annotations while annotation mode is active
+  - `S` — Confirm and save fixed annotated HTML copy
 
 ## Runtime Annotation Mode
 
@@ -122,10 +120,10 @@ Recommended presentation viewport: 16:9 at `1280 x 720` or larger. Minimum pract
 
 ## Template Location
 
-The HTML template is at: `~/.claude/skills/markdown-to-slide/template.html`
+The default HTML template is at `assets/template.html` relative to the skill directory.
 
 Read this template file and use it as the base for HTML generation. Replace the `{{TITLE}}` and `{{SLIDES}}` placeholders with generated content. The CSS and JS are already included in the template.
 
 ## Source of truth
 
-`.md` 파일이 원본이다. 콘텐츠(텍스트 / 구조 / 이미지)는 md에서 수정한 뒤 이 단계를 다시 실행해 HTML을 재생성한다. HTML을 직접 편집해 콘텐츠를 바꾸면 md가 drift되어 다음 빌드 때 변경이 사라진다. (자세한 정책은 `skill.md` 의 "Source-of-truth policy" 참조)
+`.md` 파일이 원본이다. 콘텐츠(텍스트 / 구조 / 이미지)는 md에서 수정한 뒤 이 단계를 다시 실행해 HTML을 재생성한다. HTML을 직접 편집해 콘텐츠를 바꾸면 md가 drift되어 다음 빌드 때 변경이 사라진다. 자세한 정책은 `SKILL.md` 의 "Source Of Truth"를 참조한다.
