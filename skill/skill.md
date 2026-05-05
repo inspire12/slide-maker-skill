@@ -63,12 +63,21 @@ Full pipeline: runs plan → design → export sequentially. For step-by-step co
 
 - Input: `./presentation.md` → Output: `./presentation.html`
 - Tell the user: "Presentation saved to `{output_path}`. Open in a browser to present."
+- Recommended presentation viewport: 16:9 at `1280 x 720` or larger; minimum practical viewport is `1024 x 576`.
 - Keyboard shortcuts:
   - `←` `→` — Navigate slides
   - `↑` `↓` — Navigate chapters
   - `F` — Fullscreen
   - `N` — Speaker notes
-  - `T` — Table of contents
+  - `?` — Annotation tutorial and shortcuts
+  - `O` — Table of contents
+  - `M` — Presenter prompt / private checklist memo
+  - `A` — Toggle annotation mode
+  - `T` — Add text annotation
+  - `R` — Draw rectangle annotation
+  - `E` — Eraser while annotation mode is active
+  - `C` — Clear current slide annotations while annotation mode is active
+  - `S` — Confirm and save fixed annotated HTML copy
   - `Home` / `End` — First / last slide
 
 ## Source-of-truth policy — md ↔ HTML
@@ -76,6 +85,7 @@ Full pipeline: runs plan → design → export sequentially. For step-by-step co
 - **원본은 항상 `.md` 파일**이다. HTML은 md로부터 생성된 결과물.
 - 슬라이드 내용(텍스트 · 이미지 · 순서 · 챕터 구조)을 수정할 때는 **먼저 md를 수정**하고 빌드 스크립트로 HTML을 재생성한다.
 - 디자인/스타일(CSS) 수정은 HTML(또는 `template.html`)에서만 하고 md는 손대지 않는다.
+- 강의 중 손글씨 주석은 HTML 런타임 상태이며, `S`로 저장한 `annotated-*.html`은 md 원본과 분리된 고정 기록본이다.
 - **금지**: HTML에서 텍스트 · bullets · 이미지 경로만 고치고 md를 방치하는 것. 다음 재빌드 시 변경이 사라진다.
 - **예외**: 긴급 hotfix로 HTML을 먼저 고친 경우, 같은 커밋에 md도 동일하게 반영해 drift가 남지 않도록 한다.
 

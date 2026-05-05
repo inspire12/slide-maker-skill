@@ -89,9 +89,33 @@ If the user provides a share URL (or the output file will be hosted), add a fina
   - `↑` `↓` — Navigate chapters
   - `F` — Fullscreen
   - `N` — Speaker notes
-  - `T` — Table of contents
-  - `Home` / `End` — First / last slide
-  - Each content slide shows a chapter label (top-left) and chapter progress (e.g., "2/5")
+    - `Home` / `End` — First / last slide
+    - Each content slide shows a chapter label (top-left) and chapter progress (e.g., "2/5")
+    - `?` — Annotation tutorial and shortcuts
+    - `O` — Table of contents
+    - `M` — Presenter prompt / private checklist memo
+    - `A` — Toggle annotation mode
+    - `T` — Add text annotation
+    - `R` — Draw rectangle annotation
+    - `E` — Eraser while annotation mode is active
+    - `C` — Clear current slide annotations while annotation mode is active
+    - `S` — Confirm and save fixed annotated HTML copy
+
+## Runtime Annotation Mode
+
+Generated HTML includes a transparent canvas layer for lecture-time handwriting.
+
+Recommended presentation viewport: 16:9 at `1280 x 720` or larger. Minimum practical viewport is `1024 x 576`; below that, dense slides and annotation controls may feel cramped. Check the deck in fullscreen before presenting.
+
+1. Press `?` to show the annotation tutorial and shortcut list.
+2. Press `A` to enable annotation mode. Pointer/touch input draws on the current slide instead of navigating.
+3. Press `M` to open a private presenter prompt / checklist memo. It is saved in browser `localStorage` and excluded from fixed annotated copies.
+4. Use the toolbar to choose pen, text, rectangle, eraser, color, and width.
+5. Press `T` to place a text box, then click the slide and enter text.
+6. Press `R` to draw a rectangle by dragging over the slide.
+7. Annotations are stored per slide in browser `localStorage` so refreshes do not immediately lose work.
+8. Press `S` or the toolbar Save button, confirm the prompt, then render every slide into a fixed `annotated-*.html` copy. The saved copy contains slide images with annotations baked in and no editing tools.
+9. The original `.md` remains the source of truth for lecture content; annotated HTML is a separate lecture record.
 
 ## Template Location
 
