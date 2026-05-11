@@ -99,24 +99,31 @@ function splitCards(md) {
   const fmMatch = md.match(/^---\n[\s\S]*?\n---\n?/);
   const head = fmMatch ? fmMatch[0] : '';
   const body = fmMatch ? md.slice(fmMatch[0].length) : md;
-  const parts = body.split(/^---\s*$/m);
+  const parts = body.split(/^---\s*$/m).map(p => p.trim());
   return { head, parts };
+}
+
+function joinCards(head, parts) {
+  const sep = '\n\n---\n\n';
+  const trimmedHead = head.replace(/\n+$/, '');
+  const headSep = trimmedHead ? trimmedHead + '\n\n' : '';
+  return headSep + parts.join(sep) + '\n';
 }
 
 function reorderCards(from, to) {
   const { head, parts } = splitCards($editor.value);
   const moved = parts.splice(from, 1)[0];
   parts.splice(to, 0, moved);
-  $editor.value = head + parts.join('\n---\n').replace(/^\n/, '');
+  $editor.value = joinCards(head, parts);
   rerender(); save();
 }
 
 function changeCardType(i, newType) {
   const { head, parts } = splitCards($editor.value);
   const cleaned = parts[i].replace(/<!--\s*card:\s*\w+\s*-->\n?/g, '').trim();
-  const needsMarker = newType !== 'cover' && newType !== 'body' && newType !== 'cta';
-  parts[i] = (needsMarker ? `<!-- card: ${newType} -->\n${cleaned}` : cleaned) + '\n';
-  $editor.value = head + parts.join('\n---\n').replace(/^\n/, '');
+  const needsMarker = newType === 'stat' || newType === 'quote';
+  parts[i] = needsMarker ? `<!-- card: ${newType} -->\n${cleaned}` : cleaned;
+  $editor.value = joinCards(head, parts);
   rerender(); save();
 }
 
