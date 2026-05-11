@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="mono">
+<head>
+<meta charset="utf-8">
+<title>카드뉴스 샘플</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { font-family: 'Pretendard', sans-serif; background: #f3f4f6; }
+body { padding: 40px; display: flex; flex-direction: column; gap: 40px; align-items: center; }
+
+.card {
+  width: 1080px; height: 1350px; padding: 80px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  position: relative; overflow: hidden;
+  font-weight: 800; line-height: 1.3; letter-spacing: -0.02em;
+}
+.card__brand { position: absolute; top: 60px; right: 80px; font-size: 32px; font-weight: 600; opacity: 0.75; }
+.card__pagination { position: absolute; bottom: 60px; right: 80px; font-size: 28px; font-weight: 700; opacity: 0.5; }
+.card__body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 40px; }
+
+.card h1 { font-size: 120px; font-weight: 900; }
+.card h2 { font-size: 84px; font-weight: 900; }
+.card p { font-size: 48px; font-weight: 600; line-height: 1.5; }
+.card ul { font-size: 52px; padding-left: 1.2em; }
+.card li { margin-bottom: 24px; }
+.card strong { font-weight: 900; }
+
+/* card types */
+.card--cover { background: #111; color: #fff; }
+.card--cover h1 { font-size: 140px; }
+
+.card--body { background: #fff; color: #111; }
+
+.card--stat { background: var(--accent, #ff5a36); color: #fff; align-items: center; text-align: center; }
+.card--stat .card__body { align-items: center; justify-content: center; }
+.card--stat strong { font-size: 280px; line-height: 1; display: block; margin-bottom: 32px; }
+
+.card--quote { background: #fff; color: #111; }
+.card--quote .card__body::before { content: '"'; font-size: 320px; line-height: 0.8; color: var(--accent, #ff5a36); }
+.card--quote p { font-size: 60px; font-style: italic; font-weight: 700; }
+
+.card--cta { background: var(--accent, #ff5a36); color: #fff; text-align: center; }
+.card--cta .card__body { align-items: center; justify-content: center; text-align: center; }
+.card--cta h2 { font-size: 100px; }
+
+/* themes */
+html[data-theme="mono"]  { --accent: #ff5a36; }
+html[data-theme="warm"]  { --accent: #f59e0b; }
+html[data-theme="cool"]  { --accent: #2563eb; }
+html[data-theme="bold"]  { --accent: #dc2626; }
+</style>
+</head>
+<body>
+<section class="card card--cover" data-index="0">
+<div class="card__brand">@monymony</div>
+<div class="card__body"><h1>강의 듣고 후회 안 함</h1>
+</div>
+<div class="card__pagination">1 / 5</div>
+</section>
+<section class="card card--body" data-index="1">
+<div class="card__brand">@monymony</div>
+<div class="card__body"><h2>이 강의에서 배우는 것</h2>
+<ul>
+<li>카드뉴스로 강의 핵심 정리하기</li>
+<li>마크다운만으로 자동 제작</li>
+<li>인스타용 PNG 자동 생성</li>
+</ul>
+</div>
+<div class="card__pagination">2 / 5</div>
+</section>
+<section class="card card--stat" data-index="2">
+<div class="card__brand">@monymony</div>
+<div class="card__body"><p><strong>1,200%</strong></p>
+<p>수강생 만족도 응답률</p>
+</div>
+<div class="card__pagination">3 / 5</div>
+</section>
+<section class="card card--quote" data-index="3">
+<div class="card__brand">@monymony</div>
+<div class="card__body"><p>&quot;한 번 듣고 끝나지 않는, 두고두고 보는 강의였습니다.&quot;</p>
+<p>— 수강생 김OO</p>
+</div>
+<div class="card__pagination">4 / 5</div>
+</section>
+<section class="card card--cta" data-index="4">
+<div class="card__brand">@monymony</div>
+<div class="card__body"><h2>지금 바로 시작하기</h2>
+<p>저장하고 친구에게 공유하세요</p>
+</div>
+<div class="card__pagination">5 / 5</div>
+</section>
+</body>
+</html>
