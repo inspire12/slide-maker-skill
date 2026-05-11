@@ -121,7 +121,12 @@ function reorderCards(from, to) {
 function changeCardType(i, newType) {
   const { head, parts } = splitCards($editor.value);
   const cleaned = parts[i].replace(/<!--\s*card:\s*\w+\s*-->\n?/g, '').trim();
-  const needsMarker = newType === 'stat' || newType === 'quote';
+  const total = parts.length;
+  const naturalType =
+    i === 0 ? 'cover' :
+    i === total - 1 && total > 1 ? 'cta' :
+    'body';
+  const needsMarker = newType !== naturalType;
   parts[i] = needsMarker ? `<!-- card: ${newType} -->\n${cleaned}` : cleaned;
   $editor.value = joinCards(head, parts);
   rerender(); save();

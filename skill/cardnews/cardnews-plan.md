@@ -25,8 +25,9 @@ description: 카드뉴스 마크다운 입력을 검증하고 구조를 분석. 
 
 ```bash
 node -e "
-import('./skill/cardnews/parser.mjs').then(({ parseMarkdown }) => {
-  const fs = require('node:fs');
+(async () => {
+  const { parseMarkdown } = await import('./skill/cardnews/parser.mjs');
+  const fs = await import('node:fs');
   const md = fs.readFileSync(process.argv[1], 'utf8');
   const parsed = parseMarkdown(md);
   console.log(JSON.stringify({
@@ -34,7 +35,7 @@ import('./skill/cardnews/parser.mjs').then(({ parseMarkdown }) => {
     types: parsed.cards.map(c => c.type),
     frontmatter: parsed.frontmatter,
   }, null, 2));
-});
+})();
 " <md-path>
 ```
 
