@@ -90,10 +90,21 @@ function serveFile(res, filePath, mime) {
   fs.createReadStream(filePath).pipe(res);
 }
 
+const MAX_BODY = 10 * 1024 * 1024;
+
 function readBody(req) {
   return new Promise((resolve, reject) => {
     let data = '';
-    req.on('data', c => { data += c; });
+    let size = 0;
+    req.on('data', c => {
+      size += c.length;
+      if (size > MAX_BODY) {
+        req.destroy();
+        reject(new Error(`body too large (> ${MAX_BODY} bytes)`));
+        return;
+      }
+      data += c;
+    });
     req.on('end', () => resolve(data));
     req.on('error', reject);
   });
