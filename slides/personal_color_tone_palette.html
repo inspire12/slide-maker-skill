@@ -61,6 +61,63 @@ body {
 }
 .nav-zone.prev { left: 0; }
 .nav-zone.next { right: 0; }
+.fullscreen-button {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 40;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(25, 25, 25, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #191919;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+body.is-color-slide .fullscreen-button {
+  opacity: 0;
+  pointer-events: none;
+}
+.section-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  z-index: 45;
+  display: flex;
+  gap: 6px;
+  max-width: min(92vw, 980px);
+  padding: 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.66);
+  backdrop-filter: blur(10px);
+  opacity: 0.24;
+  transition: opacity 0.16s ease;
+}
+.section-nav:hover,
+.section-nav:focus-within {
+  opacity: 0.92;
+}
+.section-nav button {
+  min-width: 34px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid rgba(25, 25, 25, 0.18);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #191919;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+.section-nav button.active {
+  background: #191919;
+  border-color: #191919;
+  color: #fff;
+}
 .sr-only {
   position: absolute;
   width: 1px;
@@ -76,7 +133,7 @@ body {
   html, body { height: auto; overflow: visible; background: #fff; }
   .deck { position: static; display: block; }
   .slide { display: block; page-break-after: always; width: 100vw; height: 56.25vw; }
-  .nav-zone { display: none; }
+  .nav-zone, .fullscreen-button, .section-nav { display: none; }
 }
 </style>
 </head>
@@ -87,6 +144,8 @@ body {
 
 <button class="nav-zone prev" type="button" aria-label="이전 페이지"></button>
 <button class="nav-zone next" type="button" aria-label="다음 페이지"></button>
+<button class="fullscreen-button" type="button" aria-label="전체화면 보기" title="전체화면 보기">⛶</button>
+<nav class="section-nav" aria-label="섹션 바로 이동"></nav>
 
 <script type="application/json" id="palette-data">
 [
@@ -145,8 +204,10 @@ body {
 <script>
 const groups = JSON.parse(document.getElementById("palette-data").textContent);
 const deck = document.querySelector(".deck");
+const sectionStarts = [];
 
 groups.forEach((group) => {
+  sectionStarts.push(deck.querySelectorAll(".slide").length);
   const section = document.createElement("section");
   section.className = "slide section";
   section.setAttribute("aria-label", group.title + " 섹션");
@@ -165,6 +226,19 @@ groups.forEach((group) => {
 });
 
 const slides = Array.from(document.querySelectorAll(".slide"));
+const sectionNav = document.querySelector(".section-nav");
+const sectionButtons = groups.map((group, index) => {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = group.title.replace(" 전체 비교", "").replace(" 톤 비교", "").replace(" 비교", "");
+  button.setAttribute("aria-label", group.title + "로 이동");
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    showSlide(sectionStarts[index]);
+  });
+  sectionNav.appendChild(button);
+  return button;
+});
 let current = 0;
 let touchStartX = null;
 
@@ -178,6 +252,14 @@ function showSlide(index, updateHash = true) {
   slides.forEach((slide, slideIndex) => {
     slide.classList.toggle("active", slideIndex === current);
   });
+  let activeSection = 0;
+  sectionStarts.forEach((start, startIndex) => {
+    if (start <= current) activeSection = startIndex;
+  });
+  sectionButtons.forEach((button, buttonIndex) => {
+    button.classList.toggle("active", buttonIndex === activeSection);
+  });
+  document.body.classList.toggle("is-color-slide", slides[current].classList.contains("color-slide"));
   if (updateHash) {
     history.replaceState(null, "", "#" + (current + 1));
   }
@@ -185,9 +267,19 @@ function showSlide(index, updateHash = true) {
 
 function nextSlide() { showSlide(current + 1); }
 function prevSlide() { showSlide(current - 1); }
+function toggleFullscreen() {
+  if (!document.fullscreenEnabled) return;
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    document.documentElement.requestFullscreen();
+  }
+}
 
 document.querySelector(".nav-zone.next").addEventListener("click", nextSlide);
 document.querySelector(".nav-zone.prev").addEventListener("click", prevSlide);
+document.querySelector(".fullscreen-button").addEventListener("click", toggleFullscreen);
+document.addEventListener("dblclick", toggleFullscreen);
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
@@ -208,11 +300,7 @@ document.addEventListener("keydown", (event) => {
   }
   if (event.key.toLowerCase() === "f" && document.fullscreenEnabled) {
     event.preventDefault();
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      document.documentElement.requestFullscreen();
-    }
+    toggleFullscreen();
   }
 });
 
