@@ -67,6 +67,7 @@ description: Generate self-contained HTML presentation from designed slide markd
 5. Replace `{{TITLE}}` with the frontmatter title (or filename if no frontmatter)
 5. Replace `{{SLIDES}}` with all generated slide HTML
 6. Write the complete HTML to the same directory as the input file, with `.html` extension
+7. If a feedback memo exists for this deck, keep it as a review record and do not embed it into exported HTML.
 
 ## Phase 4 — QR Code Slide (Optional)
 
@@ -84,20 +85,57 @@ If the user provides a share URL (or the output file will be hosted), add a fina
 
 - Input: `./presentation.md` → Output: `./presentation.html`
 - Tell the user: "Presentation saved to `{output_path}`. Open in a browser to present."
+- If feedback is expected, tell the user to leave comments by slide number and keep them in `<deck-name>.feedback.md`.
 - List keyboard shortcuts:
   - `←` `→` — Navigate slides
   - `↑` `↓` — Navigate chapters
   - `F` — Fullscreen
   - `N` — Speaker notes
-  - `T` — Table of contents
-  - `Home` / `End` — First / last slide
-  - Each content slide shows a chapter label (top-left) and chapter progress (e.g., "2/5")
+    - `Home` / `End` — First / last slide
+    - Each content slide shows a chapter label (top-left) and chapter progress (e.g., "2/5")
+    - `N` — Speaker notes popup
+    - `?` — Annotation tutorial and shortcuts
+    - `O` — Table of contents
+    - `M` — Presenter prompt / private checklist memo popup
+    - `A` — Toggle annotation mode
+    - `T` — Add text annotation
+    - `R` — Draw rectangle annotation
+    - `V` — Select and move an annotation
+    - `E` — Eraser while annotation mode is active
+    - `C` — Clear current slide annotations while annotation mode is active
+    - `S` — Confirm and save fixed annotated HTML copy
+
+## Runtime Annotation Mode
+
+Generated HTML includes a transparent canvas layer for lecture-time handwriting.
+
+Recommended presentation viewport: 16:9 at `1280 x 720` or larger. Minimum practical viewport is `1024 x 576`; below that, dense slides and annotation controls may feel cramped. Check the deck in fullscreen before presenting.
+
+Generated HTML must keep slide layout on a fixed `1280 x 720` canvas:
+- Define `--slide-base-w: 1280px`, `--slide-base-h: 720px`, `--slide-scale: 1`, and `--scale: 1`.
+- Set `.slide` to `width: var(--slide-base-w)` and `height: var(--slide-base-h)`.
+- Fit the viewport by scaling the entire slide with `transform: ... scale(var(--slide-scale, 1))`.
+- `fitSlideViewport()` should compute `min(window.innerWidth / 1280, window.innerHeight / 720)`, write it to `--slide-scale`, and keep `--scale` at `1` so fonts and layout are measured on the unscaled base canvas.
+- Do not use viewport-derived slide dimensions such as `width: min(100vw, 177.78vh)` or `--slide-w` for new exports.
+
+1. Press `?` to show the annotation tutorial and shortcut list.
+2. Press `A` to enable annotation mode. Pointer/touch input draws on the current slide instead of navigating.
+3. Press `M` to open a private presenter prompt / checklist memo popup. It is saved in browser `localStorage` and excluded from fixed annotated copies.
+4. Use the toolbar to choose pen, text, rectangle, eraser, color, and width.
+5. Press `T` to place a text box, then click the slide and enter text.
+6. Press `R` to draw a rectangle by dragging over the slide.
+7. Press `V` to select an existing pen stroke, text box, or rectangle, then drag it to move.
+8. Annotations are stored per slide in browser `localStorage` so refreshes do not immediately lose work.
+9. Press `S` or the toolbar Save button, confirm the prompt, then render every slide into a fixed `annotated-*.html` copy. The saved copy contains slide images with annotations baked in and no editing tools.
+10. The original `.md` remains the source of truth for lecture content; annotated HTML is a separate lecture record.
 
 ## Template Location
 
 The HTML template is at: `~/.claude/skills/markdown-to-slide/template.html`
 
 Read this template file and use it as the base for HTML generation. Replace the `{{TITLE}}` and `{{SLIDES}}` placeholders with generated content. The CSS and JS are already included in the template.
+
+Theme templates may be used instead of the default template when the user requests a named style. Use `templates/sadamcon.html` for `사담콘`, `Sadamcon`, `5th Conference`, or SIPE conference decks. It follows the PDF-derived dark conference style with `5th CONFERENCE` / `SIP<` header chrome and orange/mint accents.
 
 ## Source of truth
 

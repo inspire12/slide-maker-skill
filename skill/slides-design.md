@@ -11,6 +11,21 @@ description: Apply visual design enhancements to validated slide markdown. Conte
 
 `/slides-design <file-path>` — plan 단계를 거친 `.md` 파일 대상.
 
+## 16:9 Slide Budget
+
+16:9 화면을 기준으로 설계하고 최소 `1280 x 720`, 가능하면 `1920 x 1080` fullscreen에서 확인한다.
+
+1. 한 슬라이드는 한 가지 역할만 맡긴다.
+2. 일반 슬라이드는 제목 하나와 짧은 문단 하나 또는 3~5개 bullet 정도로 제한한다.
+3. 본문, bullet, 이미지가 동시에 길어지면 줄이지 말고 슬라이드를 나눈다.
+4. 긴 한글 제목, 한영 혼합 용어, 긴 코드 블록은 overflow 위험으로 보고 미리 분할한다.
+5. 세로 이미지는 portrait split, 코드 중심 슬라이드는 여러 장 분할을 우선한다.
+
+## Theme Selection
+
+- If the user asks for `사담콘`, `Sadamcon`, `5th Conference`, or a SIPE conference deck, use the Sadamcon visual system: dark charcoal background, top-left `5th CONFERENCE`, top-right `SIP<`, orange emphasis, mint gradient support, and compact dark content cards.
+- Keep Sadamcon slides sparse. Prefer one major message per slide, 3~6 bullets, or one table/card block.
+
 ## Phase 2.1 — Content Visibility Enhancement
 
 Automatically apply the following visibility improvements during HTML generation:

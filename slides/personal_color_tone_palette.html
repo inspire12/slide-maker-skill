@@ -7,6 +7,12 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; overflow: hidden; }
+:root {
+  --slide-base-w: 1280px;
+  --slide-base-h: 720px;
+  --slide-scale: 1;
+  --scale: 1;
+}
 body {
   background: #101114;
   color: #191919;
@@ -21,8 +27,10 @@ body {
 .slide {
   display: none;
   position: relative;
-  width: min(100vw, 177.7778vh);
-  height: min(100vh, 56.25vw);
+  width: var(--slide-base-w);
+  height: var(--slide-base-h);
+  transform: scale(var(--slide-scale, 1));
+  transform-origin: center center;
   overflow: hidden;
 }
 .slide.active { display: block; }
@@ -36,14 +44,14 @@ body {
 }
 .section h2 {
   margin: 0;
-  font-size: clamp(52px, 9vw, 120px);
+  font-size: 7.2rem;
   line-height: 1;
   letter-spacing: 0;
   font-weight: 850;
 }
 .section p {
   margin: 24px 0 0;
-  font-size: clamp(18px, 2.4vw, 32px);
+  font-size: 1.92rem;
   font-weight: 650;
   color: rgba(25, 25, 25, 0.62);
 }
@@ -202,6 +210,16 @@ body.is-color-slide .fullscreen-button {
 ]
 </script>
 <script>
+(function() {
+  function fitSlideViewport() {
+    const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    document.documentElement.style.setProperty('--slide-scale', scale.toString());
+    document.documentElement.style.setProperty('--scale', '1');
+  }
+  fitSlideViewport();
+  window.addEventListener('resize', fitSlideViewport);
+})();
+
 const groups = JSON.parse(document.getElementById("palette-data").textContent);
 const deck = document.querySelector(".deck");
 const sectionStarts = [];

@@ -13,21 +13,21 @@ Convert input files into a self-contained HTML presentation with chapter/slide n
 
 Full pipeline: runs plan → design → export sequentially. For step-by-step control, use individual commands.
 
-## Workflow (3-Phase Pipeline)
+## Workflow
 
 ```
-/slides-plan    →    /slides-design    →    /slides-export
- 입력 분석             디자인 강화             HTML 생성
- 구조 검증             이미지 매칭             QR 코드
- 개선 제안             레이아웃 결정            최종 출력
+intake/source    →    slide spec    →    markdown    →    HTML export    →    feedback loop    →    GitHub Pages
+주제/자료/이미지       슬라이드별 설계     md 생성        HTML 생성          피드백/수정 반복       강의 아카이브 배포
 ```
 
 ### Step 1 — Plan (`/slides-plan`)
 
-입력 파일을 분석하고 슬라이드 구조를 검증합니다.
+주제, 대상, 강의 시간, 자료, 이미지를 분석하고 강의 흐름과 슬라이드 구조를 검증합니다.
 
 - **Phase 0:** 입력 전처리 (PDF/PPTX/이미지 → 마크다운 변환)
+- **Phase 0.5:** 자료/Obsidian 문법 정규화, 이미지 인벤토리, 강의 story arc 작성
 - **Phase 1:** 구조 검증 (챕터/슬라이드 구분, 빈 슬라이드, 코드블록, 이미지 경로)
+- **Phase 1.5:** 슬라이드별 설계 카드 작성 (목적, 핵심 메시지, 자료, 이미지, 레이아웃, 발표 노트, 확인 포인트)
 - **Phase 2:** 개선 제안 (콘텐츠 분할, 스피커 노트, 요약 슬라이드)
 
 사용자 승인 후 다음 단계로 진행.
@@ -49,6 +49,24 @@ Full pipeline: runs plan → design → export sequentially. For step-by-step co
 - **Phase 3:** HTML 생성 (template.html 기반, 챕터/슬라이드/TOC/코드블록 등)
 - **Phase 4:** QR 코드 슬라이드 (선택, `share_url` 지정 시)
 
+### Step 4 — Feedback (`/slides-feedback`)
+
+생성된 HTML을 보고 받은 피드백은 `<deck-name>.feedback.md` 또는 `feedback/<deck-name>.md`에 슬라이드 번호별로 기록합니다.
+
+- 텍스트/순서/이미지 피드백은 md에 먼저 반영하고 HTML을 재생성
+- 런타임/스타일 피드백은 template 또는 HTML 생성 규칙에 반영
+- `annotated-*.html`은 강의 기록용 고정 복사본으로 취급
+- 슬라이드 삽입/삭제로 번호가 바뀌면 새 feedback round 시작
+
+### Step 5 — Deploy (`/slides-deploy`)
+
+최종 승인된 강의 자료는 GitHub Actions로 `_site/`를 빌드하고 GitHub Pages에 배포합니다.
+
+- 현재 workflow는 `.github/workflows/deploy-pages.yml`
+- 로컬 검증은 `bash scripts/build-pages.sh`
+- 자동 배포는 `main` 브랜치 push 기준
+- `develop`에서 작업했다면 최종 커밋을 `main`으로 반영하거나 workflow를 수동 실행해야 함
+
 ## Full Pipeline Behavior
 
 `/slides <file-path>` 실행 시:
@@ -56,19 +74,50 @@ Full pipeline: runs plan → design → export sequentially. For step-by-step co
 1. Plan 단계 실행 → 검증 결과 및 개선 제안을 사용자에게 보고
 2. 사용자 승인 후 Design 단계 실행 → 디자인 결과 보고
 3. 사용자 승인 후 Export 단계 실행 → HTML 파일 생성
+4. 피드백 round 반복 → md/template 수정 → HTML 재생성
+5. 최종 승인 후 build 검증 → GitHub Actions → GitHub Pages 배포
 
 각 단계 사이에 사용자 확인을 거치므로, 원하는 시점에 수정 가능.
+
+## Per-Slide Planning Card
+
+최종 md를 만들기 전에 각 슬라이드를 아래 카드로 먼저 설계한다.
+
+```markdown
+### Slide N: Working title
+- purpose: 청중이 이해해야 하는 한 문장
+- key message: 화면에서 가장 크게 남길 주장/키워드
+- source material: 사용한 메모, 문서 페이지, 링크, 이미지 파일
+- visual: 이미지 경로, 생성/검색 필요 이미지, 다이어그램, 없음
+- layout: basic / split-image / quote / stat-card / timeline / code-heavy / keyword
+- visual budget: 16:9 화면에서 넘칠 위험, 긴 한글 제목, 세로 이미지, 코드 길이
+- speaker note: 화면 밖에서 말로 설명할 내용
+- review focus: 사용자가 확인해야 할 부분
+```
+
+이 카드는 과밀 슬라이드 분리, 이미지 배치, 피드백 반복을 쉽게 하기 위한 중간 산출물이다. 사용자가 요청하지 않는 한 최종 발표 md에는 포함하지 않는다.
 
 ## Output
 
 - Input: `./presentation.md` → Output: `./presentation.html`
 - Tell the user: "Presentation saved to `{output_path}`. Open in a browser to present."
+- Recommended presentation viewport: 16:9 at `1280 x 720` or larger; minimum practical viewport is `1024 x 576`.
+- Dense decks should be reviewed at `1920 x 1080` fullscreen before delivery.
 - Keyboard shortcuts:
   - `←` `→` — Navigate slides
   - `↑` `↓` — Navigate chapters
   - `F` — Fullscreen
-  - `N` — Speaker notes
-  - `T` — Table of contents
+  - `N` — Speaker notes popup
+  - `?` — Annotation tutorial and shortcuts
+  - `O` — Table of contents
+  - `M` — Presenter prompt / private checklist memo popup
+  - `A` — Toggle annotation mode
+  - `T` — Add text annotation
+  - `R` — Draw rectangle annotation
+  - `V` — Select and move an annotation
+  - `E` — Eraser while annotation mode is active
+  - `C` — Clear current slide annotations while annotation mode is active
+  - `S` — Confirm and save fixed annotated HTML copy
   - `Home` / `End` — First / last slide
 
 ## Source-of-truth policy — md ↔ HTML
@@ -76,8 +125,11 @@ Full pipeline: runs plan → design → export sequentially. For step-by-step co
 - **원본은 항상 `.md` 파일**이다. HTML은 md로부터 생성된 결과물.
 - 슬라이드 내용(텍스트 · 이미지 · 순서 · 챕터 구조)을 수정할 때는 **먼저 md를 수정**하고 빌드 스크립트로 HTML을 재생성한다.
 - 디자인/스타일(CSS) 수정은 HTML(또는 `template.html`)에서만 하고 md는 손대지 않는다.
+- 강의 중 손글씨 주석은 HTML 런타임 상태이며, `S`로 저장한 `annotated-*.html`은 md 원본과 분리된 고정 기록본이다.
 - **금지**: HTML에서 텍스트 · bullets · 이미지 경로만 고치고 md를 방치하는 것. 다음 재빌드 시 변경이 사라진다.
 - **예외**: 긴급 hotfix로 HTML을 먼저 고친 경우, 같은 커밋에 md도 동일하게 반영해 drift가 남지 않도록 한다.
+- 피드백 메모는 작업 기록이다. 승인된 항목은 md/template에 반영하고, 재생성된 HTML 경로와 함께 완료 표시한다.
+- GitHub Pages 결과물은 강의 아카이브다. 배포 전 source md, 생성 HTML, 이미지, 피드백 메모를 git에 남긴다.
 
 ## Markdown Syntax Reference
 
@@ -263,3 +315,11 @@ Plan 단계에서 사용자가 레이아웃을 고민할 때, 해당 예시 파�
 The HTML template is at: `~/.claude/skills/markdown-to-slide/template.html`
 
 Read this template file and use it as the base for HTML generation. Replace the `{{TITLE}}` and `{{SLIDES}}` placeholders with generated content. The CSS and JS are already included in the template.
+
+Theme templates are also available under `templates/`:
+
+- `templates/monymony.html` — Monymony theme
+- `templates/sadamcon.html` — 5th Sadamcon conference theme: dark charcoal canvas, `5th CONFERENCE` / `SIP<` chrome, orange and mint accents, compact dark cards
+- `templates/sipercurl.html` — SiperCurl hackathon theme
+
+When the user asks for `사담콘`, `Sadamcon`, `5th Conference`, or a SIPE conference deck, prefer `templates/sadamcon.html`. In this repo, the project-local `$sadamcon-slides` skill contains the PDF-derived style guide and the same template asset.

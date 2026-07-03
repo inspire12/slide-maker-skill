@@ -8,16 +8,24 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
+:root {
+  --slide-base-w: 1280px;
+  --slide-base-h: 720px;
+  --slide-scale: 1;
+  --scale: 1;
+}
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background: #fff; color: #1d1d1f; line-height: 1.6;
 }
 .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: #0071e3; transition: width 0.3s ease; z-index: 100; }
 .slide {
-  display: none; width: min(100vw, 177.78vh); height: min(100vh, 56.25vw);
+  display: none; position: fixed; top: 50%; left: 50%;
+  width: var(--slide-base-w); height: var(--slide-base-h);
+  transform: translate(-50%, -50%) scale(var(--slide-scale, 1));
   padding: 60px 80px; overflow: hidden; background: #fff; box-shadow: 0 0 30px rgba(0,0,0,0.08);
 }
-.slide.active { display: flex; flex-direction: column; position: relative; }
+.slide.active { display: flex; flex-direction: column; }
 .chapter-label { position: absolute; top: 20px; left: 24px; font-size: 0.75rem; font-weight: 600; color: #86868b; letter-spacing: 0.03em; text-transform: uppercase; }
 .chapter-progress { position: absolute; top: 20px; right: 24px; font-size: 0.75rem; font-weight: 500; color: #86868b; }
 .chapter-progress-bar { position: absolute; top: 40px; right: 24px; width: 60px; height: 3px; background: #e5e5e7; border-radius: 2px; overflow: hidden; }
@@ -331,6 +339,16 @@ body {
 <div class="toc-overlay" id="tocOverlay"><h2>목차</h2><ul id="tocList"></ul></div>
 
 <script>
+(function() {
+  function fitSlideViewport() {
+    const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    document.documentElement.style.setProperty('--slide-scale', scale.toString());
+    document.documentElement.style.setProperty('--scale', '1');
+  }
+  fitSlideViewport();
+  window.addEventListener('resize', fitSlideViewport);
+})();
+
 (function() {
   const slides = document.querySelectorAll('.slide');
   const totalSlides = slides.length;

@@ -38,9 +38,9 @@ body {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(100vw, 177.78vh);  /* 16:9 */
-  height: min(100vh, 56.25vw);  /* 16:9 */
+  transform: translate(-50%, -50%) scale(var(--slide-scale, 1));
+  width: var(--slide-base-w);
+  height: var(--slide-base-h);
   padding: clamp(30px, 4.7vh, 80px) clamp(40px, 6.25vh, 100px);
   overflow: hidden;
   background: #fff;
@@ -52,8 +52,8 @@ body {
   animation: fadeIn 0.35s ease-out;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0.98); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .slide.active { animation: none; }
@@ -240,8 +240,10 @@ body {
 
 /* ===== RESPONSIVE FONT SCALING ===== */
 :root {
-  --slide-w: min(100vw, 177.78vh);
-  --scale: calc(var(--slide-w) / 1280px);
+  --slide-base-w: 1280px;
+  --slide-base-h: 720px;
+  --slide-scale: 1;
+  --scale: 1;
 }
 .slide-content             { font-size: clamp(0.85rem, calc(1.15rem * var(--scale)), 2.1rem); }
 .keyword-sub               { font-size: clamp(0.9rem, calc(1.3rem * var(--scale)), 2.5rem); }
@@ -359,12 +361,181 @@ body.first-slide .print-toolbar {
   color: #1d1d1f;
 }
 
+/* ===== LIVE ANNOTATIONS ===== */
+.annotation-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+  pointer-events: none;
+  touch-action: none;
+}
+body.annotation-mode .annotation-layer {
+  pointer-events: auto;
+  cursor: crosshair;
+}
+.annotation-toolbar {
+  position: fixed;
+  right: 24px;
+  bottom: 16px;
+  z-index: 360;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  backdrop-filter: blur(10px);
+}
+body.annotation-mode .annotation-toolbar {
+  display: flex;
+}
+.annotation-toolbar button {
+  min-width: 34px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 6px;
+  background: #fff;
+  color: #1d1d1f;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.annotation-toolbar button.active {
+  border-color: #0071e3;
+  box-shadow: 0 0 0 2px rgba(0,113,227,0.16);
+}
+.annotation-toolbar .color-swatch {
+  width: 28px;
+  min-width: 28px;
+  padding: 0;
+}
+.annotation-toolbar .width-dot::before {
+  content: '';
+  display: inline-block;
+  width: var(--dot-size);
+  height: var(--dot-size);
+  border-radius: 999px;
+  background: currentColor;
+  vertical-align: middle;
+}
+.annotation-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 68px;
+  transform: translateX(-50%);
+  z-index: 370;
+  display: none;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: rgba(29,29,31,0.88);
+  color: #fff;
+  font-size: 0.78rem;
+}
+.annotation-toast.visible {
+  display: block;
+}
+.annotation-help {
+  position: fixed;
+  inset: 0;
+  z-index: 390;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.35);
+}
+.annotation-help.visible {
+  display: flex;
+}
+.annotation-help-panel {
+  width: min(520px, calc(100vw - 32px));
+  padding: 28px;
+  border-radius: 12px;
+  background: #fff;
+  color: #1d1d1f;
+  box-shadow: 0 18px 48px rgba(0,0,0,0.22);
+}
+.annotation-help-panel h2 {
+  font-size: 1.25rem;
+  margin-bottom: 16px;
+}
+.annotation-help-panel dl {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 10px 14px;
+  font-size: 0.9rem;
+}
+.annotation-help-panel dt {
+  font-weight: 700;
+  color: #0071e3;
+}
+.annotation-help-panel dd {
+  color: #424245;
+}
+.annotation-help-panel p {
+  margin-top: 18px;
+  color: #86868b;
+  font-size: 0.82rem;
+}
+.annotation-help-panel .viewport-guide {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #e5e5e7;
+  color: #424245;
+  font-size: 0.86rem;
+}
+.annotation-help-panel .viewport-guide strong {
+  color: #1d1d1f;
+}
+.presenter-memo {
+  position: fixed;
+  top: 72px;
+  right: 24px;
+  z-index: 380;
+  display: none;
+  width: min(360px, calc(100vw - 48px));
+  padding: 14px;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 14px 36px rgba(0,0,0,0.16);
+  backdrop-filter: blur(10px);
+}
+.presenter-memo.visible {
+  display: block;
+}
+.presenter-memo label {
+  display: block;
+  margin-bottom: 8px;
+  color: #1d1d1f;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.presenter-memo textarea {
+  width: 100%;
+  min-height: 170px;
+  resize: vertical;
+  padding: 10px;
+  border: 1px solid #d2d2d7;
+  border-radius: 8px;
+  color: #1d1d1f;
+  font: 0.88rem/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.presenter-memo p {
+  margin-top: 8px;
+  color: #86868b;
+  font-size: 0.74rem;
+}
+
 /* ===== PRINT STYLES ===== */
 @media print {
   *, *::before, *::after { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   html, body { height: auto; overflow: visible; background: #fff; }
   body { display: block; }
   .progress-bar, .slide-number, .toc-overlay, .print-toolbar,
+  .annotation-layer, .annotation-toolbar, .annotation-toast,
   .speaker-notes, .code-copy-btn { display: none !important; }
   .slide {
     display: flex !important;
@@ -659,21 +830,593 @@ body.first-slide .print-toolbar {
   <ul id="tocList"></ul>
 </div>
 
+<canvas class="annotation-layer" id="annotationLayer"></canvas>
+<div class="annotation-toolbar" id="annotationToolbar" aria-label="Annotation tools">
+  <button type="button" data-tool="pen" title="Pen (A)">Pen</button>
+  <button type="button" data-tool="eraser" title="Eraser (E)">Erase</button>
+  <button type="button" data-tool="text" title="Text box (T)">Text</button>
+  <button type="button" data-tool="rect" title="Rectangle (R)">Rect</button>
+  <button type="button" data-tool="select" title="Select / move (V)">Move</button>
+  <button type="button" class="color-swatch" data-color="#ef4444" style="background:#ef4444" title="Red"></button>
+  <button type="button" class="color-swatch" data-color="#f59e0b" style="background:#f59e0b" title="Yellow"></button>
+  <button type="button" class="color-swatch" data-color="#2563eb" style="background:#2563eb" title="Blue"></button>
+  <button type="button" class="color-swatch" data-color="#111827" style="background:#111827" title="Black"></button>
+  <button type="button" class="width-dot" data-width="3" style="--dot-size:5px" title="Thin"></button>
+  <button type="button" class="width-dot" data-width="6" style="--dot-size:8px" title="Medium"></button>
+  <button type="button" class="width-dot" data-width="10" style="--dot-size:11px" title="Thick"></button>
+  <button type="button" data-action="clear-slide" title="Clear current slide (C)">Clear</button>
+  <button type="button" data-action="export" title="Save fixed annotated HTML (S)">Save</button>
+</div>
+<div class="annotation-toast" id="annotationToast"></div>
+<div class="annotation-help" id="annotationHelp" role="dialog" aria-modal="true" aria-label="Annotation shortcuts">
+  <div class="annotation-help-panel">
+    <h2>주석 단축키</h2>
+    <dl>
+      <dt>?</dt><dd>이 도움말 열기/닫기</dd>
+      <dt>A</dt><dd>주석 모드 켜기/끄기</dd>
+      <dt>O</dt><dd>목차 열기/닫기</dd>
+      <dt>M</dt><dd>발표용 프롬프트/확인 메모 열기</dd>
+      <dt>T</dt><dd>텍스트 박스 추가</dd>
+      <dt>R</dt><dd>직사각형 그리기</dd>
+      <dt>V</dt><dd>주석 선택 후 드래그로 이동</dd>
+      <dt>E</dt><dd>지우개</dd>
+      <dt>C</dt><dd>현재 슬라이드 주석 지우기</dd>
+      <dt>S</dt><dd>주석이 포함된 고정 HTML 저장</dd>
+      <dt>Esc</dt><dd>주석 모드 또는 도움말 닫기</dd>
+    </dl>
+    <div class="viewport-guide">
+      <strong>권장 화면</strong>: 16:9 기준 1280 x 720 이상, 최소 1024 x 576. 발표 전 전체 화면 모드에서 레이아웃을 확인하세요.
+    </div>
+    <p>주석 모드에서는 슬라이드 넘김 대신 캔버스 입력이 우선됩니다.</p>
+  </div>
+</div>
+<div class="presenter-memo" id="presenterMemo">
+  <label for="presenterMemoText">발표용 프롬프트 / 확인 메모</label>
+  <textarea id="presenterMemoText" placeholder="- 강조할 이야기&#10;- 질문 받을 포인트&#10;- 다음에 확인할 내용"></textarea>
+  <p>브라우저에 자동 저장됩니다. 주석 저장본에는 포함되지 않습니다.</p>
+</div>
+
+<div class="toc-overlay" id="tocOverlay">
+  <h2>목차</h2>
+  <ul id="tocList"></ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+(function() {
+  const canvas = document.getElementById('annotationLayer');
+  const toolbar = document.getElementById('annotationToolbar');
+  const toast = document.getElementById('annotationToast');
+  const ctx = canvas.getContext('2d');
+  const deckId = location.pathname + '::' + document.title;
+  const storageKey = 'slide_annotations::' + deckId;
+  const memoKey = 'slide_presenter_memo::' + deckId;
+  let currentSlide = 0;
+  let active = false;
+  let drawing = false;
+  let tool = 'pen';
+  let color = '#ef4444';
+  let width = 6;
+  let strokes = loadStrokes();
+  let currentStroke = null;
+  let selectedAnnotationIndex = -1;
+  let movingSelection = false;
+  let lastMovePoint = null;
+  let presenterMemoPopup = null;
+  const memoPanel = document.getElementById('presenterMemo');
+  const memoText = document.getElementById('presenterMemoText');
+  memoText.value = localStorage.getItem(memoKey) || '';
+  memoText.addEventListener('input', () => {
+    localStorage.setItem(memoKey, memoText.value);
+  });
+
+  function loadStrokes() {
+    try { return JSON.parse(localStorage.getItem(storageKey) || '{}'); }
+    catch (e) { return {}; }
+  }
+
+  function saveStrokes() {
+    try { localStorage.setItem(storageKey, JSON.stringify(strokes)); }
+    catch (e) { showToast('Annotation storage is full'); }
+  }
+
+  function getActiveSlide() {
+    return document.querySelector('.slide.active') || document.querySelector('.slide');
+  }
+
+  function fitCanvasToSlide() {
+    const slide = getActiveSlide();
+    if (!slide) return;
+    const rect = slide.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.style.left = rect.left + 'px';
+    canvas.style.top = rect.top + 'px';
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    renderCurrentSlide();
+  }
+
+  function drawStroke(targetCtx, stroke, w, h) {
+    if (!stroke.points || stroke.points.length < 1) return;
+    targetCtx.save();
+    targetCtx.lineCap = 'round';
+    targetCtx.lineJoin = 'round';
+    targetCtx.strokeStyle = stroke.color;
+    targetCtx.lineWidth = stroke.width * (w / 1280);
+    if (stroke.tool === 'eraser') {
+      targetCtx.globalCompositeOperation = 'destination-out';
+      targetCtx.lineWidth = stroke.width * 2 * (w / 1280);
+    }
+    targetCtx.beginPath();
+    stroke.points.forEach((point, index) => {
+      const x = point.x * w;
+      const y = point.y * h;
+      if (index === 0) targetCtx.moveTo(x, y);
+      else targetCtx.lineTo(x, y);
+    });
+    targetCtx.stroke();
+    targetCtx.restore();
+  }
+
+  function drawText(targetCtx, item, w, h) {
+    targetCtx.save();
+    targetCtx.fillStyle = item.color;
+    targetCtx.font = '700 ' + Math.round((item.fontSize || 32) * (w / 1280)) + 'px sans-serif';
+    targetCtx.textBaseline = 'top';
+    String(item.text || '').split('\n').forEach((line, index) => {
+      targetCtx.fillText(line, item.x * w, item.y * h + index * (item.fontSize || 32) * 1.25 * (w / 1280));
+    });
+    targetCtx.restore();
+  }
+
+  function drawRect(targetCtx, item, w, h) {
+    targetCtx.save();
+    targetCtx.strokeStyle = item.color;
+    targetCtx.lineWidth = item.width * (w / 1280);
+    targetCtx.strokeRect(item.x * w, item.y * h, item.w * w, item.h * h);
+    targetCtx.restore();
+  }
+
+  function drawAnnotation(targetCtx, item, w, h) {
+    if (item.kind === 'text') drawText(targetCtx, item, w, h);
+    else if (item.kind === 'rect') drawRect(targetCtx, item, w, h);
+    else drawStroke(targetCtx, item, w, h);
+  }
+
+  function annotationBounds(item) {
+    if (item.kind === 'text') {
+      const lines = String(item.text || '').split('\n');
+      const maxLen = Math.max(1, ...lines.map(line => line.length));
+      return { x: item.x, y: item.y, w: Math.min(0.5, maxLen * 0.018), h: Math.max(0.05, lines.length * 0.055) };
+    }
+    if (item.kind === 'rect') {
+      return { x: item.x, y: item.y, w: item.w, h: item.h };
+    }
+    const points = item.points || [];
+    if (!points.length) return null;
+    const xs = points.map(point => point.x);
+    const ys = points.map(point => point.y);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = Math.min(...ys);
+    const maxY = Math.max(...ys);
+    return { x: minX, y: minY, w: Math.max(0.01, maxX - minX), h: Math.max(0.01, maxY - minY) };
+  }
+
+  function drawSelectionBox() {
+    if (selectedAnnotationIndex < 0 || tool !== 'select') return;
+    const item = (strokes[currentSlide] || [])[selectedAnnotationIndex];
+    if (!item) return;
+    const bounds = annotationBounds(item);
+    if (!bounds) return;
+    const rect = canvas.getBoundingClientRect();
+    const pad = 8;
+    ctx.save();
+    ctx.setLineDash([6, 5]);
+    ctx.strokeStyle = '#0071e3';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(
+      bounds.x * rect.width - pad,
+      bounds.y * rect.height - pad,
+      bounds.w * rect.width + pad * 2,
+      bounds.h * rect.height + pad * 2
+    );
+    ctx.restore();
+  }
+
+  function hitTestAnnotation(point) {
+    const items = strokes[currentSlide] || [];
+    for (let i = items.length - 1; i >= 0; i--) {
+      const bounds = annotationBounds(items[i]);
+      if (!bounds) continue;
+      const pad = 0.025;
+      if (point.x >= bounds.x - pad && point.x <= bounds.x + bounds.w + pad &&
+          point.y >= bounds.y - pad && point.y <= bounds.y + bounds.h + pad) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  function moveAnnotation(index, dx, dy) {
+    const item = (strokes[currentSlide] || [])[index];
+    if (!item) return;
+    const bounds = annotationBounds(item);
+    if (bounds) {
+      dx = Math.max(-bounds.x, Math.min(1 - bounds.x - bounds.w, dx));
+      dy = Math.max(-bounds.y, Math.min(1 - bounds.y - bounds.h, dy));
+    }
+    if (item.kind === 'text' || item.kind === 'rect') {
+      item.x += dx;
+      item.y += dy;
+    } else if (item.points) {
+      item.points = item.points.map(point => ({ x: point.x + dx, y: point.y + dy }));
+    }
+  }
+
+  function drawRectPreview() {
+    if (!currentStroke || currentStroke.kind !== 'rect') return;
+    const rect = canvas.getBoundingClientRect();
+    drawRect(ctx, currentStroke, rect.width, rect.height);
+  }
+
+  function renderSlideToCanvas(slideIndex, targetCanvas) {
+    const targetCtx = targetCanvas.getContext('2d');
+    const w = targetCanvas.width;
+    const h = targetCanvas.height;
+    targetCtx.clearRect(0, 0, w, h);
+    (strokes[slideIndex] || []).forEach(item => drawAnnotation(targetCtx, item, w, h));
+  }
+
+  function renderCurrentSlide() {
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    (strokes[currentSlide] || []).forEach(item => drawAnnotation(ctx, item, rect.width, rect.height));
+    drawSelectionBox();
+  }
+
+  function pointerPoint(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)),
+      y: Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height))
+    };
+  }
+
+  function beginStroke(e) {
+    if (!active) return;
+    if (tool === 'text') {
+      addTextAnnotation(pointerPoint(e));
+      e.preventDefault();
+      return;
+    }
+    if (tool === 'select') {
+      const point = pointerPoint(e);
+      selectedAnnotationIndex = hitTestAnnotation(point);
+      movingSelection = selectedAnnotationIndex >= 0;
+      lastMovePoint = point;
+      if (movingSelection) canvas.setPointerCapture(e.pointerId);
+      renderCurrentSlide();
+      e.preventDefault();
+      return;
+    }
+    drawing = true;
+    canvas.setPointerCapture(e.pointerId);
+    const start = pointerPoint(e);
+    currentStroke = tool === 'rect'
+      ? { kind: 'rect', tool: 'rect', color, width, x: start.x, y: start.y, w: 0, h: 0, startX: start.x, startY: start.y }
+      : { tool, color, width, points: [start] };
+    e.preventDefault();
+  }
+
+  function moveStroke(e) {
+    const point = pointerPoint(e);
+    if (movingSelection) {
+      moveAnnotation(selectedAnnotationIndex, point.x - lastMovePoint.x, point.y - lastMovePoint.y);
+      lastMovePoint = point;
+      renderCurrentSlide();
+      e.preventDefault();
+      return;
+    }
+    if (!drawing || !currentStroke) return;
+    if (currentStroke.kind === 'rect') {
+      currentStroke.x = Math.min(currentStroke.startX, point.x);
+      currentStroke.y = Math.min(currentStroke.startY, point.y);
+      currentStroke.w = Math.abs(point.x - currentStroke.startX);
+      currentStroke.h = Math.abs(point.y - currentStroke.startY);
+    } else {
+      currentStroke.points.push(point);
+    }
+    renderCurrentSlide();
+    const rect = canvas.getBoundingClientRect();
+    if (currentStroke.kind === 'rect') drawRectPreview();
+    else drawStroke(ctx, currentStroke, rect.width, rect.height);
+    e.preventDefault();
+  }
+
+  function endStroke(e) {
+    if (movingSelection) {
+      movingSelection = false;
+      lastMovePoint = null;
+      saveStrokes();
+      renderCurrentSlide();
+      e.preventDefault();
+      return;
+    }
+    if (!drawing || !currentStroke) return;
+    drawing = false;
+    if (!strokes[currentSlide]) strokes[currentSlide] = [];
+    if (currentStroke.kind !== 'rect' || (currentStroke.w > 0.005 && currentStroke.h > 0.005)) {
+      delete currentStroke.startX;
+      delete currentStroke.startY;
+      strokes[currentSlide].push(currentStroke);
+    }
+    currentStroke = null;
+    saveStrokes();
+    renderCurrentSlide();
+    e.preventDefault();
+  }
+
+  function addTextAnnotation(point) {
+    const text = prompt('Text annotation');
+    if (!text) return;
+    if (!strokes[currentSlide]) strokes[currentSlide] = [];
+    strokes[currentSlide].push({ kind: 'text', tool: 'text', text, x: point.x, y: point.y, color, width, fontSize: 32 });
+    selectedAnnotationIndex = strokes[currentSlide].length - 1;
+    saveStrokes();
+    renderCurrentSlide();
+  }
+
+  function setActiveTool(nextTool) {
+    tool = nextTool;
+    toolbar.querySelectorAll('[data-tool]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tool === tool);
+    });
+  }
+
+  function activateAnnotationTool(nextTool) {
+    if (!active) toggleAnnotationMode(true);
+    setActiveTool(nextTool);
+    if (nextTool === 'text') showToast('Click to place text');
+    if (nextTool === 'rect') showToast('Drag to draw rectangle');
+    if (nextTool === 'select') showToast('Click an annotation, then drag to move it');
+  }
+
+  function setColor(nextColor) {
+    color = nextColor;
+    setActiveTool('pen');
+    toolbar.querySelectorAll('[data-color]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.color === color);
+    });
+  }
+
+  function setWidth(nextWidth) {
+    width = Number(nextWidth);
+    toolbar.querySelectorAll('[data-width]').forEach(btn => {
+      btn.classList.toggle('active', Number(btn.dataset.width) === width);
+    });
+  }
+
+  function clearCurrentSlide() {
+    strokes[currentSlide] = [];
+    selectedAnnotationIndex = -1;
+    saveStrokes();
+    renderCurrentSlide();
+    showToast('Current slide annotations cleared');
+  }
+
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add('visible');
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => toast.classList.remove('visible'), 1600);
+  }
+
+  function toggleAnnotationMode(force) {
+    active = typeof force === 'boolean' ? force : !active;
+    document.body.classList.toggle('annotation-mode', active);
+    fitCanvasToSlide();
+    showToast(active ? 'Annotation mode on' : 'Annotation mode off');
+  }
+
+  function toggleAnnotationHelp(force) {
+    const help = document.getElementById('annotationHelp');
+    const visible = typeof force === 'boolean' ? force : !help.classList.contains('visible');
+    help.classList.toggle('visible', visible);
+  }
+
+  function togglePresenterMemo(force) {
+    if (force === false) {
+      memoPanel.classList.remove('visible');
+      memoText.blur();
+      if (presenterMemoPopup && !presenterMemoPopup.closed) presenterMemoPopup.close();
+      return;
+    }
+    openPresenterMemoPopup();
+  }
+
+  function presenterMemoPopupHtml() {
+    return '<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+      '<title>Presenter Memo</title><style>' +
+      'body{margin:0;padding:20px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f5f7;color:#1d1d1f;}' +
+      'label{display:block;font-size:13px;font-weight:700;margin-bottom:10px;}textarea{width:100%;height:320px;box-sizing:border-box;padding:12px;border:1px solid #d2d2d7;border-radius:10px;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;resize:vertical;}p{margin:10px 0 0;color:#86868b;font-size:12px;}' +
+      '</style></head><body><label for="memo">발표용 프롬프트 / 확인 메모</label><textarea id="memo"></textarea><p>브라우저에 자동 저장됩니다. 주석 저장본에는 포함되지 않습니다.</p></body></html>';
+  }
+
+  function openPresenterMemoPopup() {
+    if (!presenterMemoPopup || presenterMemoPopup.closed) {
+      presenterMemoPopup = window.open('', 'presenterMemo', 'width=520,height=520');
+      if (!presenterMemoPopup) {
+        memoPanel.classList.add('visible');
+        memoText.focus();
+        return;
+      }
+      presenterMemoPopup.document.open();
+      presenterMemoPopup.document.write(presenterMemoPopupHtml());
+      presenterMemoPopup.document.close();
+      const popupMemo = presenterMemoPopup.document.getElementById('memo');
+      popupMemo.value = localStorage.getItem(memoKey) || '';
+      popupMemo.addEventListener('input', () => {
+        localStorage.setItem(memoKey, popupMemo.value);
+        memoText.value = popupMemo.value;
+      });
+      presenterMemoPopup.document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') presenterMemoPopup.close();
+      });
+    } else {
+      presenterMemoPopup.focus();
+    }
+  }
+
+  function syncToSlide(index) {
+    currentSlide = index;
+    selectedAnnotationIndex = -1;
+    fitCanvasToSlide();
+  }
+
+  function annotationImageForSlide(index, widthPx, heightPx) {
+    if (!strokes[index] || strokes[index].length === 0) return null;
+    const out = document.createElement('canvas');
+    out.width = widthPx;
+    out.height = heightPx;
+    renderSlideToCanvas(index, out);
+    return out.toDataURL('image/png');
+  }
+
+  function fixedHtmlFromImages(images) {
+    const title = document.title + ' - annotated';
+    const slidesHtml = images.map((src, index) =>
+      '<section class="fixed-slide" data-slide="' + (index + 1) + '">' +
+      '<img src="' + src + '" alt="Annotated slide ' + (index + 1) + '">' +
+      '</section>'
+    ).join('\n');
+    return '<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+      '<title>' + title.replace(/</g, '&lt;') + '</title><style>' +
+      'html,body{margin:0;height:100%;overflow:hidden;background:#111;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}' +
+      '.annotated-fixed-copy{height:100%;display:flex;align-items:center;justify-content:center;}' +
+      '.fixed-slide{display:none;width:100vw;height:100vh;align-items:center;justify-content:center;background:#111;}' +
+      '.fixed-slide.active{display:flex;}' +
+      '.fixed-slide img{max-width:100vw;max-height:100vh;width:min(100vw,177.78vh);height:min(100vh,56.25vw);object-fit:contain;background:#fff;}' +
+      '.counter{position:fixed;right:18px;bottom:14px;color:rgba(255,255,255,.72);font-size:12px;}' +
+      '@media print{html,body{height:auto;overflow:visible;background:#fff}.annotated-fixed-copy{display:block}.fixed-slide{display:flex!important;height:auto;page-break-after:always;background:#fff}.fixed-slide:last-child{page-break-after:auto}.fixed-slide img{width:100%;height:auto;max-width:none;max-height:none}@page{size:297mm 167mm;margin:0}.counter{display:none}}' +
+      '</style></head><body class="annotated-fixed-copy">' + slidesHtml +
+      '<div class="counter" id="counter"></div><script>' +
+      '(function(){const slides=[...document.querySelectorAll(".fixed-slide")];let current=0;function show(i){if(i<0||i>=slides.length)return;slides[current].classList.remove("active");current=i;slides[current].classList.add("active");document.getElementById("counter").textContent=(current+1)+" / "+slides.length;}document.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key===" ")show(current+1);if(e.key==="ArrowLeft")show(current-1);if(e.key==="Home")show(0);if(e.key==="End")show(slides.length-1);if(e.key==="p"||e.key==="P")window.print();});show(0);})();' +
+      '<\/script></body></html>';
+  }
+
+  async function exportAnnotatedCopy() {
+    if (!confirm('Save fixed annotated HTML copy?')) return;
+    if (!window.html2canvas) {
+      showToast('html2canvas is still loading');
+      return;
+    }
+    const wasActive = active;
+    toggleAnnotationMode(false);
+    showToast('Rendering annotated copy...');
+    const stage = document.createElement('div');
+    stage.style.cssText = 'position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:#f0f0f2;';
+    document.body.appendChild(stage);
+    const sourceSlides = Array.from(document.querySelectorAll('.slide'));
+    const images = [];
+    try {
+      for (let i = 0; i < sourceSlides.length; i++) {
+        stage.textContent = '';
+        const clone = sourceSlides[i].cloneNode(true);
+        clone.classList.add('active');
+        clone.style.cssText = 'display:flex;position:relative;top:auto;left:auto;transform:none;width:1280px;height:720px;box-shadow:none;animation:none;';
+        clone.querySelectorAll('.speaker-notes').forEach(node => node.remove());
+        const annotationSrc = annotationImageForSlide(i, 1280, 720);
+        if (annotationSrc) {
+          const img = document.createElement('img');
+          img.src = annotationSrc;
+          img.alt = '';
+          img.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:999;';
+          clone.appendChild(img);
+        }
+        stage.appendChild(clone);
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        const rendered = await html2canvas(clone, { backgroundColor: '#fff', scale: 2, useCORS: true, logging: false });
+        images.push(rendered.toDataURL('image/png'));
+      }
+      const blob = new Blob([fixedHtmlFromImages(images)], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'annotated-' + (document.title || 'slides').replace(/[^\w가-힣.-]+/g, '-') + '.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(a.href);
+      showToast('Annotated fixed HTML saved');
+    } catch (e) {
+      console.error(e);
+      showToast('Could not render annotated copy');
+    } finally {
+      stage.remove();
+      if (wasActive) toggleAnnotationMode(true);
+    }
+  }
+
+  toolbar.addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    if (btn.dataset.tool) setActiveTool(btn.dataset.tool);
+    if (btn.dataset.color) setColor(btn.dataset.color);
+    if (btn.dataset.width) setWidth(btn.dataset.width);
+    if (btn.dataset.action === 'clear-slide') clearCurrentSlide();
+    if (btn.dataset.action === 'export') exportAnnotatedCopy();
+  });
+  canvas.addEventListener('pointerdown', beginStroke);
+  canvas.addEventListener('pointermove', moveStroke);
+  canvas.addEventListener('pointerup', endStroke);
+  canvas.addEventListener('pointercancel', endStroke);
+  window.addEventListener('resize', fitCanvasToSlide);
+
+  setActiveTool('pen');
+  setColor(color);
+  setWidth(width);
+  window.slideAnnotations = {
+    isActive: () => active,
+    toggleAnnotationMode,
+    syncToSlide,
+    activateAnnotationTool,
+    setEraser: () => setActiveTool('eraser'),
+    clearCurrentSlide,
+    exportAnnotatedCopy,
+    toggleAnnotationHelp,
+    togglePresenterMemo
+  };
+  window.toggleAnnotationMode = toggleAnnotationMode;
+  window.exportAnnotatedCopy = exportAnnotatedCopy;
+  window.toggleAnnotationHelp = toggleAnnotationHelp;
+  window.activateAnnotationTool = activateAnnotationTool;
+  window.togglePresenterMemo = togglePresenterMemo;
+  fitCanvasToSlide();
+})();
+</script>
+
 <!-- PRESENTATION ENGINE JS -->
 <script>
 (function() {
-  function updateScale() {
-    const w = Math.min(window.innerWidth, window.innerHeight * 16 / 9);
-    document.documentElement.style.setProperty('--scale', (w / 1280).toString());
+  function fitSlideViewport() {
+    const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    document.documentElement.style.setProperty('--slide-scale', scale.toString());
+    document.documentElement.style.setProperty('--scale', '1');
   }
-  updateScale();
-  window.addEventListener('resize', updateScale);
+  fitSlideViewport();
+  window.addEventListener('resize', fitSlideViewport);
 })();
 (function() {
   const slides = document.querySelectorAll('.slide');
   const totalSlides = slides.length;
   let currentSlide = 0;
   let notesVisible = false;
+  let presenterNotesPopup = null;
 
   const chapters = [];
   slides.forEach((slide, i) => {
@@ -723,6 +1466,8 @@ body.first-slide .print-toolbar {
     document.getElementById('slideNumber').textContent = (currentSlide + 1) + ' / ' + totalSlides;
     updateTocCurrent();
     updateChapterProgress();
+    updatePresenterNotesPopup();
+    if (window.slideAnnotations) window.slideAnnotations.syncToSlide(currentSlide);
   }
 
   function nextSlide() { showSlide(currentSlide + 1); }
@@ -745,9 +1490,48 @@ body.first-slide .print-toolbar {
   }
 
   function toggleNotes() {
-    notesVisible = !notesVisible;
+    openPresenterNotesPopup();
+  }
+
+  function currentSpeakerNotesHtml() {
     const notes = slides[currentSlide].querySelector('.speaker-notes');
-    if (notes) notes.classList.toggle('visible', notesVisible);
+    return notes ? notes.innerHTML : '<p>No speaker notes for this slide.</p>';
+  }
+
+  function presenterNotesPopupHtml() {
+    return '<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+      '<title>Presenter Notes</title><style>' +
+      'body{margin:0;padding:24px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f5f7;color:#1d1d1f;line-height:1.6;}' +
+      'h1{font-size:18px;margin:0 0 16px;}#meta{font-size:12px;color:#86868b;margin-bottom:18px;}#notes{font-size:16px;background:#fff;border:1px solid #e5e5e7;border-radius:10px;padding:18px;min-height:180px;}' +
+      '</style></head><body><h1>Presenter Notes</h1><div id="meta"></div><div id="notes"></div></body></html>';
+  }
+
+  function updatePresenterNotesPopup() {
+    if (!presenterNotesPopup || presenterNotesPopup.closed) return;
+    const meta = presenterNotesPopup.document.getElementById('meta');
+    const notes = presenterNotesPopup.document.getElementById('notes');
+    if (!meta || !notes) return;
+    meta.textContent = 'Slide ' + (currentSlide + 1) + ' / ' + totalSlides;
+    notes.innerHTML = currentSpeakerNotesHtml();
+  }
+
+  function openPresenterNotesPopup() {
+    if (!presenterNotesPopup || presenterNotesPopup.closed) {
+      presenterNotesPopup = window.open('', 'presenterNotes', 'width=520,height=520');
+      if (!presenterNotesPopup) {
+        notesVisible = !notesVisible;
+        const notes = slides[currentSlide].querySelector('.speaker-notes');
+        if (notes) notes.classList.toggle('visible', notesVisible);
+        return;
+      }
+      presenterNotesPopup.document.open();
+      presenterNotesPopup.document.write(presenterNotesPopupHtml());
+      presenterNotesPopup.document.close();
+    } else {
+      presenterNotesPopup.focus();
+    }
+    updatePresenterNotesPopup();
   }
 
   function toggleFullscreen() {
@@ -786,9 +1570,29 @@ body.first-slide .print-toolbar {
 
   document.addEventListener('keydown', (e) => {
     const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
-    if (e.key === 't' || e.key === 'T') { toggleToc(); return; }
+    const annotations = window.slideAnnotations;
+    const annotationMode = annotations && annotations.isActive();
+    const isTyping = e.target && /^(TEXTAREA|INPUT)$/.test(e.target.tagName);
+    if (e.key === 'Escape' && document.getElementById('annotationHelp').classList.contains('visible')) { toggleAnnotationHelp(false); return; }
+    if (e.key === 'Escape' && document.getElementById('presenterMemo').classList.contains('visible')) { togglePresenterMemo(false); return; }
+    if (isTyping) return;
+    if (e.key === '?') { toggleAnnotationHelp(); return; }
+    if (e.key === 'o' || e.key === 'O') { toggleToc(); return; }
     if (e.key === 'Escape' && tocOpen) { toggleToc(); return; }
     if (tocOpen) return;
+    if (annotationMode) {
+      switch(e.key) {
+        case 'Escape': case 'a': case 'A': toggleAnnotationMode(false); break;
+        case 't': case 'T': activateAnnotationTool('text'); break;
+        case 'r': case 'R': activateAnnotationTool('rect'); break;
+        case 'v': case 'V': activateAnnotationTool('select'); break;
+        case 'm': case 'M': togglePresenterMemo(); break;
+        case 'e': case 'E': annotations.setEraser(); break;
+        case 'c': case 'C': annotations.clearCurrentSlide(); break;
+        case 's': case 'S': exportAnnotatedCopy(); break;
+      }
+      return;
+    }
 
     switch(e.key) {
       case 'ArrowRight': case ' ': nextSlide(); break;
@@ -800,6 +1604,12 @@ body.first-slide .print-toolbar {
       case 'f': case 'F': toggleFullscreen(); break;
       case 'n': case 'N': toggleNotes(); break;
       case 'p': case 'P': printSlides(); break;
+      case 'a': case 'A': toggleAnnotationMode(); break;
+      case 't': case 'T': activateAnnotationTool('text'); break;
+      case 'r': case 'R': activateAnnotationTool('rect'); break;
+      case 'v': case 'V': activateAnnotationTool('select'); break;
+      case 'm': case 'M': togglePresenterMemo(); break;
+      case 's': case 'S': exportAnnotatedCopy(); break;
     }
   });
 
@@ -813,6 +1623,7 @@ body.first-slide .print-toolbar {
 
   document.addEventListener('touchend', (e) => {
     const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
+    if (window.slideAnnotations && window.slideAnnotations.isActive()) return;
     if (tocOpen) return;
     const dx = e.changedTouches[0].clientX - touchStartX;
     const dy = e.changedTouches[0].clientY - touchStartY;
@@ -823,9 +1634,10 @@ body.first-slide .print-toolbar {
 
   document.addEventListener('click', (e) => {
     const tocOpen = document.getElementById('tocOverlay').classList.contains('visible');
+    if (window.slideAnnotations && window.slideAnnotations.isActive()) return;
     if (tocOpen) return;
     if (window.innerWidth > 768) return;
-    if (e.target.closest('a, button, .toc-overlay, .print-toolbar')) return;
+    if (e.target.closest('a, button, .toc-overlay, .print-toolbar, .annotation-toolbar')) return;
     const x = e.clientX / window.innerWidth;
     if (x < 0.25) prevSlide();
     else if (x > 0.75) nextSlide();
