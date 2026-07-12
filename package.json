@@ -1,0 +1,16 @@
+{
+  "name": "slide-maker-skill",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test 'test/*.mjs'",
+    "cardnews:design": "node skill/cardnews/server.mjs",
+    "cardnews:export": "node skill/cardnews/export.mjs"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "marked": "^12.0.0",
+    "playwright": "^1.40.0"
+  }
+}

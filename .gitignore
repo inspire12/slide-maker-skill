@@ -3,3 +3,7 @@
 _site/
 .claude/
 skill/examples/*.html
+node_modules/
+cardnews/*/png/
+package-lock.json
+cardnews/*/preview.html

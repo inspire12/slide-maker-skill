@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Cardnews Editor</title>
+<link rel="stylesheet" href="/editor.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar__title">Cardnews</div>
+  <div class="topbar__status" id="status">대기 중</div>
+  <div class="topbar__actions">
+    <select id="theme">
+      <option value="mono">mono</option>
+      <option value="warm">warm</option>
+      <option value="cool">cool</option>
+      <option value="bold">bold</option>
+    </select>
+    <button id="exportBtn">PNG 내보내기</button>
+    <button id="doneBtn">완료</button>
+  </div>
+</header>
+<main class="split">
+  <section class="pane pane--edit">
+    <textarea id="editor" spellcheck="false"></textarea>
+  </section>
+  <section class="pane pane--preview">
+    <div id="preview"></div>
+  </section>
+</main>
+<script type="module" src="/editor.js"></script>
+</body>
+</html>
