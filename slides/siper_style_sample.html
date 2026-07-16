@@ -3,18 +3,39 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>서영학 · 백엔드 개발자 · 토스증권</title>
+<title>Siper Curl 스타일 샘플</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 <style>
 /* ===== RESET ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
 
+/* ===== SIPERCURL DESIGN TOKENS ===== */
+:root {
+  --color-primary: #FF9A8B;
+  --color-primary-light: #FFC6A8;
+  --color-primary-dark: #F26D71;
+  --color-bg: #09090B;
+  --color-bg-warm: #171013;
+  --color-surface: rgba(255, 255, 255, 0.045);
+  --color-surface-strong: rgba(255, 255, 255, 0.075);
+  --color-text: #F7F4EF;
+  --color-text-secondary: #CAC3BD;
+  --color-muted: #6D6866;
+  --color-border: rgba(255, 154, 139, 0.58);
+  --radius: 24px;
+  --radius-sm: 999px;
+  --slide-base-w: 1280px;
+  --slide-base-h: 720px;
+  --slide-scale: 1;
+  --scale: 1;
+}
+
 /* ===== BASE ===== */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: #f0f0f2;
-  color: #1d1d1f;
+  font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #F5F3EF;
+  color: var(--color-text);
   line-height: 1.6;
   display: flex;
   align-items: center;
@@ -26,13 +47,13 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  height: 3px;
-  background: #0071e3;
+  height: 4px;
+  background: var(--color-primary);
   transition: width 0.3s ease;
   z-index: 100;
 }
 
-/* ===== SLIDE (16:9 ratio, flat structure) ===== */
+/* ===== SLIDE (16:9 ratio) ===== */
 .slide {
   display: none;
   position: fixed;
@@ -41,11 +62,40 @@ body {
   transform: translate(-50%, -50%) scale(var(--slide-scale, 1));
   width: var(--slide-base-w);
   height: var(--slide-base-h);
-  padding: clamp(30px, 4.7vh, 80px) clamp(40px, 6.25vh, 100px);
+  padding: clamp(56px, 8.1vh, 104px) clamp(64px, 10.8vw, 176px);
   overflow: hidden;
-  background: #fff;
-  box-shadow: 0 0 30px rgba(0,0,0,0.08);
+  background:
+    radial-gradient(circle at 82% 77%, rgba(255, 154, 139, 0.27) 0%, rgba(255, 154, 139, 0.1) 13%, rgba(255, 154, 139, 0) 30%),
+    radial-gradient(circle at 80% 32%, rgba(90, 43, 49, 0.35) 0%, rgba(16, 11, 13, 0) 42%),
+    linear-gradient(115deg, #08090A 0%, #08090A 46%, #171013 100%);
+  box-shadow: 0 22px 70px rgba(0,0,0,0.28);
   flex-direction: column;
+}
+.slide::before {
+  content: 'SIPE 5기 해커톤 · 7분 발표';
+  position: absolute;
+  top: clamp(54px, 8.1vh, 104px);
+  left: clamp(64px, 10.8vw, 176px);
+  color: var(--color-primary);
+  font-size: clamp(0.55rem, calc(0.8rem * var(--scale)), 1.25rem);
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  z-index: 1;
+}
+.slide::after {
+  content: '';
+  position: absolute;
+  right: clamp(72px, 13vw, 190px);
+  top: 39%;
+  width: clamp(96px, 16vw, 220px);
+  height: clamp(130px, 22vw, 300px);
+  border: clamp(12px, 2vw, 26px) solid var(--color-primary-light);
+  border-left-color: transparent;
+  border-bottom-color: var(--color-primary-light);
+  border-radius: 48% 56% 58% 42%;
+  transform: rotate(10deg);
+  filter: drop-shadow(0 20px 46px rgba(255,154,139,0.18));
+  z-index: 1;
 }
 .slide.active {
   display: flex;
@@ -62,12 +112,12 @@ body {
 /* ===== CHAPTER LABEL & PROGRESS ===== */
 .chapter-label {
   position: absolute;
-  top: 22px;
-  left: clamp(40px, 6.25vh, 100px);
+  top: clamp(54px, 8.1vh, 104px);
+  left: clamp(64px, 10.8vw, 176px);
   font-size: 0.55rem;
   font-weight: 600;
-  color: #a1a1a6;
-  letter-spacing: 0.08em;
+  color: transparent;
+  letter-spacing: 0;
   text-transform: uppercase;
   max-width: calc(100% - 2 * clamp(40px, 6.25vh, 100px) - 80px);
   white-space: nowrap;
@@ -76,25 +126,25 @@ body {
 }
 .chapter-progress {
   position: absolute;
-  top: 22px;
-  right: clamp(40px, 6.25vh, 100px);
+  top: 26px;
+  right: clamp(54px, 6.6vw, 100px);
   font-size: 0.55rem;
   font-weight: 500;
-  color: #a1a1a6;
+  color: transparent;
 }
 .chapter-progress-bar {
   position: absolute;
-  top: 40px;
-  right: clamp(40px, 6.25vh, 100px);
+  top: 52px;
+  right: clamp(64px, 10.8vw, 176px);
   width: 60px;
   height: 3px;
-  background: #e5e5e7;
+  background: rgba(255,255,255,0.1);
   border-radius: 2px;
   overflow: hidden;
 }
 .chapter-progress-bar .fill {
   height: 100%;
-  background: #0071e3;
+  background: var(--color-primary);
   border-radius: 2px;
   transition: width 0.3s ease;
 }
@@ -104,234 +154,332 @@ body {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: linear-gradient(135deg, #f8f9ff 0%, #fff 50%, #f0f4ff 100%);
+  background:
+    radial-gradient(circle at 80% 72%, rgba(255, 154, 139, 0.28) 0%, rgba(255, 154, 139, 0) 34%),
+    linear-gradient(115deg, #08090A 0%, #08090A 48%, #1B1012 100%);
 }
 .keyword-hero {
   font-size: 4rem;
   font-weight: 800;
-  color: #0071e3;
-  letter-spacing: -0.03em;
+  color: var(--color-text);
+  letter-spacing: 0;
   line-height: 1.2;
   margin-bottom: 16px;
-  text-shadow: 0 1px 2px rgba(0,113,227,0.08);
 }
 .keyword-sub {
   font-size: 1.3rem;
-  color: #86868b;
+  color: var(--color-text-secondary);
   font-weight: 400;
   max-width: 600px;
 }
 
+/* ===== SPLIT LAYOUT ===== */
+.slide-split { display: flex; gap: 40px; flex: 1; padding-top: clamp(36px, 4.5vh, 64px); overflow: hidden; }
+.slide-split .split-text { flex: 1; font-size: 1.15rem; color: var(--color-text); overflow-y: auto; }
+.slide-split .split-text {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: clamp(22px, 3.2vh, 40px);
+}
+.slide-split .split-text ul, .slide-split .split-text ol { margin-left: 1.5em; margin-bottom: 0.75em; }
+.slide-split .split-text li { margin-bottom: 0.4em; }
+.slide-split .split-text p { margin-bottom: 0.75em; }
+.slide-split .split-text strong { color: var(--color-text); }
+.slide-split .split-image { flex: 1; display: flex; align-items: flex-start; justify-content: center; padding-top: 12px; }
+.slide-split .split-image img {
+  max-width: 100%;
+  max-height: 55vh;
+  border-radius: var(--radius);
+  object-fit: contain;
+  background: rgba(255,255,255,0.08);
+}
+
+/* ===== IMAGE HERO LAYOUT ===== */
+.slide.image-hero .slide-hero-subtitle {
+  font-size: clamp(1rem, calc(1.3rem * var(--scale)), 2.2rem);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  text-align: left;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+.slide.image-hero .slide-hero-image {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 18px 0 8px;
+}
+.slide.image-hero .slide-hero-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.08);
+  box-shadow: 0 18px 44px rgba(0,0,0,0.24);
+}
+.slide.image-hero .source-url {
+  text-align: right;
+  margin-top: 8px;
+  padding-top: 0;
+}
+
+/* ===== PORTRAIT SPLIT ===== */
+.slide.portrait-split { padding: 0; overflow: hidden; }
+.slide.portrait-split .slide-split-portrait {
+  display: flex; flex: 1; width: 100%; height: 100%;
+}
+.slide.portrait-split .portrait-image {
+  flex: 0 0 40%; max-width: 40%; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.08);
+}
+.slide.portrait-split .portrait-image img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.slide.portrait-split .portrait-content {
+  flex: 1; padding: 60px 50px; display: flex; flex-direction: column; justify-content: flex-start; overflow-y: auto;
+}
+.slide.portrait-split .portrait-content h2 {
+  font-size: 2.4rem; font-weight: 800; color: var(--color-text);
+  letter-spacing: 0; line-height: 1.2; margin-bottom: 8px;
+}
+.slide.portrait-split .chapter-label { left: auto; right: clamp(80px, 12vh, 140px); }
+.slide.portrait-split .chapter-progress,
+.slide.portrait-split .chapter-progress-bar { right: 24px; }
+.slide.portrait-split .portrait-content hr.slide-header-divider {
+  border: none; border-bottom: 2px solid var(--color-border); margin-bottom: 24px;
+}
+.slide.portrait-split .portrait-content .portrait-text {
+  font-size: 1.1rem; color: var(--color-text); line-height: 1.7;
+}
+.slide.portrait-split .portrait-content .portrait-text ul,
+.slide.portrait-split .portrait-content .portrait-text ol { margin-left: 1.5em; margin-bottom: 0.75em; }
+.slide.portrait-split .portrait-content .portrait-text li { margin-bottom: 0.5em; }
+.slide.portrait-split .portrait-content .portrait-text p { margin-bottom: 0.75em; }
+.slide.portrait-split .portrait-content .portrait-text strong { color: var(--color-text); }
+
 /* ===== CHAPTER TITLE SLIDE ===== */
 .slide.chapter-title {
   justify-content: center;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
+  background:
+    radial-gradient(circle at 82% 78%, rgba(255, 154, 139, 0.27) 0%, rgba(255, 154, 139, 0.09) 13%, rgba(255, 154, 139, 0) 31%),
+    radial-gradient(circle at 78% 33%, rgba(95, 39, 47, 0.34) 0%, rgba(12, 8, 10, 0) 43%),
+    linear-gradient(115deg, #08090A 0%, #08090A 47%, #171013 100%);
 }
 .slide.chapter-title h1 {
-  font-size: clamp(2rem, 7vw, 9rem);
-  font-weight: 800;
-  color: #1d1d1f;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  max-width: 88%;
-  text-align: center;
+  font-size: clamp(3.2rem, 8vw, 8.9rem);
+  font-weight: 900;
+  color: var(--color-text);
+  letter-spacing: 0;
+  line-height: 1.04;
+  max-width: min(760px, 62%);
+  text-align: left;
   word-break: keep-all;
   overflow-wrap: break-word;
 }
 .slide.chapter-title h1::after {
   content: '';
   display: block;
-  width: 120px;
-  height: 6px;
-  background: #0071e3;
-  margin: 48px auto 0;
-  border-radius: 3px;
+  width: clamp(58px, 7.5vw, 118px);
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), #F6D7A4);
+  margin: 30px 0 0;
+  border-radius: 2px;
 }
 .slide.chapter-title .chapter-subtitle {
-  font-size: 1.2rem;
-  color: #86868b;
-  margin-top: 0.5rem;
+  font-size: clamp(1.25rem, calc(2rem * var(--scale)), 3rem);
+  color: var(--color-text-secondary);
+  margin-top: 1.7rem;
+  font-weight: 800;
 }
 
 /* ===== CONTENT SLIDE ===== */
 .slide-header {
   flex-shrink: 0;
-  margin-top: clamp(32px, 4.5vh, 64px);
+  margin-top: clamp(30px, 4.5vh, 62px);
   margin-bottom: 0;
 }
 .slide-header h2 {
   font-size: 2.4rem;
-  font-weight: 800;
-  color: #1d1d1f;
+  font-weight: 900;
+  color: var(--color-text);
   text-align: left;
-  letter-spacing: -0.02em;
+  letter-spacing: 0;
   line-height: 1.2;
 }
 .slide-header-divider {
   border: none;
-  border-bottom: 2px solid #e5e5e7;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
   margin-top: 16px;
 }
 .slide-content {
   flex: 1;
   padding-top: clamp(36px, 4.5vh, 64px);
   font-size: 1.15rem;
-  color: #333;
+  color: var(--color-text);
   overflow-y: auto;
+}
+.slide:not(.chapter-title):not(.keyword-slide):not(.toc-slide):not(.qr-slide):not(.portrait-split):not(.image-hero) > .slide-content {
+  margin-top: clamp(28px, 3.5vh, 44px);
+  padding: clamp(22px, 3.2vh, 40px);
+  background: var(--color-surface);
+  border-radius: var(--radius);
 }
 .slide-content ul, .slide-content ol {
   margin-left: 1.5em;
   margin-bottom: 0.75em;
 }
 .slide-content li { margin-bottom: 0.4em; }
-.slide-content li li { margin-bottom: 0.2em; font-size: 0.95em; color: #666; }
+.slide-content li::marker,
+.slide-split .split-text li::marker,
+.portrait-text li::marker {
+  color: var(--color-primary);
+  font-weight: 700;
+}
 .slide-content p { margin-bottom: 0.75em; }
+.slide-content img {
+  max-width: 100%;
+  max-height: 60vh;
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.08);
+}
+
+/* ===== SUBSECTION HEADER ===== */
+.slide-content h3.subsection,
+.split-text h3.subsection,
+.portrait-text h3.subsection {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  letter-spacing: 0.01em;
+}
+.slide-content h3.subsection:first-child,
+.split-text h3.subsection:first-child,
+.portrait-text h3.subsection:first-child { margin-top: 0; }
+
+/* ===== INLINE KEYWORD ===== */
+.keyword-inline {
+  font-size: clamp(1.4rem, calc(2.2rem * var(--scale)), 3.8rem);
+  font-weight: 800;
+  color: var(--color-primary);
+  text-align: center;
+  padding: 18px 24px;
+  margin: 12px 0 20px;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+/* ===== SOURCE URL ===== */
+.slide > .source-url {
+  position: absolute;
+  bottom: 18px;
+  left: clamp(54px, 6.6vw, 100px);
+  right: clamp(54px, 6.6vw, 100px);
+  font-size: 0.65rem;
+  color: var(--color-text-secondary);
+  word-break: break-all;
+  text-align: right;
+  line-height: 1.4;
+  z-index: 5;
+}
+.slide > .source-url a { color: var(--color-text-secondary); text-decoration: none; }
+.slide > .source-url a:hover { color: var(--color-primary); text-decoration: underline; }
+.slide.portrait-split > .source-url { left: calc(45% + 24px); right: 24px; }
+
+/* ===== DENSE CONTENT ===== */
+.dense-content { font-size: 0.9rem !important; }
+.dense-content li { margin-bottom: 0.25em !important; }
+.dense-content h3.subsection { font-size: 0.95rem !important; margin-top: 0.8em !important; }
+
+/* ===== TABLE ===== */
+.slide-content table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+.slide-content th, .slide-content td { padding: 10px 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.12); }
+.slide-content th { font-weight: 600; color: var(--color-text); background: var(--color-surface-strong); }
+.slide-content td { color: var(--color-text); transition: background 0.15s ease; }
+.slide-content tr:hover td { background: var(--color-surface-strong); }
 
 /* ===== KEYWORD HIGHLIGHT ===== */
 .keyword {
-  color: #0071e3;
+  color: var(--color-primary);
   font-weight: 700;
+}
+
+/* ===== STAT CARD ===== */
+.stat-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius);
+  padding: 32px 48px;
+  margin: 16px 8px;
+  min-width: 180px;
+  text-align: center;
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(0,0,0,0.22);
+}
+.stat-card .stat-value {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+.stat-card .stat-label {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  margin-top: 8px;
+  font-weight: 500;
+}
+.stat-card.loss .stat-value { color: #FF7A7A; }
+.stat-card.gain .stat-value { color: #73D9C4; }
+.stat-cards-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 24px 0;
 }
 
 /* ===== CALLOUT BLOCKQUOTE ===== */
 .callout {
-  border-left: 4px solid #0071e3;
-  background: linear-gradient(135deg, #f5f5f7, #f0f2f8);
-  border-radius: 0 8px 8px 0;
+  border-left: 4px solid var(--color-primary);
+  background: var(--color-surface);
+  border-radius: 0 var(--radius) var(--radius) 0;
   padding: 16px 20px;
   margin: 16px 0;
   font-size: 1.05rem;
-  color: #1d1d1f;
+  color: var(--color-text);
 }
 .callout p { margin-bottom: 0; }
 
-/* ===== STAT CARD ===== */
-.stat-cards-row {
-  display: flex;
-  gap: 24px;
-  margin: 24px 0;
-  flex-wrap: wrap;
-}
-.stat-card {
-  flex: 1;
-  min-width: 200px;
-  background: linear-gradient(135deg, #f8f9ff, #f0f4ff);
-  border-radius: 14px;
-  padding: 28px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  border: 1px solid rgba(0,113,227,0.12);
-}
-.stat-card .stat-value {
-  font-size: clamp(1.8rem, calc(3.2rem * var(--scale)), 4.5rem);
-  font-weight: 800;
-  color: #0071e3;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-}
-.stat-card .stat-label {
-  font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.3rem);
-  color: #86868b;
-  font-weight: 500;
-}
-
-/* ===== TECH TAGS (inline code) ===== */
-.slide-content code {
-  display: inline-block;
-  background: #eef2ff;
-  color: #3b42c9;
-  border: 1px solid rgba(59,66,201,0.15);
-  border-radius: 999px;
-  padding: 2px 10px;
-  margin: 2px 3px;
-  font-size: 0.82em;
-  font-weight: 600;
-  font-family: 'SF Mono', Menlo, Consolas, monospace;
-}
-.slide-content pre {
-  background: #f5f5f7;
-  border-radius: 10px;
-  padding: 16px 20px;
-  margin: 16px 0;
-  overflow-x: auto;
-  font-size: 1em;
-  font-family: 'SF Mono', Menlo, Consolas, monospace;
-  color: #1d1d1f;
-  text-align: center;
-}
-.slide-content pre code {
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin: 0;
-  display: block;
-  color: inherit;
-  border-radius: 0;
-  font-weight: 500;
-  font-size: 1em;
-}
-.slide-content .subhead {
-  font-weight: 700;
-  color: #1d1d1f;
-  margin: 12px 0;
-  font-size: 1.1em;
-}
-.slide-content .tech-row {
-  margin-top: 12px;
-  line-height: 2.2;
-}
-
-/* ===== TOC SLIDE ===== */
-.slide.toc-slide {
-  justify-content: center;
-  padding: 60px 100px;
-}
-.slide.toc-slide h2 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #1d1d1f;
-  margin-bottom: 40px;
-}
-.toc-item {
-  display: flex;
-  align-items: baseline;
-  gap: 20px;
-  padding: 14px 0;
-  border-bottom: 1px solid #e5e5e7;
-  cursor: default;
-}
-.toc-item:last-child { border-bottom: none; }
-.toc-num {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0071e3;
-  min-width: 36px;
-}
-.toc-title {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #1d1d1f;
-}
-
 /* ===== RESPONSIVE FONT SCALING ===== */
-:root {
-  --slide-base-w: 1280px;
-  --slide-base-h: 720px;
-  --slide-scale: 1;
-  --scale: 1;
-}
 .slide-content             { font-size: clamp(0.85rem, calc(1.15rem * var(--scale)), 2.1rem); }
+.keyword-hero              { font-size: clamp(2rem, calc(4rem * var(--scale)), 7.5rem); }
 .keyword-sub               { font-size: clamp(0.9rem, calc(1.3rem * var(--scale)), 2.5rem); }
 .slide.chapter-title h1    { font-size: clamp(2rem, 7vw, 12rem); }
 .slide.chapter-title .chapter-subtitle { font-size: clamp(1rem, calc(1.5rem * var(--scale)), 2.8rem); }
+.stat-card .stat-value     { font-size: clamp(1.8rem, calc(3.2rem * var(--scale)), 6.3rem); }
+.stat-card .stat-label     { font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.8rem); }
+.slide-split .split-text   { font-size: clamp(0.85rem, calc(1.15rem * var(--scale)), 2.1rem); }
+.slide.portrait-split .portrait-content .portrait-text { font-size: clamp(0.8rem, calc(1.1rem * var(--scale)), 2rem); }
 .slide.toc-slide h2        { font-size: clamp(1.3rem, calc(2rem * var(--scale)), 3.6rem); }
 .toc-title                 { font-size: clamp(0.9rem, calc(1.2rem * var(--scale)), 2.2rem); }
-.slide-number              { font-size: clamp(0.6rem, calc(0.8rem * var(--scale)), 1.4rem); }
+.slide.summary-slide .slide-content li { font-size: clamp(0.95rem, calc(1.3rem * var(--scale)), 2.4rem); }
+.slide-content pre code    { font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.7rem); }
 .callout                   { font-size: clamp(0.8rem, calc(1.05rem * var(--scale)), 2rem); }
+.slide-number              { font-size: clamp(0.6rem, calc(0.8rem * var(--scale)), 1.4rem); }
 
-/* ===== DENSE CONTENT ===== */
+/* ===== DENSE CONTENT (auto font scaling) ===== */
 .slide-content.dense-content {
   font-size: clamp(0.7rem, calc(0.95rem * var(--scale)), 1.7rem);
   line-height: 1.5;
@@ -339,104 +487,122 @@ body {
 .slide-content.dense-content li { margin-bottom: 0.2em; }
 .slide-content.dense-content p { margin-bottom: 0.5em; }
 
+/* ===== SUMMARY SLIDE ===== */
+.slide.summary-slide .slide-content {
+  display: flex; flex-direction: column; justify-content: center;
+}
+.slide.summary-slide .slide-content ul { list-style: none; margin-left: 0; }
+.slide.summary-slide .slide-content li {
+  font-size: 1.3rem; font-weight: 600; color: var(--color-text);
+  padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.slide.summary-slide .slide-content li::before {
+  content: '\2713\0020'; color: var(--color-primary); font-weight: 700;
+}
+
+/* ===== QR CODE SLIDE ===== */
+.slide.qr-slide { justify-content: center; align-items: center; text-align: center; }
+.slide.qr-slide h2 { font-size: 2rem; font-weight: 700; color: var(--color-text); margin-bottom: 32px; }
+.qr-container { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.qr-container canvas { border-radius: 12px; box-shadow: 0 16px 40px rgba(0,0,0,0.26); }
+.qr-url { font-size: 0.9rem; color: var(--color-text-secondary); word-break: break-all; max-width: 400px; }
+
+/* ===== TOC SLIDE ===== */
+.slide.toc-slide { justify-content: center; padding: 60px 100px; }
+.slide.toc-slide h2 { font-size: 2rem; font-weight: 700; color: var(--color-text); margin-bottom: 40px; }
+.toc-item {
+  display: flex; align-items: baseline; gap: 20px;
+  padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.12); cursor: default;
+}
+.toc-item:last-child { border-bottom: none; }
+.toc-num { font-size: 1.1rem; font-weight: 700; color: var(--color-primary); min-width: 36px; }
+.toc-title { font-size: 1.2rem; font-weight: 500; color: var(--color-text); }
+
+/* ===== CODE BLOCKS ===== */
+.code-block-wrapper { position: relative; margin-bottom: 1em; }
+.code-lang-badge {
+  display: inline-block; background: var(--color-primary); color: #09090B;
+  font-size: 0.7rem; font-weight: 600; padding: 2px 10px;
+  border-radius: var(--radius) var(--radius) 0 0; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.code-title {
+  font-size: 0.8rem; color: var(--color-text-secondary); padding: 6px 16px;
+  background: #2d2d2d; border-radius: var(--radius) var(--radius) 0 0;
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; border-bottom: 1px solid #3a3a3a;
+}
+.code-title + pre { border-radius: 0 0 var(--radius) var(--radius); }
+.code-copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: #ccc; font-size: 0.7rem; padding: 4px 10px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: background 0.15s; z-index: 5;
+}
+.code-copy-btn:hover { background: rgba(255,255,255,0.2); }
+.code-copy-btn.copied { color: #7DB87D; }
+.slide-content pre {
+  background: #2d2d2d; border-radius: var(--radius); padding: 20px; overflow-x: auto; margin-bottom: 0;
+}
+.slide-content pre code {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.95rem; line-height: 1.6; counter-reset: line;
+}
+.slide-content pre code .line { display: block; counter-increment: line; padding: 0 4px; }
+.slide-content pre code .line.highlighted {
+  background: rgba(255, 169, 90, 0.18); border-left: 3px solid var(--color-primary);
+  margin-left: -4px; padding-left: 5px;
+}
+.slide-content pre code .line::before {
+  content: counter(line); display: inline-block; width: 2em; margin-right: 1em;
+  text-align: right; color: #666; user-select: none;
+}
+
 /* ===== SPEAKER NOTES ===== */
 .speaker-notes {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(15, 15, 15, 0.92);
-  color: #e5e5e7;
-  padding: 20px 40px;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  max-height: 30vh;
-  overflow-y: auto;
-  z-index: 90;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transform: translateY(100%);
-  transition: transform 0.3s ease-out;
-  pointer-events: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(26, 27, 28, 0.94); color: #FFFFFF;
+  padding: 20px 40px; font-size: 0.95rem; line-height: 1.6;
+  max-height: 30vh; overflow-y: auto; z-index: 90;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transform: translateY(100%); transition: transform 0.3s ease-out; pointer-events: none;
 }
-.speaker-notes.visible {
-  transform: translateY(0);
-  pointer-events: auto;
-}
+.speaker-notes.visible { transform: translateY(0); pointer-events: auto; }
 
 /* ===== SLIDE NUMBER ===== */
 .slide-number {
-  position: fixed;
-  bottom: 16px;
-  right: 24px;
-  font-size: 0.75rem;
-  color: #86868b;
-  z-index: 80;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
+  position: fixed; bottom: 16px; right: 24px;
+  font-size: 0.75rem; color: var(--color-text-secondary);
+  z-index: 80; font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
 }
 
 /* ===== TOC OVERLAY ===== */
 .toc-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.97);
-  z-index: 200;
-  padding: 60px 80px;
-  overflow-y: auto;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease-out;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  position: fixed; inset: 0; background: rgba(26, 27, 28, 0.97);
+  z-index: 200; padding: 60px 80px; overflow-y: auto;
+  opacity: 0; pointer-events: none; transition: opacity 0.25s ease-out;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
-.toc-overlay.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-.toc-overlay h2 {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
-  color: #1d1d1f;
-}
+.toc-overlay.visible { opacity: 1; pointer-events: auto; }
+.toc-overlay h2 { font-size: 2rem; margin-bottom: 1.5rem; color: var(--color-text); }
 .toc-overlay ul { list-style: none; }
 .toc-overlay li {
-  padding: 12px 16px;
-  font-size: 1.2rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s;
+  padding: 12px 16px; font-size: 1.2rem; border-radius: var(--radius);
+  cursor: pointer; transition: background 0.15s;
 }
-.toc-overlay li:hover { background: #f0f0f2; }
-.toc-overlay li.current { color: #0071e3; font-weight: 600; }
+.toc-overlay li:hover { background: var(--color-surface-strong); }
+.toc-overlay li.current { color: var(--color-primary); font-weight: 600; }
 
 /* ===== PRINT TOOLBAR ===== */
 .print-toolbar {
-  position: fixed;
-  bottom: 16px;
-  left: 24px;
-  z-index: 300;
-  display: none;
-  gap: 8px;
+  position: fixed; bottom: 16px; left: 24px; z-index: 300; display: none; gap: 8px;
 }
-body.first-slide .print-toolbar {
-  display: flex;
-}
+body.first-slide .print-toolbar { display: flex; }
 .print-toolbar button {
-  background: rgba(0,0,0,0.06);
-  border: 1px solid rgba(0,0,0,0.1);
-  color: #86868b;
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 6px 14px;
-  border-radius: 6px;
-  cursor: pointer;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12);
+  color: var(--color-text-secondary); font-size: 0.75rem; font-weight: 500;
+  padding: 6px 14px; border-radius: var(--radius-sm); cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
-.print-toolbar button:hover {
-  background: rgba(0,0,0,0.1);
-  color: #1d1d1f;
-}
+.print-toolbar button:hover { background: rgba(255,255,255,0.09); color: var(--color-text); }
 
 /* ===== LIVE ANNOTATIONS ===== */
 .annotation-layer {
@@ -481,8 +647,8 @@ body.annotation-mode .annotation-toolbar {
   cursor: pointer;
 }
 .annotation-toolbar button.active {
-  border-color: #0071e3;
-  box-shadow: 0 0 0 2px rgba(0,113,227,0.16);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(255,154,139,0.22);
 }
 .annotation-toolbar .color-swatch {
   width: 28px;
@@ -546,7 +712,7 @@ body.annotation-mode .annotation-toolbar {
 }
 .annotation-help-panel dt {
   font-weight: 700;
-  color: #0071e3;
+  color: var(--color-primary-dark);
 }
 .annotation-help-panel dd {
   color: #424245;
@@ -606,6 +772,49 @@ body.annotation-mode .annotation-toolbar {
   font-size: 0.74rem;
 }
 
+@media (max-width: 700px) {
+  .slide {
+    padding: 28px 32px;
+  }
+  .slide::before {
+    top: 20px;
+    left: 32px;
+    font-size: 0.42rem;
+    letter-spacing: 0.18em;
+  }
+  .slide::after {
+    right: 30px;
+    top: 40%;
+    width: 76px;
+    height: 98px;
+    border-width: 10px;
+  }
+  .slide.chapter-title h1 {
+    font-size: 2.05rem;
+    max-width: 58%;
+  }
+  .slide.chapter-title h1::after {
+    width: 58px;
+    height: 3px;
+    margin-top: 14px;
+  }
+  .slide.chapter-title .chapter-subtitle {
+    font-size: 0.78rem;
+    margin-top: 0.9rem;
+    max-width: 58%;
+  }
+  .slide-header {
+    margin-top: 24px;
+  }
+  .slide-header h2 {
+    font-size: 1.25rem;
+  }
+  .slide:not(.chapter-title):not(.keyword-slide):not(.toc-slide):not(.qr-slide):not(.portrait-split):not(.image-hero) > .slide-content {
+    margin-top: 12px;
+    padding: 14px 16px;
+  }
+}
+
 /* ===== PRINT STYLES ===== */
 @media print {
   *, *::before, *::after { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -615,29 +824,20 @@ body.annotation-mode .annotation-toolbar {
   .annotation-layer, .annotation-toolbar, .annotation-toast,
   .speaker-notes, .code-copy-btn { display: none !important; }
   .slide {
-    display: flex !important;
-    position: relative !important;
-    top: auto !important; left: auto !important;
-    transform: none !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 100vh;
-    padding: 48px 64px !important;
-    box-shadow: none !important;
-    animation: none !important;
-    page-break-after: always;
-    break-after: page;
-    page-break-inside: avoid;
-    break-inside: avoid;
+    display: flex !important; position: relative !important;
+    top: auto !important; left: auto !important; transform: none !important;
+    width: 100% !important; height: auto !important; min-height: 100vh;
+    padding: 48px 64px !important; box-shadow: none !important; animation: none !important;
+    page-break-after: always; break-after: page;
+    page-break-inside: avoid; break-inside: avoid;
   }
   .slide:last-child { page-break-after: auto; break-after: auto; }
-  @page {
-    size: 297mm 167mm;
-    margin: 0;
-  }
-  .slide.chapter-title h1::after { background: #0071e3 !important; }
-  .keyword-hero { color: #0071e3 !important; }
-  .callout { background: #f5f5f7 !important; border-left-color: #0071e3 !important; }
+  @page { size: 297mm 167mm; margin: 0; }
+  .slide.chapter-title h1::after { background: var(--color-primary) !important; }
+  .keyword-hero { color: var(--color-primary-dark) !important; }
+  .stat-card { background: var(--color-surface) !important; }
+  .callout { background: var(--color-surface) !important; border-left-color: var(--color-primary) !important; }
+  .slide-content pre { background: #2d2d2d !important; color: #d4d4d4 !important; }
 }
 </style>
 </head>
@@ -645,640 +845,65 @@ body.annotation-mode .annotation-toolbar {
 
 <div class="progress-bar" id="progressBar"></div>
 
-<!-- ==================== SLIDES ==================== -->
+<div class="slide chapter-title" data-chapter="1" data-chapter-title="Siper Curl"><h1>Siper Curl</h1><div class="chapter-subtitle">작게 만들고, 바로 보여주고, 피드백으로 다음 판을 고친다.</div></div>
 
-<div class="slide chapter-title" data-chapter="1">
-  <h1>서영학</h1>
-  <div class="chapter-subtitle">기록하고 공유하며 함께 성장하는 백엔드 개발자</div>
-  <div class="speaker-notes">안녕하세요. 토스증권 백엔드 개발자 포지션에 지원한 서영학입니다. 짧은 시간 동안 제 경험과 강점을 소개드리겠습니다.</div>
-</div>
-
-<div class="slide" data-chapter="1">
-  <span class="chapter-label">서영학</span>
-  <span class="chapter-progress"></span>
+<div class="slide" data-chapter="1" data-chapter-title="Siper Curl">
+  <div class="chapter-label">Siper Curl</div>
+  <div class="chapter-progress">1/1</div>
   <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-content" style="display:flex; align-items:center; justify-content:center; flex-direction:column; gap:20px; text-align:center;">
-    <p style="font-size:1.8rem; font-weight:700; color:#1d1d1f;">기록하고 공유하며 함께 성장하는<br>백엔드 개발자</p>
-    <p style="font-size:1.2rem; color:#0071e3; font-weight:600;"><strong class="keyword">토스증권</strong> 백엔드 개발자 지원</p>
-  </div>
-  <div class="speaker-notes">안녕하세요. 토스증권 백엔드 개발자 포지션에 지원한 서영학입니다. 짧은 시간 동안 제 경험과 강점을 소개드리겠습니다.</div>
+  <div class="slide-header"><h2>오늘 보여줄 것</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content"><ul><li><strong class="keyword">한 문장 문제 정의</strong>로 시작한다</li><li><strong class="keyword">3개 장면</strong>만 골라 흐름을 만든다</li><li><strong class="keyword">결과 화면</strong>을 가장 크게 보여준다</li><li>마지막에는 다음 액션 하나만 남긴다</li></ul></div>
+  <div class="speaker-notes">Siper 스타일은 장식보다 리듬이 중요하다. 한 슬라이드에 하나의 판단만 남긴다.</div>
 </div>
 
-<div class="slide chapter-title" data-chapter="2">
-  <h1>About Me</h1>
-</div>
+<div class="slide chapter-title" data-chapter="2" data-chapter-title="데모 흐름"><h1>데모 흐름</h1></div>
 
-<div class="slide keyword-slide" data-chapter="2">
-  <span class="chapter-label">About Me</span>
-  <span class="chapter-progress"></span>
+<div class="slide keyword-slide" data-chapter="2" data-chapter-title="데모 흐름"><div class="keyword-hero">7분 안에 납득시키기</div><div class="keyword-sub">Siper Curl sample rhythm</div></div>
+
+<div class="slide" data-chapter="2" data-chapter-title="데모 흐름">
+  <div class="chapter-label">데모 흐름</div>
+  <div class="chapter-progress">2/3</div>
   <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="keyword-hero">호기심과 탐구심으로<br>성장하는 백엔드 개발자</div>
-  <div class="speaker-notes">저를 한 문장으로 표현하면 '호기심과 탐구심으로 성장하는 개발자'입니다. 다양한 문제를 가리지 않고 부딪히며 성장해왔습니다.</div>
+  <div class="slide-header"><h2>발표 구조</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content"><table><thead><tr><th>구간</th><th>역할</th><th>화면</th></tr></thead><tbody><tr><td>0:00-1:00</td><td>문제 공감</td><td>왜 지금 불편한가</td></tr><tr><td>1:00-4:30</td><td>핵심 데모</td><td>실제 사용 장면</td></tr><tr><td>4:30-6:00</td><td>구현 판단</td><td>무엇을 버렸나</td></tr><tr><td>6:00-7:00</td><td>다음 단계</td><td>바로 할 일</td></tr></tbody></table></div>
+  <div class="speaker-notes">표는 발표자에게 시간 감각을 주기 위한 샘플이다. 실제 자료에서는 데모 이미지로 바꾸면 더 좋다.</div>
 </div>
 
-<div class="slide" data-chapter="2">
-  <span class="chapter-label">About Me</span>
-  <span class="chapter-progress"></span>
+<div class="slide" data-chapter="2" data-chapter-title="데모 흐름">
+  <div class="chapter-label">데모 흐름</div>
+  <div class="chapter-progress">3/3</div>
   <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>저는 이런 개발자입니다</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li><strong class="keyword">다양한 도메인</strong> — 게임·AI·금융·연애 다이어리까지 가리지 않음</li>
-      <li><strong class="keyword">전체 사이클 경험</strong> — 팀 빌딩부터 운영까지 4년 이상</li>
-      <li><strong class="keyword">기술과 비즈니스의 균형</strong> — 실질적 가치를 만드는 데 집중</li>
-      <li><strong class="keyword">꾸준한 기록과 공유</strong> — 글쓰기, 멘토링, 강의</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">제 강점은 다양한 경험을 통해 기술과 비즈니스 사이에서 균형을 잡으며 실질적인 가치를 만들 수 있다는 점입니다.</div>
+  <div class="slide-header"><h2>핵심 지표</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content"><div class="stat-cards-row"><div class="stat-card"><span class="stat-value">3장</span><span class="stat-label">데모 화면</span></div><div class="stat-card"><span class="stat-value">1개</span><span class="stat-label">핵심 메시지</span></div><div class="stat-card"><span class="stat-value">7분</span><span class="stat-label">발표 시간</span></div></div>
+<blockquote class="callout"><p>숫자는 크게 보이게 두고, 설명은 말로 보충한다.</p></blockquote></div>
+  
 </div>
 
-<div class="slide" data-chapter="2">
-  <span class="chapter-label">About Me</span>
-  <span class="chapter-progress"></span>
+<div class="slide chapter-title" data-chapter="3" data-chapter-title="마무리"><h1>마무리</h1></div>
+
+<div class="slide" data-chapter="3" data-chapter-title="마무리">
+  <div class="chapter-label">마무리</div>
+  <div class="chapter-progress">1/2</div>
   <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>핵심 경험 요약</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <div class="stat-cards-row">
-      <div class="stat-card">
-        <span class="stat-value">8년</span>
-        <span class="stat-label">백엔드 개발 경력</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-value">4년</span>
-        <span class="stat-label">AI 플랫폼 전체 사이클 운영</span>
-      </div>
-      <div class="stat-card">
-        <span class="stat-value">DAU 80만</span>
-        <span class="stat-label">글로벌 서비스 운영 중</span>
-      </div>
-    </div>
-  </div>
-  <div class="speaker-notes">약 8년간 백엔드 서버 개발자로 성장해왔고, 특히 AI 프로야구 플랫폼 PAIGE에서 4년간 팀 빌딩부터 운영까지 전체 사이클을 경험했습니다.</div>
+  <div class="slide-header"><h2>다음 판에서 고칠 것</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content"><ul><li>첫 화면에 실제 제품 이미지를 넣는다</li><li>데모 전환 구간의 문장을 더 짧게 만든다</li><li>마지막 장은 QR 또는 배포 링크로 바꾼다</li></ul></div>
+  <div class="speaker-notes">샘플에서는 구조와 톤만 확인한다. 실제 발표 자료로 확장할 때는 이미지와 데이터가 먼저다.</div>
 </div>
 
-<div class="slide chapter-title" data-chapter="3">
-  <h1>Career Timeline</h1>
-</div>
-
-<div class="slide" data-chapter="3">
-  <span class="chapter-label">Career Timeline</span>
-  <span class="chapter-progress"></span>
+<div class="slide" data-chapter="3" data-chapter-title="마무리">
+  <div class="chapter-label">마무리</div>
+  <div class="chapter-progress">2/2</div>
   <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>경력 한 눈에 보기</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li><strong class="keyword">26.01 ~ 현재</strong> · monymony — 썸원 Backend 개발팀</li>
-      <li><strong class="keyword">24.01 ~ 24.12</strong> · ncsoft — Account Platform 개발팀</li>
-      <li><strong class="keyword">23.01 ~ 23.12</strong> · ncsoft — 금융AI 서비스 개발팀</li>
-      <li><strong class="keyword">18.09 ~ 22.12</strong> · ncsoft — NLP AI 서비스 개발팀 (PAIGE)</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">2018년 NC NLP 센터에서 커리어를 시작해 AI·금융·계정 보안을 거쳐 현재 썸원에서 RAG 기반 콘텐츠 운영을 담당하고 있습니다.</div>
+  <div class="slide-header"><h2>감사합니다</h2><hr class="slide-header-divider"></div>
+  <div class="slide-content"><blockquote class="callout"><p>&quot;완성된 설명보다, 이해되는 화면이 먼저다.&quot;</p></blockquote>
+<ul><li>발표 자료: <code>slides/siper_style_sample.html</code></li><li>원본 문서: <code>slides/siper_style_sample.md</code></li></ul></div>
+  <div class="speaker-notes">마지막 장은 연락처나 저장소 링크를 넣는 자리다.</div>
 </div>
-
-<div class="slide" data-chapter="3">
-  <span class="chapter-label">Career Timeline</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>도메인 커버리지</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li>AI 플랫폼 (야구, 비전 ML)</li>
-      <li><strong class="keyword">금융</strong> · 프랍 트레이딩 · <strong class="keyword">실시간 체결</strong></li>
-      <li>글로벌 계정 · 보안 · ETL 파이프라인</li>
-      <li>글로벌 콘텐츠 서비스</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">단일 도메인에 머무르지 않고, 새로운 문제와 기술을 꾸준히 학습하며 폭을 넓혀왔습니다. 특히 금융과 실시간 처리 경험이 토스증권 포지션과 맞닿아 있다고 생각합니다.</div>
-</div>
-
-<div class="slide chapter-title" data-chapter="4">
-  <h1>썸원 · 글로벌 연애 다이어리 앱</h1>
-</div>
-
-<div class="slide" data-chapter="4">
-  <span class="chapter-label">썸원</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>monymony — 26.01 ~ 현재</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li>연애 질문·다이어리 앱 <strong class="keyword">썸원</strong>의 콘텐츠 운영 고도화</li>
-      <li><strong class="keyword">유저 세그먼트</strong> 분류 및 질문 온톨로지 구성</li>
-      <li><strong class="keyword">RAG 기반 시멘틱 검색</strong>으로 유사 질문 검출 자동화</li>
-      <li><strong class="keyword">어드민 전면 재개편</strong> · <strong class="keyword">콘텐츠 배포 편리성 및 안정성 강화</strong>
-        <ul>
-          <li>스프레드시트 수작업 → 어드민 일원화 시스템화</li>
-          <li>다국어·번역 등 글로벌 서비스 운영</li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-  <div class="speaker-notes">현재는 DAU 80만 글로벌 서비스인 썸원에서 일하고 있습니다. 기존에 스프레드시트로 수작업하던 콘텐츠 운영을 RAG와 유저 세그먼트로 자동화하는 작업을 주도하고 있습니다.</div>
-</div>
-
-<div class="slide" data-chapter="4">
-  <span class="chapter-label">썸원</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>문제 해결 방식</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <blockquote class="callout"><p>문제가 생기면 '어떻게 <strong class="keyword">자동화하고 시스템화</strong>할 것인가'를 먼저 고민합니다.</p></blockquote>
-    <ul>
-      <li>콘텐츠 생성 → 검증 → 배포 전체 워크플로우 수집</li>
-      <li>어드민 일원화로 <strong class="keyword">운영 부담 자체를 제거</strong></li>
-      <li>반복 작업은 사람 대신 RAG·유저 세그먼트로 대체</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">저는 눈앞의 문제를 해결하는 것을 넘어, 운영 부담 자체를 줄이는 시스템을 설계하는 것을 중요하게 생각합니다.</div>
-</div>
-
-<div class="slide chapter-title" data-chapter="5">
-  <h1>금융AI · 프랍 트레이딩</h1>
-</div>
-
-<div class="slide" data-chapter="5">
-  <span class="chapter-label">금융AI · 프랍 트레이딩</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>실시간 체결 알림 시스템 — 23.01 ~ 23.12</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content dense-content">
-    <ul>
-      <li><strong class="keyword">Problem</strong> — 트레이딩 알림은 <strong class="keyword">수 ms</strong> 지연도 손실. 단순 폴링으로는 한계</li>
-      <li><strong class="keyword">Analysis</strong> — 호가·체결 스트림 분석 → 진짜 병목은 속도가 아니라 <strong class="keyword">소켓 상태 가시성 부재</strong></li>
-      <li><strong class="keyword">Action</strong> — 웹소켓(Stomp) 채널 + Ratelimit, 소켓 상태 모니터링 어드민, 개장 전 데이터 적재 배치</li>
-      <li><strong class="keyword">Reflection</strong> — 실시간 금융 시스템에서 성능보다 먼저 필요한 건 <strong class="keyword">관측 가능성</strong>. "빠르게" 전에 "보이게"부터 설계</li>
-    </ul>
-    <div class="tech-row"><code>WebSocket(Stomp)</code> <code>RabbitMQ</code> <code>Spring gateway</code> <code>Redis</code></div>
-  </div>
-  <div class="speaker-notes">토스증권과 가장 맞닿은 경험. 단순히 웹소켓을 깐 게 아니라, 클러스터 환경에서 소켓 상태를 관측·격리하는 쪽이 더 중요한 설계 포인트였다는 점을 강조.</div>
-</div>
-
-<div class="slide" data-chapter="5">
-  <span class="chapter-label">금융AI · 프랍 트레이딩</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>Faip — AI 추천 × 금융 플랫폼</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content dense-content">
-    <ul>
-      <li><strong class="keyword">Problem</strong> — AI 추천 모델은 빨라도 금융 데이터 적재·집계 단계에서 <strong class="keyword">응답 지연이 누적</strong></li>
-      <li><strong class="keyword">Analysis</strong> — 핫패스(실시간) vs 콜드패스(배치) 분리 가능 여부 검증 → <strong class="keyword">80%는 사전 집계로 흡수 가능</strong></li>
-      <li><strong class="keyword">Action</strong> — Spring batch + Airflow + Kafka 단계별 적재, ES 집계 테이블 + 캐싱, Grafana SLA 시각화</li>
-      <li><strong class="keyword">Reflection</strong> — <strong class="keyword">모델 속도 ≠ 서비스 속도</strong>. 입력 파이프라인의 SLA가 사용자 체감을 결정</li>
-    </ul>
-    <div class="tech-row"><code>Spring batch</code> <code>Airflow</code> <code>Kafka</code> <code>Elasticsearch</code></div>
-  </div>
-  <div class="speaker-notes">모델만 빠르게 만들면 끝이 아니라, 입력 파이프라인의 정합성과 적재 SLA가 서비스 응답을 결정한다는 관점을 전달.</div>
-</div>
-
-<div class="slide" data-chapter="5">
-  <span class="chapter-label">금융AI · 프랍 트레이딩</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>한국투자증권 Mocking 서버 자체 개발</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content dense-content">
-    <ul>
-      <li><strong class="keyword">Problem</strong> — 실데이터는 <strong class="keyword">개장 시간에만</strong> 받을 수 있어 개발/QA가 하루 6시간에 묶임</li>
-      <li><strong class="keyword">Analysis</strong> — 외부 mock 도구 검토 → 호가·체결 시나리오 <strong class="keyword">재현 불가</strong>. 직접 만드는 게 오히려 빠름</li>
-      <li><strong class="keyword">Action</strong> — 실거래 응답을 <strong class="keyword">녹화·저장·재생</strong>하는 자체 Mocking 서버 구축 + 팀 공용 배포</li>
-      <li><strong class="keyword">Reflection</strong> — 제약을 <strong class="keyword">우회 대상이 아닌 설계 대상</strong>으로 보는 습관. "직접 만드는 게 빠른 경우"를 먼저 의심</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">제약이 있을 때 외부 솔루션을 찾기보다 직접 문제를 정의하고 해결하는 성향. 금융 도메인의 이런 제약은 토스증권에서도 마주칠 수 있다고 생각합니다.</div>
-</div>
-
-<div class="slide chapter-title" data-chapter="6">
-  <h1>글로벌 계정 · 보안</h1>
-</div>
-
-<div class="slide" data-chapter="6">
-  <span class="chapter-label">글로벌 계정 · 보안</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>NC Shield — 보안 ETL 파이프라인</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content dense-content">
-    <ul>
-      <li><strong class="keyword">Problem</strong> — 글로벌 게임 보안 트래픽 <strong class="keyword">30분당 최대 200만 건</strong>. 단일 적재로는 가공·집계 불가</li>
-      <li><strong class="keyword">Analysis</strong> — 원천 → 가공 → 시각화의 <strong class="keyword">3단 분리</strong> 필요. 단계마다 실패 격리 + 재처리</li>
-      <li><strong class="keyword">Action</strong> — Kafka → Airflow → MySQL → Airflow → InfluxDB → Grafana 단계별 파이프라인 설계·운영</li>
-      <li><strong class="keyword">Reflection</strong> — ETL은 한 줄이 아니라 <strong class="keyword">단계마다 실패를 허용하는 구조</strong>로 짜야 운영 가능. 이후 파이프라인 설계의 기본 원칙</li>
-    </ul>
-    <pre><code>Kafka → Airflow → MySQL → Airflow → InfluxDB ← Grafana</code></pre>
-    <div class="tech-row"><code>Kafka</code> <code>Airflow</code> <code>InfluxDB</code> <code>Grafana</code> <code>Kotlin</code> <code>Spring</code> <code>graphQL</code></div>
-  </div>
-  <div class="speaker-notes">단순히 ETL을 짠 게 아니라, 단계마다 실패가 격리되도록 끊어 놓아야 운영이 가능하다는 점을 학습한 프로젝트.</div>
-</div>
-
-<div class="slide chapter-title" data-chapter="7">
-  <h1>KBO Paige · 4년</h1>
-</div>
-
-<div class="slide" data-chapter="7">
-  <span class="chapter-label">KBO Paige</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>NLP 센터 AI 서비스 개발 · 18.09 ~ 22.12</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <blockquote class="callout"><p>팀 빌딩부터 운영까지 <strong class="keyword">4년간 전체 사이클</strong>을 경험한 프로젝트</p></blockquote>
-    <ul>
-      <li>AI 프로야구 KBO 앱 PAIGE</li>
-      <li>중계·피드·기록·채팅·커뮤니티·뉴스·챗봇</li>
-      <li>홈 피드, 영상/문자 중계, 계정, 이벤트, 로깅, AI 연동</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">제 커리어의 가장 큰 축인 프로젝트입니다. B2B 플랫폼의 팀 빌딩부터 4년간 운영까지 전 사이클을 경험했습니다.</div>
-</div>
-
-<div class="slide" data-chapter="7">
-  <span class="chapter-label">KBO Paige</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>AI 추천 피드 — 성능 개선</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content dense-content">
-    <ul>
-      <li><strong class="keyword">Problem</strong> — AI 추천 API <strong class="keyword">3~10초</strong> 소요 → 홈피드 전체 병목</li>
-      <li><strong class="keyword">Analysis</strong> — 유저 단위가 아니라 <strong class="keyword">유저 그룹 단위</strong>로도 추천 품질 유지됨을 데이터로 검증</li>
-      <li><strong class="keyword">Action</strong> — 그룹 기반 Batch 선계산 + 비동기 갱신, 실시간 호출은 조회만</li>
-      <li><strong class="keyword">Reflection</strong> — 성능 최적화는 코드가 아니라 <strong class="keyword">요구사항 재정의</strong>에서 시작. "실시간이 정말 필요한가"부터 묻는 습관</li>
-    </ul>
-    <div class="stat-cards-row">
-      <div class="stat-card loss">
-        <span class="stat-value">3~10초</span>
-        <span class="stat-label">Before</span>
-      </div>
-      <div class="stat-card gain">
-        <span class="stat-value">100ms</span>
-        <span class="stat-label">After</span>
-      </div>
-    </div>
-    <div class="tech-row"><code>캐시</code> <code>Batch</code> <code>비동기</code></div>
-  </div>
-  <div class="speaker-notes">가장 중요한 배움은 '실시간이 꼭 필요한가?'를 먼저 의심하는 것. 도메인 특성을 보니 실시간이 아니어도 품질이 유지된다는 인사이트가 핵심.</div>
-</div>
-
-<div class="slide" data-chapter="7">
-  <span class="chapter-label">KBO Paige</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>KBO 경기 중계 시스템</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content dense-content">
-    <ul>
-      <li><strong class="keyword">Problem</strong> — 기록원 수동 입력이 이닝 종료 후 <strong class="keyword">빈번히 수정</strong> → 영상/피드 전방위 오류 전파</li>
-      <li><strong class="keyword">Analysis</strong> — 외부 데이터 의존 시스템은 "정합성"이 아니라 <strong class="keyword">"변경 가능성"</strong>을 전제로 재설계</li>
-      <li><strong class="keyword">Action</strong> — 변경 감지·이력 저장, 에러 재현 테스트 환경, 영상 재생성 로직 개선, 어드민 모니터링</li>
-      <li><strong class="keyword">Reflection</strong> — <strong class="keyword">모니터링은 문제를 보여주는 일이 아니라, 대응 동선을 설계하는 일</strong>. 이후 운영 시스템 설계의 기준</li>
-    </ul>
-    <div class="tech-row"><code>Python</code> <code>Pandas</code> <code>Tornado</code> <code>Mock</code></div>
-  </div>
-  <div class="speaker-notes">이 경험에서 얻은 가장 큰 교훈은 '모니터링은 문제를 보여주는 것만이 아니라 대응 동선까지 설계해야 의미가 있다'는 점.</div>
-</div>
-
-<div class="slide" data-chapter="7">
-  <span class="chapter-label">KBO Paige</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>Vision MLOps 플랫폼 구축</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content dense-content">
-    <ul>
-      <li><strong class="keyword">Problem</strong> — AI 연구센터의 <strong class="keyword">수동 배포</strong>. 롤백·버전 비교 테스트 불가, 연구자가 인프라에 시간 소모</li>
-      <li><strong class="keyword">Analysis</strong> — ML은 코드가 아니라 <strong class="keyword">모델·데이터·환경의 조합</strong>이 배포 단위 — 일반 CI/CD로는 부족</li>
-      <li><strong class="keyword">Action</strong> — Vision ML 모델 VCS, API 서버 도커라이징, GPU 기반 k8s 배포 파이프라인, nc dinos 영상 자동화</li>
-      <li><strong class="keyword">Reflection</strong> — <strong class="keyword">연구자의 생산성을 플랫폼 문제로 환원</strong>하는 관점. "사람 대신 시스템이 할 수 있는 일"을 먼저 찾게 됨</li>
-    </ul>
-    <div class="tech-row"><code>K8s</code> <code>Fastapi</code> <code>모델 도커라이징</code> <code>CI/CD</code></div>
-  </div>
-  <div class="speaker-notes">AI 연구팀이 연구에 집중할 수 있도록 MLOps 환경을 구축. GPU 기반 k8s 배포는 당시 사내에서도 드문 경험.</div>
-</div>
-
-<div class="slide" data-chapter="7">
-  <span class="chapter-label">KBO Paige</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>Push 플랫폼 · 커뮤니티</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li>경기 일정 기반 Push <strong class="keyword">스케줄러</strong> 설계</li>
-      <li>세그먼트별 발송, 편집·예약 취소 어드민</li>
-      <li>유저 응답 데이터를 AI Lab 추천 모델 <strong class="keyword">피드백 연동</strong></li>
-      <li>팬 커뮤니티: 댓글·투표·무한 스크롤·이미지/영상 비동기 변환</li>
-    </ul>
-    <div class="tech-row"><code>Spring</code> <code>RabbitMQ</code> <code>FCM</code> <code>S3</code> <code>FFmpeg</code></div>
-  </div>
-  <div class="speaker-notes">Push와 커뮤니티 모두 단순 개발을 넘어, 사용자 반응 데이터를 AI 모델에 피드백하는 구조를 설계했습니다.</div>
-</div>
-
-<div class="slide chapter-title" data-chapter="8">
-  <h1>강의 · 커뮤니티</h1>
-</div>
-
-<div class="slide" data-chapter="8">
-  <span class="chapter-label">강의 · 커뮤니티</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>부트캠프 강사 — 25.03 ~ 26.01</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <blockquote class="callout"><p>기술을 어떻게 쓰는지를 넘어, <strong class="keyword">어디에 써야 하는지</strong>를 알려주는 강사</p></blockquote>
-    <ul>
-      <li><strong class="keyword">Upstage 새싹 / 강원대 부트캠프</strong> 메인 강사</li>
-      <li><strong class="keyword">멋쟁이 사자처럼</strong> 백엔드 부트캠프 4기 메인 강사</li>
-      <li>Spring 심화, 웹소켓, ES 실습 + 프로젝트 멘토링</li>
-      <li>충남대 실전코딩 강사 (2022~2024)</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">2025년에는 본격적으로 부트캠프 강사로 활동했습니다. 제가 배운 것을 다음 세대에게 전달하는 일이 저의 성장에도 큰 도움이 되었습니다.</div>
-</div>
-
-<div class="slide" data-chapter="8">
-  <span class="chapter-label">강의 · 커뮤니티</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>기록과 커뮤니티</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li><strong class="keyword">글또 9기·10기</strong> (2023.12 ~ 2025.05) — 꾸준한 글쓰기</li>
-      <li><strong class="keyword">SIPE 3기</strong> (2024.08 ~ 2025.02) — 개발자 커뮤니티</li>
-      <li>블로그: inspire12.tistory.com</li>
-      <li>GitHub: github.com/inspire12</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">글또와 SIPE를 통해 기록과 지식 공유를 꾸준히 이어가고 있습니다. 문제 앞에서 의도와 콘텍스트를 함께 고민하는 태도를 이 커뮤니티들에서 많이 배웠습니다.</div>
-</div>
-
-<div class="slide chapter-title" data-chapter="9">
-  <h1>엔지니어로서의 고민</h1>
-</div>
-
-<div class="slide" data-chapter="9">
-  <span class="chapter-label">엔지니어로서의 고민</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>실제로 막혔던 순간들</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content dense-content">
-    <blockquote class="callout"><p>잘 된 것만 쓰면 거짓말이 됩니다. 제가 <strong class="keyword">진짜로 막혔던 순간</strong>들을 공유합니다.</p></blockquote>
-    <ul>
-      <li><strong class="keyword">Vision MLOps 초기</strong> — GPU k8s에서 모델 간 리소스 경합, 연구자 작업이 서로 <strong class="keyword">OOM</strong>으로 죽음
-        <ul><li>우선순위·쿼터·모델 크기 기반 스케줄링으로 재설계</li></ul>
-      </li>
-      <li><strong class="keyword">KBO 중계 초기</strong> — 외부 기록 데이터를 "정합성이 보장된다"고 가정하고 설계 → 이닝마다 깨짐
-        <ul><li>아키텍처 일부를 처음부터 다시 짜야 했음. <strong class="keyword">"변경 가능성" 관점</strong>을 이때 얻음</li></ul>
-      </li>
-      <li><strong class="keyword">썸원 RAG 초기</strong> — 시멘틱 검색 정확도 기대 이하, 임베딩 모델만 바꿔봐도 해결 안 됨
-        <ul><li><strong class="keyword">질문 온톨로지·세그먼트가 전제</strong>라는 걸 뒤늦게 깨달음</li></ul>
-      </li>
-    </ul>
-  </div>
-  <div class="speaker-notes">프로젝트 성공 스토리보다 이런 실패 지점에서 배운 게 훨씬 많습니다. 여기서 얻은 관점이 다음 프로젝트의 설계를 바꿉니다.</div>
-</div>
-
-<div class="slide" data-chapter="9">
-  <span class="chapter-label">엔지니어로서의 고민</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>문제 앞에서의 사고 과정</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ol>
-      <li><strong class="keyword">이게 왜 문제인가?</strong> — 증상이 아니라 원인을 묻기</li>
-      <li><strong class="keyword">진짜 원인이 맞나?</strong> — 첫 가설을 의심, 재현 환경부터 만들기</li>
-      <li><strong class="keyword">더 싸게 풀 수 있나?</strong> — 요구사항 재정의·도메인 특성으로 우회 가능한지</li>
-      <li><strong class="keyword">운영이 가능한가?</strong> — 장애 시나리오·대응 동선까지 상상</li>
-      <li><strong class="keyword">이 판단을 기록했나?</strong> — 다음 사람이 이해할 수 있게 남기기</li>
-    </ol>
-    <blockquote class="callout"><p>기술 선택도 같은 순서로 — "유행"이 아니라 <strong class="keyword">"이 문제에 이 선택이 왜 맞는가"</strong>부터 답할 수 있어야 합니다.</p></blockquote>
-  </div>
-  <div class="speaker-notes">이 순서는 의식적으로 만든 게 아니라, 실패들을 통해 저절로 몸에 붙은 순서입니다. 면접에서 이 과정으로 대화하고 싶습니다.</div>
-</div>
-
-<div class="slide" data-chapter="9">
-  <span class="chapter-label">엔지니어로서의 고민</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>도메인을 넘어 남는 것</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content dense-content">
-    <blockquote class="callout"><p>8년간 게임·AI·금융·글로벌 콘텐츠를 오가며 <strong class="keyword">도메인은 바뀌어도 반복해서 부딪힌 질문</strong>이 있었습니다.</p></blockquote>
-    <ul>
-      <li><strong class="keyword">관측 가능성이 먼저</strong> — 빠르게 만들기 전에, 지금 무슨 일이 일어나는지가 보여야 한다</li>
-      <li><strong class="keyword">실패를 허용하는 구조</strong> — 한 줄의 흐름이 아니라, 각 단계가 독립적으로 복구 가능하게</li>
-      <li><strong class="keyword">실시간은 정말 필요한가</strong> — 요구사항부터 의심. 도메인 특성으로 우회 가능한 경우가 많다</li>
-      <li><strong class="keyword">외부 의존은 "변경 가능성"이 전제</strong> — 정합성은 환상, 변화를 감지·기록·재현할 수 있어야 한다</li>
-      <li><strong class="keyword">제약은 우회가 아니라 설계 대상</strong> — 직접 만드는 게 빠른 경우를 먼저 의심</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">개별 프로젝트를 넘어, 제가 어떤 관점으로 엔지니어링을 하는지를 한 장으로 압축한 부분. 토스증권에서도 이 원칙들이 그대로 적용된다고 생각합니다.</div>
-</div>
-
-<div class="slide" data-chapter="9">
-  <span class="chapter-label">엔지니어로서의 고민</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>지금도 남은 고민들</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li><strong class="keyword">AI 시대에 백엔드의 역할 재정의</strong> — 모델을 둘러싼 플랫폼·데이터 흐름의 책임이 어디까지인가</li>
-      <li><strong class="keyword">운영 자동화의 한계선</strong> — 어디까지 자동화하고, 어디부터 사람의 판단을 남겨둘 것인가</li>
-      <li><strong class="keyword">규모와 단순함의 균형</strong> — 대용량이 아닌 경우에도 과한 아키텍처를 들이지 않기</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">정답을 가진 고민이 아니라, 계속 들고 가는 질문들. 면접에서도 이 부분으로 대화를 확장하고 싶습니다.</div>
-</div>
-
-<div class="slide chapter-title" data-chapter="10">
-  <h1>Skills</h1>
-</div>
-
-<div class="slide" data-chapter="10">
-  <span class="chapter-label">Skills</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>Backend</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li><strong class="keyword">Spring Boot</strong> (Java / Kotlin)</li>
-      <li><strong class="keyword">Spring WebFlux</strong> (Java / Kotlin)</li>
-      <li>NestJS (TypeScript), GraphQL</li>
-      <li>FastAPI, Airflow</li>
-      <li>WebSocket (Stomp)</li>
-    </ul>
-    <p class="subhead">Data</p>
-    <div class="tech-row"><code>MySQL</code> <code>PostgreSQL</code> <code>Redis</code> <code>Hazelcast</code> <code>Elasticsearch</code> <code>InfluxDB</code></div>
-    <p class="subhead">Messaging · 기타</p>
-    <div class="tech-row"><code>Kafka</code> <code>RabbitMQ</code> <code>RAG</code> <code>AWS</code></div>
-  </div>
-  <div class="speaker-notes">주력은 Spring Boot와 Kotlin이고, 실시간·대용량 처리를 위해 WebFlux, WebSocket, Kafka, Redis를 두루 다룹니다.</div>
-</div>
-
-<div class="slide" data-chapter="10">
-  <span class="chapter-label">Skills</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>DevOps / MSA</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li><strong class="keyword">Docker</strong>, <strong class="keyword">Kubernetes</strong></li>
-      <li>Nginx, Caddy</li>
-      <li>Jenkins, GitHub Actions</li>
-      <li>Frontend: React, Vue (필요 시 직접 구현)</li>
-      <li><strong class="keyword">MSA 환경 운영 경험</strong> (ncsoft 전반)</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">인프라와 프론트엔드도 필요하면 직접 구현하며, MSA 환경의 운영 경험을 기반으로 서비스 전체를 바라볼 수 있습니다.</div>
-</div>
-
-<div class="slide chapter-title" data-chapter="11">
-  <h1>Education</h1>
-</div>
-
-<div class="slide" data-chapter="11">
-  <span class="chapter-label">Education</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>충남대학교 컴퓨터공학과 · 12.03 ~ 18.03</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <p class="subhead">알고리즘</p>
-    <ul>
-      <li><strong class="keyword">ANT 알고리즘 동아리 회장</strong> (17.08 ~ 18.12)</li>
-      <li><strong class="keyword">ACM-ICPC 대전 본선</strong> 진출 (2016)</li>
-      <li>Coder's High 본선 진출 (2016)</li>
-      <li>Baekjoon Online Judge — inspire12</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">학부 시절 알고리즘 동아리에서 대회 준비와 운영을 함께 했습니다. 이 경험이 문제를 '정의'하고 '분해'하는 습관의 기반이 되었습니다.</div>
-</div>
-
-<div class="slide" data-chapter="11">
-  <span class="chapter-label">Education</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>AI · 연구 · 해외 연수</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content">
-    <ul>
-      <li>Elice <strong class="keyword">AI 데이터사이언티스트</strong> 전문가 양성과정</li>
-      <li>KIPS 학술발표 — "이미지 분석과 딥러닝을 통한 영유아 위험물 탐지"</li>
-      <li>IITP 캡스톤 디자인 — "Low cost Tethered UAV"</li>
-      <li>충남대 SW사업단 美 <strong class="keyword">퍼듀대 파견</strong> (2017)</li>
-      <li>BEIN 2017 Poster Section 전시</li>
-    </ul>
-  </div>
-  <div class="speaker-notes">학부 때 AI 연구와 해외 연수를 경험하며, 연구와 실제 제품을 연결하는 일에 관심을 갖게 되었습니다.</div>
-</div>
-
-<div class="slide chapter-title" data-chapter="12">
-  <h1>마무리</h1>
-</div>
-
-<div class="slide keyword-slide" data-chapter="12">
-  <span class="chapter-label">마무리</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="keyword-hero">금융과 실시간 처리,<br>토스증권에서 이어가고 싶습니다</div>
-  <div class="speaker-notes">제가 NC 금융AI 팀에서 쌓은 프랍 트레이딩·실시간 체결·대용량 데이터 파이프라인 경험을, 토스증권에서 더 깊고 넓게 이어가고 싶습니다.</div>
-</div>
-
-<div class="slide" data-chapter="12">
-  <span class="chapter-label">마무리</span>
-  <span class="chapter-progress"></span>
-  <div class="chapter-progress-bar"><div class="fill"></div></div>
-  <div class="slide-header">
-    <h2>Contact</h2>
-    <hr class="slide-header-divider">
-  </div>
-  <div class="slide-content" style="display:flex; align-items:center; justify-content:center; flex-direction:column; gap:18px; text-align:center;">
-    <p style="font-size:2.2rem; font-weight:800; color:#0071e3;">ox4443@naver.com</p>
-    <ul style="list-style:none; margin:0; padding:0;">
-      <li style="margin:8px 0;">GitHub — <span style="color:#86868b;">github.com/inspire12</span></li>
-      <li style="margin:8px 0;">Blog — <span style="color:#86868b;">inspire12.tistory.com</span></li>
-      <li style="margin:8px 0;">LinkedIn — <span style="color:#86868b;">linkedin.com/in/inspire12</span></li>
-    </ul>
-    <p style="font-size:1.5rem; font-weight:700; color:#1d1d1f; margin-top:12px;">감사합니다</p>
-  </div>
-  <div class="speaker-notes">오늘 소중한 기회 주셔서 감사합니다. 궁금하신 점이 있으면 편하게 질문 주세요.</div>
-</div>
-
-<!-- ==================== END SLIDES ==================== -->
 
 <div class="slide-number" id="slideNumber"></div>
 
 <div class="print-toolbar">
-  <button onclick="printSlides()" title="Print / PDF (P)">🖨 Print / PDF</button>
-</div>
-
-<div class="toc-overlay" id="tocOverlay">
-  <h2>목차</h2>
-  <ul id="tocList"></ul>
+  <button onclick="printSlides()" title="Print / PDF (P)">Print / PDF</button>
 </div>
 
 <canvas class="annotation-layer" id="annotationLayer"></canvas>
@@ -1467,7 +1092,7 @@ body.annotation-mode .annotation-toolbar {
     const pad = 8;
     ctx.save();
     ctx.setLineDash([6, 5]);
-    ctx.strokeStyle = '#0071e3';
+    ctx.strokeStyle = '#FFA95A';
     ctx.lineWidth = 2;
     ctx.strokeRect(
       bounds.x * rect.width - pad,
@@ -1932,10 +1557,7 @@ body.annotation-mode .annotation-toolbar {
   function prevChapter() {
     let target = null;
     for (let i = chapters.length - 1; i >= 0; i--) {
-      if (chapters[i].slideIndex < currentSlide) {
-        target = chapters[i];
-        break;
-      }
+      if (chapters[i].slideIndex < currentSlide) { target = chapters[i]; break; }
     }
     if (target) showSlide(target.slideIndex);
   }
@@ -1986,11 +1608,8 @@ body.annotation-mode .annotation-toolbar {
   }
 
   function toggleFullscreen() {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen();
-    } else {
-      document.exitFullscreen();
-    }
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
   }
 
   function toggleToc() {
@@ -2002,10 +1621,7 @@ body.annotation-mode .annotation-toolbar {
     chapters.forEach((ch) => {
       const li = document.createElement('li');
       li.textContent = ch.title;
-      li.addEventListener('click', () => {
-        showSlide(ch.slideIndex);
-        toggleToc();
-      });
+      li.addEventListener('click', () => { showSlide(ch.slideIndex); toggleToc(); });
       list.appendChild(li);
     });
   }
@@ -2064,7 +1680,6 @@ body.annotation-mode .annotation-toolbar {
     }
   });
 
-  // Touch swipe
   let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
   document.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].clientX;
@@ -2088,7 +1703,7 @@ body.annotation-mode .annotation-toolbar {
     if (window.slideAnnotations && window.slideAnnotations.isActive()) return;
     if (tocOpen) return;
     if (window.innerWidth > 768) return;
-    if (e.target.closest('a, button, .toc-overlay, .print-toolbar, .annotation-toolbar')) return;
+    if (e.target.closest('a, button, .toc-overlay, .print-toolbar, .annotation-toolbar, .code-copy-btn')) return;
     const x = e.clientX / window.innerWidth;
     if (x < 0.25) prevSlide();
     else if (x > 0.75) nextSlide();
@@ -2112,7 +1727,9 @@ function autoFitSlides() {
     if (slide.classList.contains('chapter-title') ||
         slide.classList.contains('keyword-slide') ||
         slide.classList.contains('toc-slide')) return;
-    const content = slide.querySelector('.slide-content');
+    const content = slide.querySelector('.slide-content') ||
+                    slide.querySelector('.split-text') ||
+                    slide.querySelector('.portrait-text');
     if (!content) return;
     const text = content.textContent.trim();
     if (!text) return;
@@ -2131,24 +1748,68 @@ function autoFitSlides() {
       const measured = layout(prepared, contentWidth, lineHeight);
       if (measured.height > availH) {
         content.classList.add('dense-content');
+        const densePrepared = prepare(text, parseFloat(fontSize) * 0.85 + 'px ' + fontFamily);
+        const denseMeasured = layout(densePrepared, contentWidth, lineHeight * 0.9);
+        if (denseMeasured.height > availH) {
+          const scale = Math.max(0.7, availH / denseMeasured.height);
+          content.style.fontSize = (parseFloat(fontSize) * 0.85 * scale) + 'px';
+          content.style.lineHeight = '1.4';
+        }
       }
     } catch (e) {
-      if (content.scrollHeight > availH) {
-        content.classList.add('dense-content');
-      }
+      if (content.scrollHeight > availH) content.classList.add('dense-content');
     }
   });
 }
 
-if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(autoFitSlides);
-} else {
-  window.addEventListener('load', autoFitSlides);
-}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(autoFitSlides);
+else window.addEventListener('load', autoFitSlides);
+
 let resizeTimer;
 window.addEventListener('resize', () => {
   clearTimeout(resizeTimer);
   resizeTimer = setTimeout(autoFitSlides, 200);
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+document.querySelectorAll('.qr-container[data-url]').forEach(container => {
+  const url = container.getAttribute('data-url');
+  const canvas = document.createElement('canvas');
+  container.prepend(canvas);
+  QRCode.toCanvas(canvas, url, { width: 200, margin: 2 });
+});
+</script>
+<script>
+document.querySelectorAll('pre code').forEach(block => {
+  hljs.highlightElement(block);
+  const lines = block.innerHTML.split('\n');
+  const highlightAttr = block.getAttribute('data-highlight');
+  const highlightSet = new Set();
+  if (highlightAttr) {
+    highlightAttr.split(',').forEach(range => {
+      const parts = range.trim().split('-');
+      if (parts.length === 2) {
+        for (let i = parseInt(parts[0]); i <= parseInt(parts[1]); i++) highlightSet.add(i);
+      } else highlightSet.add(parseInt(parts[0]));
+    });
+  }
+  block.innerHTML = lines.map((line, i) => {
+    const cls = highlightSet.has(i + 1) ? 'line highlighted' : 'line';
+    return '<span class="' + cls + '">' + line + '</span>';
+  }).join('\n');
+  const wrapper = block.closest('.code-block-wrapper');
+  if (wrapper) {
+    const btn = wrapper.querySelector('.code-copy-btn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(block.textContent).then(() => {
+          btn.textContent = 'Copied!'; btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+        });
+      });
+    }
+  }
 });
 </script>
 </body>

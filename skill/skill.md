@@ -315,3 +315,11 @@ Plan 단계에서 사용자가 레이아웃을 고민할 때, 해당 예시 파�
 The HTML template is at: `~/.claude/skills/markdown-to-slide/template.html`
 
 Read this template file and use it as the base for HTML generation. Replace the `{{TITLE}}` and `{{SLIDES}}` placeholders with generated content. The CSS and JS are already included in the template.
+
+Theme templates are also available under `templates/`:
+
+- `templates/monymony.html` — Monymony theme
+- `templates/sadamcon.html` — 5th Sadamcon conference theme: dark charcoal canvas, `5th CONFERENCE` / `SIP<` chrome, orange and mint accents, compact dark cards
+- `templates/sipercurl.html` — SiperCurl hackathon theme
+
+When the user asks for `사담콘`, `Sadamcon`, `5th Conference`, or a SIPE conference deck, prefer `templates/sadamcon.html`. In this repo, the project-local `$sadamcon-slides` skill contains the PDF-derived style guide and the same template asset.

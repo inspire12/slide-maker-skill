@@ -1,4 +1,4 @@
----
+stock_story_2025---
 title: 일하는 방식의 변화와 준비
 author: 서영학
 ---

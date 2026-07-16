@@ -38,9 +38,9 @@ body {
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(100vw, 177.78vh);  /* 16:9 */
-  height: min(100vh, 56.25vw);  /* 16:9 */
+  transform: translate(-50%, -50%) scale(var(--slide-scale, 1));
+  width: var(--slide-base-w);
+  height: var(--slide-base-h);
   padding: clamp(30px, 4.7vh, 80px) clamp(40px, 6.25vh, 100px);
   overflow: hidden;
   background: #fff;
@@ -52,8 +52,8 @@ body {
   animation: fadeIn 0.35s ease-out;
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0.98); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
   .slide.active { animation: none; }
@@ -271,8 +271,10 @@ body {
 
 /* ===== RESPONSIVE FONT SCALING ===== */
 :root {
-  --slide-w: min(100vw, 177.78vh);
-  --scale: calc(var(--slide-w) / 1280px);
+  --slide-base-w: 1280px;
+  --slide-base-h: 720px;
+  --slide-scale: 1;
+  --scale: 1;
 }
 .slide-content             { font-size: clamp(0.85rem, calc(1.15rem * var(--scale)), 2.1rem); }
 .keyword-sub               { font-size: clamp(0.9rem, calc(1.3rem * var(--scale)), 2.5rem); }
@@ -1692,12 +1694,13 @@ body.annotation-mode .annotation-toolbar {
 <!-- PRESENTATION ENGINE JS -->
 <script>
 (function() {
-  function updateScale() {
-    const w = Math.min(window.innerWidth, window.innerHeight * 16 / 9);
-    document.documentElement.style.setProperty('--scale', (w / 1280).toString());
+  function fitSlideViewport() {
+    const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    document.documentElement.style.setProperty('--slide-scale', scale.toString());
+    document.documentElement.style.setProperty('--scale', '1');
   }
-  updateScale();
-  window.addEventListener('resize', updateScale);
+  fitSlideViewport();
+  window.addEventListener('resize', fitSlideViewport);
 })();
 (function() {
   const slides = document.querySelectorAll('.slide');

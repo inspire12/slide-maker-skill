@@ -21,6 +21,11 @@ description: Apply visual design enhancements to validated slide markdown. Conte
 4. 긴 한글 제목, 한영 혼합 용어, 긴 코드 블록은 overflow 위험으로 보고 미리 분할한다.
 5. 세로 이미지는 portrait split, 코드 중심 슬라이드는 여러 장 분할을 우선한다.
 
+## Theme Selection
+
+- If the user asks for `사담콘`, `Sadamcon`, `5th Conference`, or a SIPE conference deck, use the Sadamcon visual system: dark charcoal background, top-left `5th CONFERENCE`, top-right `SIP<`, orange emphasis, mint gradient support, and compact dark content cards.
+- Keep Sadamcon slides sparse. Prefer one major message per slide, 3~6 bullets, or one table/card block.
+
 ## Phase 2.1 — Content Visibility Enhancement
 
 Automatically apply the following visibility improvements during HTML generation:

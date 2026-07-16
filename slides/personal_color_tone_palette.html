@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>퍼스널 컬러 톤 비교 팔레트</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; }
+:root {
+  --slide-base-w: 1280px;
+  --slide-base-h: 720px;
+  --slide-scale: 1;
+  --scale: 1;
+}
+body {
+  background: #101114;
+  color: #191919;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.deck {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.slide {
+  display: none;
+  position: relative;
+  width: var(--slide-base-w);
+  height: var(--slide-base-h);
+  transform: scale(var(--slide-scale, 1));
+  transform-origin: center center;
+  overflow: hidden;
+}
+.slide.active { display: block; }
+.section {
+  background: #f7f4ef;
+  text-align: center;
+}
+.section.active {
+  display: grid;
+  place-items: center;
+}
+.section h2 {
+  margin: 0;
+  font-size: 7.2rem;
+  line-height: 1;
+  letter-spacing: 0;
+  font-weight: 850;
+}
+.section p {
+  margin: 24px 0 0;
+  font-size: 1.92rem;
+  font-weight: 650;
+  color: rgba(25, 25, 25, 0.62);
+}
+.color-slide { background: var(--color); }
+.nav-zone {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 30vw;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  z-index: 20;
+}
+.nav-zone.prev { left: 0; }
+.nav-zone.next { right: 0; }
+.fullscreen-button {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  z-index: 40;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(25, 25, 25, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #191919;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+}
+body.is-color-slide .fullscreen-button {
+  opacity: 0;
+  pointer-events: none;
+}
+.section-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  z-index: 45;
+  display: flex;
+  gap: 6px;
+  max-width: min(92vw, 980px);
+  padding: 6px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.66);
+  backdrop-filter: blur(10px);
+  opacity: 0.24;
+  transition: opacity 0.16s ease;
+}
+.section-nav:hover,
+.section-nav:focus-within {
+  opacity: 0.92;
+}
+.section-nav button {
+  min-width: 34px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid rgba(25, 25, 25, 0.18);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #191919;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+.section-nav button.active {
+  background: #191919;
+  border-color: #191919;
+  color: #fff;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media print {
+  html, body { height: auto; overflow: visible; background: #fff; }
+  .deck { position: static; display: block; }
+  .slide { display: block; page-break-after: always; width: 100vw; height: 56.25vw; }
+  .nav-zone, .fullscreen-button, .section-nav { display: none; }
+}
+</style>
+</head>
+<body>
+<main class="deck" aria-live="polite">
+  <h1 class="sr-only">퍼스널 컬러 톤 비교 팔레트</h1>
+</main>
+
+<button class="nav-zone prev" type="button" aria-label="이전 페이지"></button>
+<button class="nav-zone next" type="button" aria-label="다음 페이지"></button>
+<button class="fullscreen-button" type="button" aria-label="전체화면 보기" title="전체화면 보기">⛶</button>
+<nav class="section-nav" aria-label="섹션 바로 이동"></nav>
+
+<script type="application/json" id="palette-data">
+[
+  {
+    "title": "4계절 전체 비교",
+    "subtitle": "Spring · Summer · Autumn · Winter",
+    "colors": ["#FFE0C7", "#FFB6A8", "#FF6F61", "#F8D94E", "#F5C8D1", "#C8B7D8", "#8DB5D9", "#7BA7A3", "#C58A4B", "#A84E2A", "#747C3F", "#275D52", "#111111", "#F7F7F5", "#D0005B", "#0047AB"]
+  },
+  {
+    "title": "봄 웜",
+    "subtitle": "밝고 선명한 온기",
+    "colors": ["#FFF1D6", "#FFE3BD", "#FFD0A6", "#FFB58A", "#FF936F", "#FFF07A", "#FFD84D", "#FFC145", "#FF9F45", "#FF7C4D", "#FFCAD4", "#FF9FB1", "#FF7F8F", "#FF5E73", "#F54E5D", "#CDEB73", "#9BDB68", "#49C7A7", "#42C8D6", "#48AEEA"]
+  },
+  {
+    "title": "여름 쿨",
+    "subtitle": "부드럽고 흐린 냉기",
+    "colors": ["#F8DDE6", "#EFC8D8", "#DCAFC9", "#C698B9", "#A77EA0", "#E7DDF2", "#D4C6E8", "#B8ADD7", "#9C95C4", "#7E80A8", "#DCEBF6", "#BFD9EC", "#9EC3DD", "#82AACB", "#6587A8", "#DDEFEA", "#C4DED9", "#A6C9C5", "#89AEAE", "#6F8E96"]
+  },
+  {
+    "title": "가을 웜",
+    "subtitle": "낮고 깊은 온기",
+    "colors": ["#E8C18A", "#D49A5A", "#B87333", "#91562A", "#6D4327", "#C65F36", "#A84525", "#8E3F25", "#74351F", "#5B2C1D", "#B58D44", "#8F7937", "#6F7032", "#566734", "#3F5636", "#A97C50", "#866343", "#634733", "#2F5E58", "#1F423D"]
+  },
+  {
+    "title": "겨울 쿨",
+    "subtitle": "강하고 선명한 냉기",
+    "colors": ["#FFFFFF", "#D9DDE8", "#A8B1C7", "#4A5063", "#050505", "#FF0A6C", "#D0005B", "#B0008E", "#7B1FA2", "#4B0082", "#F5002F", "#C9002B", "#0057D9", "#003EA8", "#001B5B", "#00A676", "#008F8C", "#006A71", "#004B5A", "#172A3A"]
+  },
+  {
+    "title": "웜톤 비교",
+    "subtitle": "봄 웜 vs 가을 웜",
+    "colors": ["#FFF1D6", "#FFE3BD", "#FFD0A6", "#FFB58A", "#FF936F", "#FF6F61", "#FFF07A", "#FFD84D", "#CDEB73", "#9BDB68", "#49C7A7", "#42C8D6", "#E8C18A", "#D49A5A", "#B87333", "#A84525", "#8E3F25", "#74351F", "#B58D44", "#8F7937", "#6F7032", "#566734", "#2F5E58", "#1F423D"]
+  },
+  {
+    "title": "쿨톤 비교",
+    "subtitle": "여름 쿨 vs 겨울 쿨",
+    "colors": ["#F8DDE6", "#EFC8D8", "#DCAFC9", "#C698B9", "#E7DDF2", "#D4C6E8", "#DCEBF6", "#BFD9EC", "#9EC3DD", "#DDEFEA", "#C4DED9", "#89AEAE", "#FFFFFF", "#D9DDE8", "#050505", "#FF0A6C", "#D0005B", "#B0008E", "#F5002F", "#0057D9", "#003EA8", "#00A676", "#008F8C", "#004B5A"]
+  },
+  {
+    "title": "라이트 톤 비교",
+    "subtitle": "봄 라이트 vs 여름 라이트",
+    "colors": ["#FFF4DA", "#FFE6C8", "#FFD0A6", "#FFB7A0", "#FFEFB5", "#DDEB9A", "#B8E6C7", "#A7E0E8", "#FCE7EF", "#EFD7E7", "#E3D8F1", "#D6E4F2", "#C9DDF0", "#CFE7E2", "#B9D8D4", "#AFC2D9", "#FFF8EC", "#F9EEE8", "#F1EAF4", "#EAF1F7", "#E6F3EF", "#F3F1D7", "#ECE9DA", "#DDE2EA"]
+  },
+  {
+    "title": "딥 톤 비교",
+    "subtitle": "가을 딥 vs 겨울 딥",
+    "colors": ["#5B2C1D", "#74351F", "#8E3F25", "#6D4327", "#634733", "#3F5636", "#2F5E58", "#1F423D", "#050505", "#172A3A", "#001B5B", "#003EA8", "#4B0082", "#7B0046", "#850020", "#004B5A", "#2A1A12", "#342317", "#40321C", "#203221", "#142D31", "#111111", "#191827", "#1A1026"]
+  },
+  {
+    "title": "포인트 컬러 비교",
+    "subtitle": "계절별 강조색 차이",
+    "colors": ["#FFB000", "#FF6F61", "#FF8FA3", "#8EDB65", "#34C7C7", "#3DA5FF", "#D7BFE8", "#B8A3D1", "#8DB5D9", "#75A9A2", "#C98FA6", "#9D8296", "#C96B34", "#A84525", "#B58D44", "#72763A", "#2F5E58", "#6D4327", "#F5002F", "#D0005B", "#B0008E", "#0057D9", "#00A676", "#050505"]
+  }
+]
+</script>
+<script>
+(function() {
+  function fitSlideViewport() {
+    const scale = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    document.documentElement.style.setProperty('--slide-scale', scale.toString());
+    document.documentElement.style.setProperty('--scale', '1');
+  }
+  fitSlideViewport();
+  window.addEventListener('resize', fitSlideViewport);
+})();
+
+const groups = JSON.parse(document.getElementById("palette-data").textContent);
+const deck = document.querySelector(".deck");
+const sectionStarts = [];
+
+groups.forEach((group) => {
+  sectionStarts.push(deck.querySelectorAll(".slide").length);
+  const section = document.createElement("section");
+  section.className = "slide section";
+  section.setAttribute("aria-label", group.title + " 섹션");
+  section.innerHTML = "<div><h2></h2><p></p></div>";
+  section.querySelector("h2").textContent = group.title;
+  section.querySelector("p").textContent = group.subtitle;
+  deck.appendChild(section);
+
+  group.colors.forEach((color, index) => {
+    const slide = document.createElement("section");
+    slide.className = "slide color-slide";
+    slide.style.setProperty("--color", color);
+    slide.setAttribute("aria-label", group.title + " " + (index + 1) + " " + color);
+    deck.appendChild(slide);
+  });
+});
+
+const slides = Array.from(document.querySelectorAll(".slide"));
+const sectionNav = document.querySelector(".section-nav");
+const sectionButtons = groups.map((group, index) => {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.textContent = group.title.replace(" 전체 비교", "").replace(" 톤 비교", "").replace(" 비교", "");
+  button.setAttribute("aria-label", group.title + "로 이동");
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    showSlide(sectionStarts[index]);
+  });
+  sectionNav.appendChild(button);
+  return button;
+});
+let current = 0;
+let touchStartX = null;
+
+function pageFromHash() {
+  const value = Number(window.location.hash.replace("#", ""));
+  return Number.isInteger(value) && value >= 1 && value <= slides.length ? value - 1 : 0;
+}
+
+function showSlide(index, updateHash = true) {
+  current = Math.max(0, Math.min(slides.length - 1, index));
+  slides.forEach((slide, slideIndex) => {
+    slide.classList.toggle("active", slideIndex === current);
+  });
+  let activeSection = 0;
+  sectionStarts.forEach((start, startIndex) => {
+    if (start <= current) activeSection = startIndex;
+  });
+  sectionButtons.forEach((button, buttonIndex) => {
+    button.classList.toggle("active", buttonIndex === activeSection);
+  });
+  document.body.classList.toggle("is-color-slide", slides[current].classList.contains("color-slide"));
+  if (updateHash) {
+    history.replaceState(null, "", "#" + (current + 1));
+  }
+}
+
+function nextSlide() { showSlide(current + 1); }
+function prevSlide() { showSlide(current - 1); }
+function toggleFullscreen() {
+  if (!document.fullscreenEnabled) return;
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  } else {
+    document.documentElement.requestFullscreen();
+  }
+}
+
+document.querySelector(".nav-zone.next").addEventListener("click", nextSlide);
+document.querySelector(".nav-zone.prev").addEventListener("click", prevSlide);
+document.querySelector(".fullscreen-button").addEventListener("click", toggleFullscreen);
+document.addEventListener("dblclick", toggleFullscreen);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowRight" || event.key === "PageDown" || event.key === " ") {
+    event.preventDefault();
+    nextSlide();
+  }
+  if (event.key === "ArrowLeft" || event.key === "PageUp") {
+    event.preventDefault();
+    prevSlide();
+  }
+  if (event.key === "Home") {
+    event.preventDefault();
+    showSlide(0);
+  }
+  if (event.key === "End") {
+    event.preventDefault();
+    showSlide(slides.length - 1);
+  }
+  if (event.key.toLowerCase() === "f" && document.fullscreenEnabled) {
+    event.preventDefault();
+    toggleFullscreen();
+  }
+});
+
+document.addEventListener("touchstart", (event) => {
+  touchStartX = event.changedTouches[0].clientX;
+}, { passive: true });
+
+document.addEventListener("touchend", (event) => {
+  if (touchStartX === null) return;
+  const deltaX = event.changedTouches[0].clientX - touchStartX;
+  touchStartX = null;
+  if (Math.abs(deltaX) < 40) return;
+  if (deltaX < 0) nextSlide();
+  if (deltaX > 0) prevSlide();
+}, { passive: true });
+
+window.addEventListener("hashchange", () => showSlide(pageFromHash(), false));
+showSlide(pageFromHash(), false);
+</script>
+</body>
+</html>

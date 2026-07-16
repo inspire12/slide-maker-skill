@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sadamcon Slides"
+  short_description: "Generate 5th Sadamcon-style slide decks"
+  default_prompt: "Use $sadamcon-slides to create a 5th Sadamcon-style conference slide deck from my markdown."

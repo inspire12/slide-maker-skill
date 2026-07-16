@@ -8,6 +8,8 @@ required_files=(
   "$skill_dir/agents/openai.yaml"
   "$skill_dir/assets/template.html"
   "$skill_dir/assets/templates/monymony.html"
+  "$skill_dir/assets/templates/sadamcon.html"
+  "$skill_dir/assets/templates/sipercurl.html"
   "$skill_dir/references/slides-plan.md"
   "$skill_dir/references/slides-design.md"
   "$skill_dir/references/slides-export.md"
@@ -26,6 +28,8 @@ done
 grep -Fq "name: markdown-to-slide" "$skill_dir/SKILL.md"
 grep -Fq "Use when creating, editing, exporting, or improving lecture slides" "$skill_dir/SKILL.md"
 grep -Fq "assets/template.html" "$skill_dir/SKILL.md"
+grep -Fq "assets/templates/sadamcon.html" "$skill_dir/SKILL.md"
+grep -Fq "assets/templates/sipercurl.html" "$skill_dir/SKILL.md"
 grep -Fq "references/slides-export.md" "$skill_dir/SKILL.md"
 grep -Fq "references/slides-feedback.md" "$skill_dir/SKILL.md"
 grep -Fq "references/slides-deploy.md" "$skill_dir/SKILL.md"
@@ -50,6 +54,16 @@ cmp -s skill/template.html "$skill_dir/assets/template.html" || {
 
 cmp -s skill/templates/monymony.html "$skill_dir/assets/templates/monymony.html" || {
   echo "Codex monymony template asset is out of sync with skill/templates/monymony.html" >&2
+  exit 1
+}
+
+cmp -s skill/templates/sadamcon.html "$skill_dir/assets/templates/sadamcon.html" || {
+  echo "Codex sadamcon template asset is out of sync with skill/templates/sadamcon.html" >&2
+  exit 1
+}
+
+cmp -s skill/templates/sipercurl.html "$skill_dir/assets/templates/sipercurl.html" || {
+  echo "Codex sipercurl template asset is out of sync with skill/templates/sipercurl.html" >&2
   exit 1
 }
 
